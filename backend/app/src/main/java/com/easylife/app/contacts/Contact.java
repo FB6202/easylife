@@ -1,6 +1,6 @@
 package com.easylife.app.contacts;
 
-import com.easylife.app.shared.RelationshipType;
+import com.easylife.app.shared.enums.RelationshipType;
 import jakarta.persistence.*;
 import lombok.*;
 

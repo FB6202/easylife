@@ -1,8 +1,8 @@
 package com.easylife.app.calendar;
 
-import com.easylife.app.shared.AccessType;
-import com.easylife.app.shared.EventType;
-import com.easylife.app.shared.RecurrenceType;
+import com.easylife.app.shared.enums.AccessType;
+import com.easylife.app.shared.enums.EventType;
+import com.easylife.app.shared.enums.RecurrenceType;
 import jakarta.persistence.*;
 import lombok.*;
 

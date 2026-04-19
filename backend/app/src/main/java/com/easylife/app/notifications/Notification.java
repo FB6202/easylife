@@ -1,8 +1,8 @@
 package com.easylife.app.notifications;
 
-import com.easylife.app.shared.NotificationChannel;
-import com.easylife.app.shared.NotificationType;
-import com.easylife.app.shared.ReferenceType;
+import com.easylife.app.shared.enums.NotificationChannel;
+import com.easylife.app.shared.enums.NotificationType;
+import com.easylife.app.shared.enums.ReferenceType;
 import jakarta.persistence.*;
 import lombok.*;
 

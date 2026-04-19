@@ -1,7 +1,7 @@
 package com.easylife.app.calendar;
 
-import com.easylife.app.shared.AccessType;
-import com.easylife.app.shared.EventType;
+import com.easylife.app.shared.enums.AccessType;
+import com.easylife.app.shared.enums.EventType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

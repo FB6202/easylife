@@ -1,7 +1,7 @@
 package com.easylife.app.notifications;
 
-import com.easylife.app.shared.NotificationChannel;
-import com.easylife.app.shared.NotificationType;
+import com.easylife.app.shared.enums.NotificationChannel;
+import com.easylife.app.shared.enums.NotificationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
