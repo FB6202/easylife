@@ -12,7 +12,7 @@ interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     List<Notification> findAllByUserId(Long userId);
 
-    List<Notification> findAllByUserIdAndRead(Long userId, Boolean read);
+    List<Notification> findAllByUserIdAndAlreadyRead(Long userId, Boolean alreadyRead);
 
     List<Notification> findAllByUserIdAndChannel(Long userId, NotificationChannel channel);
 
@@ -22,7 +22,7 @@ interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     List<Notification> findAllByScheduledAtBeforeAndSentAtIsNull(LocalDateTime now);
 
-    long countByUserIdAndRead(Long userId, Boolean read);
+    long countByUserIdAndAlreadyRead(Long userId, Boolean alreadyRead);
 
     Optional<Notification> findByIdAndUserId(Long id, Long userId);
 

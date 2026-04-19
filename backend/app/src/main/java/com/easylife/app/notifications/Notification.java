@@ -24,7 +24,7 @@ class Notification {
     private String title;
     private String message;
     private Long referenceId;
-    private Boolean read;
+    private Boolean alreadyRead;
     private LocalDateTime scheduledAt;
     private LocalDateTime sentAt;
     private LocalDateTime createdAt;
