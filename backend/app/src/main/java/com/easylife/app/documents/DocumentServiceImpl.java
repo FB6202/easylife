@@ -5,6 +5,9 @@ import com.easylife.app.documents.payload.DocumentFilter;
 import com.easylife.app.documents.payload.DocumentRequest;
 import com.easylife.app.documents.payload.DocumentResponse;
 import com.easylife.app.shared.payload.PageResponse;
+import com.easylife.app.storage.api.StorageApi;
+import com.easylife.app.users.api.UserApi;
+import com.easylife.app.users.api.UserResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,8 @@ class DocumentServiceImpl implements DocumentService {
     private final DocumentRepository documentRepository;
     private final DocumentMapper documentMapper;
     private final CategoryApi categoryApi;
+    private final StorageApi storageApi;
+    private final UserApi userApi;
 
     @Override
     public DocumentResponse create(DocumentRequest request, Long userId, String filePath) {
@@ -33,9 +38,12 @@ class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentResponse findById(Long id, Long userId) {
-        return documentRepository.findByIdAndUserId(id, userId)
-                .map(doc -> documentMapper.toResponse(doc, null))
+        Document document = documentRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Document not found"));
+        return documentMapper.toResponse(
+                document,
+                storageApi.generateDownloadUrl(document.getFilePath())
+        );
     }
 
     @Override
@@ -43,7 +51,11 @@ class DocumentServiceImpl implements DocumentService {
         Specification<Document> spec = DocumentSpecification.build(userId, filter);
         Page<Document> result = documentRepository.findAll(spec, PageRequest.of(page, size));
         return new PageResponse<>(
-                result.getContent().stream().map(doc -> documentMapper.toResponse(doc, null)).toList(),
+                result.getContent().stream()
+                        .map(doc -> documentMapper.toResponse(
+                                doc,
+                                storageApi.generateDownloadUrl(doc.getFilePath())))
+                        .toList(),
                 result.getNumber(),
                 result.getSize(),
                 result.getTotalElements(),
@@ -65,6 +77,7 @@ class DocumentServiceImpl implements DocumentService {
     public void delete(Long id, Long userId) {
         Document document = documentRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Document not found"));
+        storageApi.delete(document.getFilePath());
         documentRepository.delete(document);
     }
 
@@ -79,6 +92,18 @@ class DocumentServiceImpl implements DocumentService {
                 }
             });
         }
+    }
+
+    @Override
+    public String generateUploadUrl(Long userId, String fileName, String contentType) {
+        UserResponse user = userApi.findById(userId);
+        String key = storageApi.buildKey(
+                user.username(),
+                "documents",
+                userId,
+                fileName
+        );
+        return storageApi.generateUploadUrl(key, contentType);
     }
 
 }

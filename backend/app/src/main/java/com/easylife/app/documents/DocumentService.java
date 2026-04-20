@@ -17,4 +17,6 @@ public interface DocumentService {
 
     void delete(Long id, Long userId);
 
+    String generateUploadUrl(Long userId, String fileName, String contentType);
+
 }

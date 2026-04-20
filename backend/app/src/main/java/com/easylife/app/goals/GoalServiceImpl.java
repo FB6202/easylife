@@ -3,6 +3,9 @@ package com.easylife.app.goals;
 import com.easylife.app.categories.api.CategoryApi;
 import com.easylife.app.goals.payload.*;
 import com.easylife.app.shared.payload.PageResponse;
+import com.easylife.app.storage.api.StorageApi;
+import com.easylife.app.users.api.UserApi;
+import com.easylife.app.users.api.UserResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,8 @@ class GoalServiceImpl implements GoalService {
     private final GoalTaskRepository goalTaskRepository;
     private final GoalMapper goalMapper;
     private final CategoryApi categoryApi;
+    private final StorageApi storageApi;
+    private final UserApi userApi;
 
     @Override
     public GoalResponse create(GoalRequest request, Long userId) {
@@ -32,9 +37,12 @@ class GoalServiceImpl implements GoalService {
 
     @Override
     public GoalResponse findById(Long id, Long userId) {
-        return goalRepository.findByIdAndUserId(id, userId)
-                .map(goalMapper::toResponse)
+        Goal goal = goalRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+        return goalMapper.toResponse(
+                goal,
+                storageApi.generateDownloadUrl(goal.getImagePath())
+        );
     }
 
     @Override
@@ -42,7 +50,11 @@ class GoalServiceImpl implements GoalService {
         Specification<Goal> spec = GoalSpecification.build(userId, filter);
         Page<Goal> result = goalRepository.findAll(spec, PageRequest.of(page, size));
         return new PageResponse<>(
-                result.getContent().stream().map(goalMapper::toResponse).toList(),
+                result.getContent().stream()
+                        .map(goal -> goalMapper.toResponse(
+                                goal,
+                                storageApi.generateDownloadUrl(goal.getImagePath())))
+                        .toList(),
                 result.getNumber(),
                 result.getSize(),
                 result.getTotalElements(),
@@ -64,9 +76,15 @@ class GoalServiceImpl implements GoalService {
     public GoalResponse updateImage(Long id, String imagePath, Long userId) {
         Goal goal = goalRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+        if (goal.getImagePath() != null) {
+            storageApi.delete(goal.getImagePath());
+        }
         goal.setImagePath(imagePath);
         goal.setUpdatedAt(LocalDateTime.now());
-        return goalMapper.toResponse(goalRepository.save(goal));
+        return goalMapper.toResponse(
+                goalRepository.save(goal),
+                storageApi.generateDownloadUrl(imagePath)
+        );
     }
 
     @Override
@@ -122,6 +140,20 @@ class GoalServiceImpl implements GoalService {
                 }
             });
         }
+    }
+
+    @Override
+    public String generateImageUploadUrl(Long goalId, Long userId, String fileName, String contentType) {
+        goalRepository.findByIdAndUserId(goalId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+        UserResponse user = userApi.findById(userId);
+        String key = storageApi.buildKey(
+                user.username(),
+                "goals",
+                goalId,
+                fileName
+        );
+        return storageApi.generateUploadUrl(key, contentType);
     }
 
 }

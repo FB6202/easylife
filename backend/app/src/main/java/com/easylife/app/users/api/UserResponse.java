@@ -1,4 +1,7 @@
-package com.easylife.app.users.payload;
+package com.easylife.app.users.api;
+
+import com.easylife.app.users.payload.ProfileResponse;
+import com.easylife.app.users.payload.SettingsResponse;
 
 import java.time.LocalDateTime;
 

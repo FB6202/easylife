@@ -1,6 +1,8 @@
 package com.easylife.app.users;
 
+import com.easylife.app.storage.api.StorageApi;
 import com.easylife.app.users.api.UserApi;
+import com.easylife.app.users.api.UserResponse;
 import com.easylife.app.users.payload.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ public class UserServiceImpl implements UserService, UserApi {
     private final AddressRepository addressRepository;
     private final SettingsRepository settingsRepository;
     private final UserMapper userMapper;
+    private final StorageApi storageApi;
 
     @Override
     public UserResponse register(RegisterUserRequest request) {
@@ -79,9 +82,12 @@ public class UserServiceImpl implements UserService, UserApi {
     }
 
     @Override
-    public void updateProfileImage(Long userId, String profileImagePath) {
+    public void updateProfileImage(Long userId, String imagePath) {
         User user = getUserEntity(userId);
-        user.getProfile().setProfileImagePath(profileImagePath);
+        if (user.getProfile().getProfileImagePath() != null) {
+            storageApi.delete(user.getProfile().getProfileImagePath());
+        }
+        user.getProfile().setProfileImagePath(imagePath);
         user.getProfile().setUpdatedAt(LocalDateTime.now());
         profileRepository.save(user.getProfile());
     }
@@ -94,6 +100,18 @@ public class UserServiceImpl implements UserService, UserApi {
     @Override
     public boolean existsById(Long userId) {
         return userRepository.existsById(userId);
+    }
+
+    @Override
+    public String generateProfileImageUploadUrl(Long userId, String fileName, String contentType) {
+        User user = getUserEntity(userId);
+        String key = storageApi.buildKey(
+                user.getUsername(),
+                "profiles",
+                userId,
+                fileName
+        );
+        return storageApi.generateUploadUrl(key, contentType);
     }
 
 }

@@ -1,5 +1,5 @@
 spring:
   application:
-    name: app
+    name: easy-life
   profiles:
     active: ${SPRING_ACTIVE_PROFILE:dev}
