@@ -1,11 +1,12 @@
 package com.easylife.app.users.payload;
 
-import jakarta.validation.constraints.NotBlank;
+import com.easylife.app.shared.enums.ColorTheme;
+import com.easylife.app.shared.enums.Language;
 
 public record SettingsRequest(
-        @NotBlank String language,
-        @NotBlank String webColorTheme,
-        @NotBlank String mobileColorTheme,
+        Language language,
+        ColorTheme webColorTheme,
+        ColorTheme mobileColorTheme,
         Boolean emailNotifications,
         Boolean pushNotifications
 ) {}
