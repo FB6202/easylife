@@ -1,5 +1,6 @@
 package com.easylife.app.users;
 
+import com.easylife.app.users.api.UserResponse;
 import com.easylife.app.users.payload.*;
 
 public interface UserService {
@@ -17,5 +18,7 @@ public interface UserService {
     SettingsResponse updateSettings(Long userId, SettingsRequest request);
 
     void updateProfileImage(Long userId, String profileImagePath);
+
+    String generateProfileImageUploadUrl(Long userId, String fileName, String contentType);
 
 }

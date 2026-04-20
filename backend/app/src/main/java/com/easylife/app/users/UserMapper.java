@@ -2,6 +2,7 @@ package com.easylife.app.users;
 
 import com.easylife.app.shared.enums.ColorTheme;
 import com.easylife.app.shared.enums.Language;
+import com.easylife.app.users.api.UserResponse;
 import com.easylife.app.users.payload.*;
 import org.springframework.stereotype.Component;
 

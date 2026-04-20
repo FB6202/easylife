@@ -1,7 +1,6 @@
 @org.springframework.modulith.ApplicationModule(
-        displayName = "Users",
+        displayName = "Storage",
         allowedDependencies = {
-                "storage::api",
                 "shared"
         })
-package com.easylife.app.users;
+package com.easylife.app.storage;

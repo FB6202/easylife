@@ -25,4 +25,6 @@ public interface GoalService {
 
     void deleteTask(Long goalId, Long taskId, Long userId);
 
+    String generateImageUploadUrl(Long goalId, Long userId, String fileName, String contentType);
+
 }

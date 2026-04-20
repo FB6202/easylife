@@ -3,6 +3,7 @@
         allowedDependencies = {
                 "users::api",
                 "categories::api",
+                "storage::api",
                 "shared"
         })
 package com.easylife.app.documents;
