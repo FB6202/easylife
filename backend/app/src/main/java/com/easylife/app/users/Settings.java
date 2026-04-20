@@ -1,5 +1,7 @@
 package com.easylife.app.users;
 
+import com.easylife.app.shared.enums.ColorTheme;
+import com.easylife.app.shared.enums.Language;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,12 +17,12 @@ class Settings {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String language;
-    @Column(nullable = false)
-    private String webColorTheme;
-    @Column(nullable = false)
-    private String mobileColorTheme;
+    @Enumerated(EnumType.STRING)
+    private Language language;
+    @Enumerated(EnumType.STRING)
+    private ColorTheme webColorTheme;
+    @Enumerated(EnumType.STRING)
+    private ColorTheme mobileColorTheme;
     @Column(nullable = false)
     private Boolean emailNotifications;
     @Column(nullable = false)
