@@ -27,7 +27,9 @@ class Notification {
     private Boolean alreadyRead;
     private LocalDateTime scheduledAt;
     private LocalDateTime sentAt;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;

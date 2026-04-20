@@ -1,9 +1,8 @@
 @org.springframework.modulith.ApplicationModule(
         displayName = "Contacts",
         allowedDependencies = {
-                "users",
-                "categories",
+                "users::api",
+                "categories::api",
                 "shared"
         })
-
 package com.easylife.app.contacts;

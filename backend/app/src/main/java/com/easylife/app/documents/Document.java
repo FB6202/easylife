@@ -27,7 +27,9 @@ class Document {
     @Column(nullable = false)
     private String fileType;
     private Long fileSizeBytes;
+    @Column(nullable = false)
     private LocalDateTime uploadedAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private AccessType accessType;

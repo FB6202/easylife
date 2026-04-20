@@ -26,7 +26,9 @@ class CalendarEvent {
     private String description;
     private String location;
     private String eventColor;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
     private LocalDateTime startDateTime;

@@ -23,7 +23,10 @@ class Goal {
     @Column(nullable = false)
     private String title;
     private String description;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String imagePath;
 
     // smart fields
     private String measurableTarget;      // "10km running", "5kg less weight"

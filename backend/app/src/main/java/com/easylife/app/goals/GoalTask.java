@@ -21,9 +21,11 @@ class GoalTask {
     private String title;
     private String description;
     private Boolean done;
-    private Integer progressContribution; // amount of total goal in %
+    private Integer progressContribution;
     private LocalDate dueDate;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "goal_id")

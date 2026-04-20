@@ -3,6 +3,8 @@ package com.easylife.app.users;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,5 +23,8 @@ class Address {
     private String additionalAddressInfo;
     private String zipCode;
     private String city;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 }

@@ -26,7 +26,9 @@ class Todo {
     private String title;
     private String description;
     private LocalDate dueDate;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Priority priority;
