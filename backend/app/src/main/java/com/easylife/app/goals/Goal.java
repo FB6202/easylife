@@ -1,7 +1,7 @@
 package com.easylife.app.goals;
 
-import com.easylife.app.shared.AccessType;
-import com.easylife.app.shared.GoalStatus;
+import com.easylife.app.shared.enums.AccessType;
+import com.easylife.app.shared.enums.GoalStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

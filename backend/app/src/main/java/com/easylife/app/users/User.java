@@ -21,8 +21,8 @@ class User {
     private String username;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
-    private String password;
+    @Column(nullable = false, unique = true)
+    private String keycloakId;
     @Column(nullable = false)
     private Boolean locked;
     @Column(nullable = false)

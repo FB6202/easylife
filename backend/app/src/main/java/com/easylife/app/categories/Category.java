@@ -1,6 +1,6 @@
 package com.easylife.app.categories;
 
-import com.easylife.app.shared.AccessType;
+import com.easylife.app.shared.enums.AccessType;
 import jakarta.persistence.*;
 import lombok.*;
 

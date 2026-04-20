@@ -1,8 +1,8 @@
 package com.easylife.app.notifications;
 
-import com.easylife.app.shared.NotificationChannel;
-import com.easylife.app.shared.NotificationType;
-import com.easylife.app.shared.ReferenceType;
+import com.easylife.app.shared.enums.NotificationChannel;
+import com.easylife.app.shared.enums.NotificationType;
+import com.easylife.app.shared.enums.ReferenceType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +24,7 @@ class Notification {
     private String title;
     private String message;
     private Long referenceId;
-    private Boolean read;
+    private Boolean alreadyRead;
     private LocalDateTime scheduledAt;
     private LocalDateTime sentAt;
     private LocalDateTime createdAt;

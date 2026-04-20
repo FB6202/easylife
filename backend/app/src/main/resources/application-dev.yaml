@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/easylife_db
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:FB6202Borussia!}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update

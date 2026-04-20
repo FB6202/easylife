@@ -1,4 +1,4 @@
-package com.easylife.app.shared;
+package com.easylife.app.shared.enums;
 
 public enum EventType {
 
