@@ -1,9 +1,8 @@
 @org.springframework.modulith.ApplicationModule(
         displayName = "Documents",
         allowedDependencies = {
-                "users",
-                "categories",
+                "users::api",
+                "categories::api",
                 "shared"
         })
-
 package com.easylife.app.documents;

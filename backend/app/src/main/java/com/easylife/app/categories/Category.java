@@ -26,7 +26,9 @@ class Category {
     private String color;
     @Column(nullable = false)
     private String icon;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private AccessType accessType;

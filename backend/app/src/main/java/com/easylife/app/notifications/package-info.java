@@ -1,7 +1,7 @@
 @org.springframework.modulith.ApplicationModule(
         displayName = "Notifications",
         allowedDependencies = {
-                "users",
+                "users::api",
                 "todos",
                 "goals",
                 "calendar",
@@ -9,5 +9,4 @@
                 "contacts",
                 "shared"
         })
-
 package com.easylife.app.notifications;

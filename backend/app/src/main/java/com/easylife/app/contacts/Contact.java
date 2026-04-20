@@ -33,7 +33,9 @@ class Contact {
     private String notes;
     private String tags;
     private LocalDate lastContactedAt;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private RelationshipType relationshipType;

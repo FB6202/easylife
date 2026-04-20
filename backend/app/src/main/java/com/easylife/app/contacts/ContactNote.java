@@ -18,7 +18,9 @@ class ContactNote {
     private Long id;
     @Column(nullable = false)
     private String content;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "contact_id")

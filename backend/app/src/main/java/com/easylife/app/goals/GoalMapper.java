@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @Component
 class GoalMapper {
 
-    public GoalResponse toResponse(Goal goal) {
+    public GoalResponse toResponse(Goal goal, String presignedImageUrl) {
         return new GoalResponse(
                 goal.getId(),
                 goal.getTitle(),
@@ -30,8 +30,13 @@ class GoalMapper {
                 goal.getCategoryIds(),
                 goal.getTasks() != null
                         ? goal.getTasks().stream().map(this::toTaskResponse).toList()
-                        : new ArrayList<>()
+                        : new ArrayList<>(),
+                presignedImageUrl
         );
+    }
+
+    public GoalResponse toResponse(Goal goal) {
+        return toResponse(goal, null);
     }
 
     public GoalTaskResponse toTaskResponse(GoalTask task) {

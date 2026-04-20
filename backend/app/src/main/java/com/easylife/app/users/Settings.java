@@ -5,6 +5,8 @@ import com.easylife.app.shared.enums.Language;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,5 +29,8 @@ class Settings {
     private Boolean emailNotifications;
     @Column(nullable = false)
     private Boolean pushNotifications;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 }

@@ -3,6 +3,8 @@ package com.easylife.app.users;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +23,9 @@ class Profile {
     private String lastname;
     private String profileImagePath;
     private String bio;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")

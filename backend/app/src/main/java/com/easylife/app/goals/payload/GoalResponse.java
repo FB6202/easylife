@@ -20,5 +20,6 @@ public record GoalResponse(
         AccessType accessType,
         LocalDateTime createdAt,
         List<Long> categoryIds,
-        List<GoalTaskResponse> tasks
+        List<GoalTaskResponse> tasks,
+        String presignedImageUrl        // neu
 ) {}
