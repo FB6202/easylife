@@ -29,6 +29,7 @@ class Todo {
     @Column(nullable = false)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long weekPlanId;
 
     @Enumerated(EnumType.STRING)
     private Priority priority;

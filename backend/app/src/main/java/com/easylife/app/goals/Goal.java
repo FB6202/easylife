@@ -27,6 +27,7 @@ class Goal {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String imagePath;
+    private Long weekPlanId;
 
     // smart fields
     private String measurableTarget;      // "10km running", "5kg less weight"

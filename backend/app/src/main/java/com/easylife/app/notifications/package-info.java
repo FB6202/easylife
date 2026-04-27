@@ -7,6 +7,8 @@
                 "calendar",
                 "documents",
                 "contacts",
+                "journal",
+                "weekplan",
                 "shared"
         })
 package com.easylife.app.notifications;

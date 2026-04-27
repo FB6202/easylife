@@ -6,6 +6,8 @@ public enum ReferenceType {
     GOAL,
     EVENT,
     DOCUMENT,
-    CONTACT
+    CONTACT,
+    JOURNAL_ENTRY,
+    WEEK_PLAN
 
 }
