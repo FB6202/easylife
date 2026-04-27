@@ -3,3 +3,6 @@ To Do's:
 - security
 - payments
 - ai-screenshots backend changes
+- max storage capacity for docs (including profile image + goals images)
+- pricing models corresponding to storage (size and amount)
+- website + social media?
