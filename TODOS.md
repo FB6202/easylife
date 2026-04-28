@@ -6,3 +6,7 @@ To Do's:
 - max storage capacity for docs (including profile image + goals images)
 - pricing models corresponding to storage (size and amount)
 - website + social media?
+- delete mechanism for efficient db storage using ;)
+
+Frontend:
+- 
