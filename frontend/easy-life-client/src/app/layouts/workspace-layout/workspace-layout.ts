@@ -33,8 +33,8 @@ export class WorkspaceLayoutComponent {
 
   readonly accountItems: NavItem[] = [
     { label: 'Profile', route: 'profile', icon: 'person' },
-    { label: 'Network', route: 'network', icon: 'people' },
-    { label: 'Following', route: 'following', icon: 'person_add' },
+    { label: 'People', route: 'network', icon: 'people' },
+    { label: 'Network', route: 'following', icon: 'person_add' },
     { label: 'Notifications', route: 'notifications', icon: 'notifications' },
   ];
 

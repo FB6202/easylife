@@ -87,6 +87,26 @@ export const routes: Routes = [
           import('./pages/workspace/profile/profile').then((m) => m.ProfileComponent),
         title: 'Profile - Easy Life',
       },
+      {
+        path: 'network',
+        loadComponent: () =>
+          import('./pages/workspace/network/network').then((m) => m.NetworkComponent),
+        title: 'People - Easy Life',
+      },
+      {
+        path: 'following',
+        loadComponent: () =>
+          import('./pages/workspace/following/following').then((m) => m.FollowingComponent),
+        title: 'Network - Easy Life',
+      },
+      {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/workspace/notifications/notifications').then(
+            (m) => m.NotificationsComponent,
+          ),
+        title: 'Notifications - Easy Life',
+      },
     ],
   },
 

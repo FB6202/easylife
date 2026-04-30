@@ -1,0 +1,111 @@
+<!-- Page Header -->
+<div class="network-header">
+  <div class="network-header__text">
+    <h1 class="network-header__title">Network.</h1>
+    <p class="network-header__subtitle">Manage your personal and professional relationships.</p>
+  </div>
+  <div class="network-header__actions">
+    <button class="btn-secondary">
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+    </button>
+    <button class="btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      Add Contact
+    </button>
+  </div>
+</div>
+
+<!-- Tag Filter Row -->
+<div class="network-tags">
+  @for (tag of availableTags(); track tag.id) {
+    <button
+      [class]="'network-tag ' + (activeTagId() === tag.id ? 'network-tag--active' : '')"
+      (click)="setActiveTag(tag.id)"
+    >
+      {{ tag.label }}
+    </button>
+  }
+  <span class="network-tags__sort">
+    <span class="material-symbols-outlined">sort</span>
+    Last Contacted
+  </span>
+</div>
+
+<!-- Contacts Table -->
+<div class="network-container">
+  <!-- Table Header -->
+  <div class="network-table__header">
+    <span class="network-col network-col--contact">CONTACT</span>
+    <span class="network-col network-col--company">COMPANY & POSITION</span>
+    <span class="network-col network-col--type">TYPE</span>
+    <span class="network-col network-col--last">LAST CONTACT</span>
+    <span class="network-col network-col--actions">ACTIONS</span>
+  </div>
+
+  <!-- Rows -->
+  @for (contact of filteredContacts(); track contact.id) {
+    <div class="network-table__row">
+      <!-- Contact -->
+      <div class="network-col network-col--contact">
+        <div class="contact-avatar" [style.background]="contact.avatarColor">
+          {{ contact.initials }}
+        </div>
+        <span class="contact-name"> {{ contact.firstname }} {{ contact.lastname }} </span>
+      </div>
+
+      <!-- Company & Position -->
+      <div class="network-col network-col--company">
+        <div class="contact-company">
+          <span class="contact-company__name">{{ contact.company }}</span>
+          <span class="contact-company__position">{{ contact.position }}</span>
+        </div>
+      </div>
+
+      <!-- Type -->
+      <div class="network-col network-col--type">
+        <span [class]="'contact-type ' + getRelationshipClass(contact.relationshipType)">
+          {{ contact.relationshipType }}
+        </span>
+      </div>
+
+      <!-- Last Contact -->
+      <div class="network-col network-col--last">
+        <span class="material-symbols-outlined contact-last__icon">schedule</span>
+        <span class="contact-last__text">{{ contact.lastContactedAt }}</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="network-col network-col--actions">
+        @if (contact.email) {
+          <button class="contact-action-btn" [title]="contact.email">
+            <span class="material-symbols-outlined">mail</span>
+          </button>
+        }
+        @if (contact.phone) {
+          <button class="contact-action-btn" [title]="contact.phone">
+            <span class="material-symbols-outlined">call</span>
+          </button>
+        }
+        @if (contact.linkedinUrl) {
+          <button class="contact-action-btn" title="LinkedIn">
+            <span class="material-symbols-outlined">link</span>
+          </button>
+        }
+        <button class="contact-action-btn">
+          <span class="material-symbols-outlined">more_vert</span>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Pagination -->
+  <app-pagination
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    [pageSize]="pageSize()"
+    (pageChange)="onPageChange($event)"
+    (aiClick)="onAiClick()"
+  />
+</div>
