@@ -1,0 +1,87 @@
+<!-- Page Header -->
+<div class="categories-header">
+  <div class="categories-header__text">
+    <p class="categories-header__label">Categories</p>
+    <p class="categories-header__subtitle">
+      Group your tasks, goals and documents into meaningful categories.
+    </p>
+  </div>
+  <div class="categories-header__actions">
+    <button class="btn-secondary">
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+    </button>
+    <button class="btn-primary" (click)="showCreateModal.set(true)">
+      <span class="material-symbols-outlined">add</span>
+      Create Category
+    </button>
+  </div>
+</div>
+
+<!-- Categories Grid -->
+<div class="categories-container">
+  <div class="categories-grid">
+    @for (category of categories(); track category.id) {
+      <div class="category-card">
+        <!-- Color Bar -->
+        <div class="category-card__bar" [style.background]="category.color"></div>
+
+        <!-- Card Body -->
+        <div class="category-card__body">
+          <!-- Icon + Access Badge -->
+          <div class="category-card__top">
+            <div class="category-card__icon" [style.background]="category.color + '18'">
+              <span class="material-symbols-outlined" [style.color]="category.color">{{
+                category.icon
+              }}</span>
+            </div>
+            <span
+              [class]="
+                'category-card__access ' +
+                (category.accessType === 'PUBLIC' ? 'access--public' : 'access--private')
+              "
+            >
+              {{ category.accessType }}
+            </span>
+          </div>
+
+          <!-- Name + Description -->
+          <h3 class="category-card__name">{{ category.name }}</h3>
+          <p class="category-card__desc">{{ category.description }}</p>
+
+          <!-- Footer -->
+          <div class="category-card__footer">
+            <span class="category-card__date">
+              <span class="material-symbols-outlined">calendar_today</span>
+              Created {{ category.createdAt }}
+            </span>
+            <button class="category-card__arrow">
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Add New Card -->
+    <div class="category-card category-card--add" (click)="showCreateModal.set(true)">
+      <div class="category-card__add-inner">
+        <div class="category-card__add-icon">
+          <span class="material-symbols-outlined">add</span>
+        </div>
+        <span class="category-card__add-label">Add New</span>
+        <span class="category-card__add-sub">Define a category</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    [pageSize]="pageSize()"
+    (pageChange)="onPageChange($event)"
+    (aiClick)="onAiClick()"
+  />
+</div>

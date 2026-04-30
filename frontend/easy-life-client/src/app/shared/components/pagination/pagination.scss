@@ -1,0 +1,99 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.pagination {
+  @include flex-between;
+  padding: $space-4 $space-6;
+  border-top: 1px solid var(--color-border-light);
+  flex-wrap: wrap;
+  gap: $space-4;
+
+  &__info {
+    @include flex-start;
+    gap: $space-4;
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+
+    strong {
+      color: var(--color-text-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &__ai-btn {
+    @include flex-start;
+    gap: $space-2;
+    padding: $space-2 $space-4;
+    border-radius: $radius-pill;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    font-family: $font-family;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    .material-symbols-outlined {
+      font-size: 16px;
+      color: var(--color-primary);
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+
+    &:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+  }
+
+  &__controls {
+    @include flex-start;
+    gap: $space-1;
+  }
+
+  &__btn {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-md;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    font-family: $font-family;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    @include flex-center;
+    transition: all $transition-fast;
+
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+
+    &--active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+
+      &:hover {
+        background: var(--color-primary-hover) !important;
+        color: white !important;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}

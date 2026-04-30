@@ -1,0 +1,355 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+// ── Page ───────────────────────────────────────────────────
+.profile-page {
+  max-width: 860px;
+  padding-bottom: $space-16;
+
+  &__header {
+    margin-bottom: $space-8;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+    margin-bottom: $space-2;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+  }
+}
+
+// ── Section ────────────────────────────────────────────────
+.profile-section {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: $space-8;
+  margin-bottom: $space-8;
+  padding-bottom: $space-8;
+  border-bottom: 1px solid var(--color-border-light);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @include below-md {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+  }
+
+  &__label {
+    @include flex-col;
+    gap: $space-2;
+    padding-top: $space-1;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-primary);
+  }
+
+  &__desc {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  &__card {
+    @include card($space-6);
+    @include flex-col;
+    gap: $space-5;
+  }
+}
+
+// ── Avatar ─────────────────────────────────────────────────
+.profile-avatar {
+  @include flex-start;
+  gap: $space-5;
+  padding-bottom: $space-5;
+  border-bottom: 1px solid var(--color-border-light);
+
+  &__img {
+    width: 72px;
+    height: 72px;
+    border-radius: $radius-full;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  &__initials {
+    width: 72px;
+    height: 72px;
+    border-radius: $radius-full;
+    background: var(--color-primary);
+    color: white;
+    @include flex-center;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    flex-shrink: 0;
+  }
+
+  &__actions {
+    @include flex-col;
+    gap: $space-2;
+    align-items: flex-start;
+  }
+
+  &__hint {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    @include flex-start;
+    gap: $space-2;
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+  }
+}
+
+// ── Form ───────────────────────────────────────────────────
+.profile-form {
+  @include flex-col;
+  gap: $space-4;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4;
+
+    &--3-1 {
+      grid-template-columns: 3fr 1fr;
+    }
+
+    @include below-md {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// ── Form Group overrides ───────────────────────────────────
+.form-group {
+  &__hint {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    margin-left: $space-2;
+    font-weight: $font-weight-regular;
+  }
+
+  &__optional {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    font-weight: $font-weight-regular;
+    margin-left: $space-2;
+  }
+
+  &__counter {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    text-align: right;
+    display: block;
+    margin-top: -$space-2;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+  @include flex-start;
+
+  .material-symbols-outlined {
+    position: absolute;
+    left: $space-3;
+    font-size: 18px;
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  input {
+    @include input-base;
+    padding-left: $space-10;
+  }
+}
+
+.input--readonly {
+  background: var(--color-bg-input) !important;
+  color: var(--color-text-muted) !important;
+  cursor: not-allowed;
+}
+
+// ── Preferences ────────────────────────────────────────────
+.pref-row {
+  @include flex-between;
+  gap: $space-6;
+  align-items: center;
+  flex-wrap: wrap;
+
+  &__label {
+    @include flex-start;
+    gap: $space-4;
+    flex: 1;
+    min-width: 0;
+
+    .material-symbols-outlined {
+      font-size: 22px;
+      color: var(--color-primary);
+      flex-shrink: 0;
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-primary);
+  }
+
+  &__desc {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+}
+
+.pref-divider {
+  height: 1px;
+  background: var(--color-border-light);
+}
+
+.pref-select {
+  @include input-base;
+  width: auto;
+  min-width: 160px;
+  cursor: pointer;
+}
+
+// ── Theme Toggle ───────────────────────────────────────────
+.theme-toggle {
+  @include flex-start;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  button {
+    @include flex-start;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    font-family: $font-family;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    border-right: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    .material-symbols-outlined {
+      font-size: 15px;
+    }
+
+    &:hover {
+      background: var(--color-bg-hover);
+      color: var(--color-text-primary);
+    }
+
+    &.active {
+      background: var(--color-primary);
+      color: white;
+    }
+  }
+}
+
+// ── Toggle Switch ──────────────────────────────────────────
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .toggle-switch__slider {
+      background: var(--color-primary);
+
+      &::before {
+        transform: translateX(20px);
+      }
+    }
+  }
+
+  &__slider {
+    position: absolute;
+    inset: 0;
+    background: var(--color-border);
+    border-radius: $radius-pill;
+    transition: background $transition-base;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: $radius-full;
+      transition: transform $transition-base;
+      box-shadow: var(--shadow-sm);
+    }
+  }
+}
+
+// ── Save Bar ───────────────────────────────────────────────
+.save-bar {
+  position: fixed;
+  bottom: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  @include flex-between;
+  padding: $space-4 $space-8;
+  background: var(--color-bg-card);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+  z-index: 40;
+  gap: $space-4;
+
+  &__hint {
+    @include flex-start;
+    gap: $space-2;
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+
+    .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__actions {
+    @include flex-start;
+    gap: $space-3;
+  }
+}

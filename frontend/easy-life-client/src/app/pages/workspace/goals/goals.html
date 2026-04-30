@@ -1,0 +1,107 @@
+<!-- Page Header -->
+<div class="goals-header">
+  <div class="goals-header__text">
+    <p class="goals-header__label">Goals</p>
+    <p class="goals-header__subtitle">Manage and track your primary objectives and key results.</p>
+  </div>
+  <div class="goals-header__actions">
+    <button class="btn-secondary">
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+    </button>
+    <button class="btn-primary" (click)="showCreateModal.set(true)">
+      <span class="material-symbols-outlined">add</span>
+      New Goal
+    </button>
+  </div>
+</div>
+
+<!-- Goals Grid -->
+<div class="goals-container">
+  <div class="goals-grid">
+    @for (goal of goals(); track goal.id) {
+      <div class="goal-card">
+        <!-- Image / Status Badge -->
+        <div class="goal-card__image">
+          @if (goal.imagePath) {
+            <img [src]="goal.imagePath" [alt]="goal.title" />
+          } @else {
+            <div class="goal-card__image-placeholder">
+              <span class="material-symbols-outlined">flag</span>
+            </div>
+          }
+          <span [class]="'goal-card__status ' + getStatusClass(goal.status)">
+            {{ goal.status }}
+          </span>
+        </div>
+
+        <!-- Card Body -->
+        <div class="goal-card__body">
+          <!-- Title + Description -->
+          <h3 class="goal-card__title">{{ goal.title }}</h3>
+          <p class="goal-card__desc">{{ goal.description }}</p>
+
+          <!-- Target Tag -->
+          <div class="goal-card__target">
+            <span class="material-symbols-outlined">my_location</span>
+            Target: {{ goal.measurableTarget }}
+          </div>
+
+          <!-- Progress -->
+          <div class="goal-card__progress">
+            <div class="goal-card__progress-info">
+              <span class="goal-card__progress-label">
+                {{ getTasksDone(goal) }} of {{ goal.targetValue }} tasks done
+              </span>
+              <span
+                class="goal-card__progress-pct"
+                [class.pct--complete]="goal.currentProgress === 100"
+              >
+                {{ goal.currentProgress }}%
+              </span>
+            </div>
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                [style.width.%]="goal.currentProgress"
+                [class.progress-fill--complete]="goal.currentProgress === 100"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Deadline -->
+          <div class="goal-card__deadline">
+            <span class="material-symbols-outlined">calendar_today</span>
+            {{ goal.deadline }}
+          </div>
+
+          <!-- Footer: Category Dots + Access -->
+          <div class="goal-card__footer">
+            <div class="goal-card__dots">
+              @for (dot of goal.categoryDots; track dot.color) {
+                <span class="goal-card__dot" [style.background]="dot.color"></span>
+              }
+            </div>
+            <span
+              class="material-symbols-outlined goal-card__access"
+              [class.goal-card__access--public]="goal.accessType === 'PUBLIC'"
+              [class.goal-card__access--private]="goal.accessType === 'PRIVATE'"
+            >
+              {{ goal.accessType === 'PUBLIC' ? 'travel_explore' : 'lock' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    [pageSize]="pageSize()"
+    (pageChange)="onPageChange($event)"
+    (aiClick)="onAiClick()"
+  />
+</div>

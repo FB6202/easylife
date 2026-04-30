@@ -1,0 +1,221 @@
+<!-- Page Header -->
+<div class="cal-header">
+  <div class="cal-header__text">
+    <span class="cal-header__label">{{ headerLabel() }}</span>
+    <h1 class="cal-header__title">{{ headerTitle() }}</h1>
+    <p class="cal-header__subtitle">You have {{ upcomingCount() }} upcoming events.</p>
+  </div>
+  <div class="cal-header__actions">
+    <div class="cal-nav">
+      <button class="cal-nav__btn" (click)="prev()">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <button class="cal-nav__today" (click)="goToday()">Today</button>
+      <button class="cal-nav__btn" (click)="next()">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+    <div class="cal-view-toggle">
+      <button [class.active]="viewMode() === 'month'" (click)="setView('month')">Month</button>
+      <button [class.active]="viewMode() === 'week'" (click)="setView('week')">Week</button>
+      <button [class.active]="viewMode() === 'day'" (click)="setView('day')">Day</button>
+    </div>
+    <button class="btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      Create Event
+    </button>
+  </div>
+</div>
+
+<!-- Event Type Filters -->
+<div class="cal-filters">
+  @for (et of eventTypes; track et.type) {
+    <button
+      [class]="'cal-filter-btn ' + (activeFilter() === et.type ? 'cal-filter-btn--active' : '')"
+      (click)="setFilter(et.type)"
+    >
+      <span class="material-symbols-outlined">{{ et.icon }}</span>
+      {{ et.label }}
+    </button>
+  }
+</div>
+
+<!-- ── MONTH VIEW ───────────────────────────────────────── -->
+@if (viewMode() === 'month') {
+  <div class="cal-body">
+    <div class="cal-grid">
+      <div class="cal-grid__header">
+        @for (day of weekDays; track day) {
+          <div class="cal-grid__day-label">{{ day }}</div>
+        }
+      </div>
+      <div class="cal-grid__cells">
+        @for (cell of calendarDays(); track $index) {
+          <div
+            class="cal-cell"
+            [class.cal-cell--other-month]="!cell.currentMonth"
+            [class.cal-cell--today]="cell.isToday"
+            [class.cal-cell--weekend]="isWeekend(cell.date)"
+          >
+            <span class="cal-cell__date">{{ cell.date.getDate() }}</span>
+            <div class="cal-cell__events">
+              @for (event of cell.events; track event.id) {
+                <div
+                  class="cal-event-chip"
+                  [style.background]="event.color + '20'"
+                  [style.border-left]="'3px solid ' + event.color"
+                  [style.color]="event.color"
+                >
+                  {{ event.title }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Today Panel -->
+    <div class="cal-today-panel">
+      <div class="cal-today-panel__header">
+        <div class="cal-today-panel__date">
+          <span class="cal-today-panel__day-name">Wednesday,</span>
+          <span class="cal-today-panel__day-num">29</span>
+        </div>
+        <span class="cal-today-panel__badge">TODAY</span>
+      </div>
+      <div class="cal-today-panel__events">
+        @for (event of todayEvents(); track event.id) {
+          <div class="cal-today-event" [style.border-left-color]="event.color">
+            <div class="cal-today-event__top">
+              <h4 class="cal-today-event__title">{{ event.title }}</h4>
+              @if (event.accessLabel) {
+                <span class="cal-today-event__access">{{ event.accessLabel }}</span>
+              }
+            </div>
+            @if (event.time) {
+              <div class="cal-today-event__meta">
+                <span class="material-symbols-outlined">schedule</span>
+                {{ event.time }}
+                @if (event.endTime) {
+                  - {{ event.endTime }}
+                }
+              </div>
+            }
+            @if (event.location) {
+              <div class="cal-today-event__meta">
+                <span class="material-symbols-outlined">location_on</span>
+                {{ event.location }}
+              </div>
+            }
+          </div>
+        }
+        @if (todayEvents().length === 0) {
+          <div class="cal-today-panel__empty">
+            <span class="material-symbols-outlined">event_available</span>
+            No events today
+          </div>
+        }
+      </div>
+      <button class="cal-today-panel__add">
+        <span class="material-symbols-outlined">add_circle</span>
+        Add Entry
+      </button>
+    </div>
+  </div>
+}
+
+<!-- ── WEEK VIEW ────────────────────────────────────────── -->
+@if (viewMode() === 'week') {
+  <div class="cal-week">
+    <!-- Week Header -->
+    <div class="cal-week__header">
+      <div class="cal-week__time-col"></div>
+      @for (day of currentWeekDays(); track day.date) {
+        <div class="cal-week__day-col" [class.cal-week__day-col--today]="day.isToday">
+          <span class="cal-week__day-name">{{ formatDayShort(day.date) }}</span>
+          <span class="cal-week__day-num" [class.today-circle]="day.isToday">
+            {{ day.date.getDate() }}
+          </span>
+        </div>
+      }
+    </div>
+
+    <!-- Week Grid -->
+    <div class="cal-week__grid">
+      <!-- Hour Labels -->
+      <div class="cal-week__hours">
+        @for (hour of hours; track hour) {
+          <div class="cal-week__hour-label">{{ formatHour(hour) }}</div>
+        }
+      </div>
+
+      <!-- Day Columns -->
+      @for (day of currentWeekDays(); track day.date) {
+        <div class="cal-week__day" [class.cal-week__day--today]="day.isToday">
+          @for (hour of hours; track hour) {
+            <div class="cal-week__slot"></div>
+          }
+          @for (event of day.events; track event.id) {
+            @if (event.time) {
+              <div
+                class="cal-week__event"
+                [style.top.%]="getEventTopPercent(event.time)"
+                [style.height.%]="
+                  event.endTime ? getEventHeightPercent(event.time, event.endTime) : 4
+                "
+                [style.background]="event.color + '20'"
+                [style.border-left]="'3px solid ' + event.color"
+                [style.color]="event.color"
+              >
+                <span class="cal-week__event-title">{{ event.title }}</span>
+                <span class="cal-week__event-time">{{ event.time }}</span>
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- ── DAY VIEW ─────────────────────────────────────────── -->
+@if (viewMode() === 'day') {
+  <div class="cal-day">
+    <div class="cal-day__grid">
+      <!-- Hour slots -->
+      @for (hour of hours; track hour) {
+        <div class="cal-day__row">
+          <div class="cal-day__hour-label">{{ formatHour(hour) }}</div>
+          <div class="cal-day__slot"></div>
+        </div>
+      }
+
+      <!-- Events overlay -->
+      @for (event of dayEvents(); track event.id) {
+        @if (event.time) {
+          <div
+            class="cal-day__event"
+            [style.top.%]="getEventTopPercent(event.time)"
+            [style.height.%]="event.endTime ? getEventHeightPercent(event.time, event.endTime) : 4"
+            [style.background]="event.color + '15'"
+            [style.border-left]="'4px solid ' + event.color"
+          >
+            <div class="cal-day__event-title" [style.color]="event.color">
+              {{ event.title }}
+            </div>
+            <div class="cal-day__event-meta">
+              {{ event.time }}
+              @if (event.endTime) {
+                - {{ event.endTime }}
+              }
+              @if (event.location) {
+                · {{ event.location }}
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+}

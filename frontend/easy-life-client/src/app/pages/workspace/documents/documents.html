@@ -1,0 +1,167 @@
+<!-- Page Header -->
+<div class="docs-header">
+  <div class="docs-header__text">
+    <p class="docs-header__label">Documents</p>
+    <p class="docs-header__subtitle">Manage and access all your files in one secure place.</p>
+  </div>
+  <div class="docs-header__actions">
+    <button class="btn-secondary">
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+    </button>
+    <button class="btn-primary">
+      <span class="material-symbols-outlined">upload</span>
+      New Upload
+    </button>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="docs-stats">
+  <div class="docs-stat">
+    <div class="docs-stat__icon">
+      <span class="material-symbols-outlined">storage</span>
+    </div>
+    <div class="docs-stat__content">
+      <span class="docs-stat__label">Total Storage</span>
+      <span class="docs-stat__value">{{ totalStorageFormatted() }}</span>
+    </div>
+  </div>
+  <div class="docs-stat">
+    <div class="docs-stat__icon">
+      <span class="material-symbols-outlined">folder</span>
+    </div>
+    <div class="docs-stat__content">
+      <span class="docs-stat__label">Total Files</span>
+      <span class="docs-stat__value">{{ totalFiles() | number }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Documents Section -->
+<div class="docs-container">
+  <!-- Section Header -->
+  <div class="docs-section-header">
+    <h2 class="docs-section-title">Documents</h2>
+    <div class="docs-view-toggle">
+      <button [class.active]="viewMode() === 'grid'" (click)="viewMode.set('grid')">
+        <span class="material-symbols-outlined">grid_view</span>
+      </button>
+      <button [class.active]="viewMode() === 'list'" (click)="viewMode.set('list')">
+        <span class="material-symbols-outlined">view_list</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Grid View -->
+  @if (viewMode() === 'grid') {
+    <div class="docs-grid">
+      @for (doc of documents(); track doc.id) {
+        <div class="doc-card">
+          <div class="doc-card__top">
+            <div class="doc-card__file-icon" [style.color]="getFileColor(doc.fileType)">
+              <span class="material-symbols-outlined">{{ getFileIcon(doc.fileType) }}</span>
+            </div>
+            <span
+              [class]="
+                'doc-card__access ' +
+                (doc.accessType === 'PUBLIC' ? 'access--public' : 'access--private')
+              "
+            >
+              <span class="material-symbols-outlined">
+                {{ doc.accessType === 'PUBLIC' ? 'travel_explore' : 'lock' }}
+              </span>
+              {{ doc.accessType }}
+            </span>
+          </div>
+          <h3 class="doc-card__title">{{ doc.title }}</h3>
+          <div class="doc-card__footer">
+            <span class="doc-card__date">{{ doc.uploadedAt }}</span>
+            <button class="doc-card__download">
+              <span class="material-symbols-outlined">download</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Add Document Card -->
+      <div class="doc-card doc-card--add">
+        <div class="doc-card__add-inner">
+          <span class="material-symbols-outlined">add</span>
+          <span>Add Document</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- List View -->
+  @if (viewMode() === 'list') {
+    <div class="docs-list">
+      <div class="docs-list__header">
+        <span class="docs-list__col docs-list__col--name">NAME</span>
+        <span class="docs-list__col docs-list__col--type">TYPE</span>
+        <span class="docs-list__col docs-list__col--size">SIZE</span>
+        <span class="docs-list__col docs-list__col--access">ACCESS</span>
+        <span class="docs-list__col docs-list__col--date">UPLOADED</span>
+        <span class="docs-list__col docs-list__col--actions"></span>
+      </div>
+
+      @for (doc of documents(); track doc.id) {
+        <div class="docs-list__row">
+          <div class="docs-list__col docs-list__col--name">
+            <div class="doc-list-name">
+              <span
+                class="material-symbols-outlined doc-list-name__icon"
+                [style.color]="getFileColor(doc.fileType)"
+                >{{ getFileIcon(doc.fileType) }}</span
+              >
+              <span class="doc-list-name__title">{{ doc.title }}</span>
+            </div>
+          </div>
+          <div class="docs-list__col docs-list__col--type">
+            <span class="doc-type-badge" [style.color]="getFileColor(doc.fileType)">
+              {{ doc.fileType.toUpperCase() }}
+            </span>
+          </div>
+          <div class="docs-list__col docs-list__col--size">
+            {{ formatSize(doc.fileSizeBytes) }}
+          </div>
+          <div class="docs-list__col docs-list__col--access">
+            <span
+              [class]="
+                'doc-access-badge ' +
+                (doc.accessType === 'PUBLIC' ? 'access--public' : 'access--private')
+              "
+            >
+              <span class="material-symbols-outlined">
+                {{ doc.accessType === 'PUBLIC' ? 'travel_explore' : 'lock' }}
+              </span>
+              {{ doc.accessType }}
+            </span>
+          </div>
+          <div class="docs-list__col docs-list__col--date">
+            {{ doc.uploadedAt }}
+          </div>
+          <div class="docs-list__col docs-list__col--actions">
+            <button class="doc-action-btn">
+              <span class="material-symbols-outlined">download</span>
+            </button>
+            <button class="doc-action-btn">
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Pagination -->
+  <app-pagination
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    [pageSize]="pageSize()"
+    (pageChange)="onPageChange($event)"
+    (aiClick)="onAiClick()"
+  />
+</div>

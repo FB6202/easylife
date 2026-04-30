@@ -1,0 +1,387 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+// ── Header ─────────────────────────────────────────────────
+.tasks-header {
+  @include flex-between;
+  margin-bottom: $space-6;
+  gap: $space-4;
+  flex-wrap: wrap;
+
+  &__text {
+    @include flex-col;
+    gap: $space-1;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+    max-width: 500px;
+  }
+
+  &__actions {
+    @include flex-start;
+    gap: $space-3;
+  }
+}
+
+// ── Stats ──────────────────────────────────────────────────
+.tasks-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  @include below-lg {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tasks-stat {
+  @include card($space-5);
+  @include flex-col;
+  gap: $space-3;
+
+  &__label {
+    @include section-label;
+  }
+
+  &__value {
+    @include flex-start;
+    align-items: baseline;
+    gap: $space-2;
+  }
+
+  &__num {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+    line-height: 1;
+
+    &--warning {
+      color: var(--color-high);
+    }
+    &--accent {
+      color: var(--color-primary);
+    }
+  }
+
+  &__sub {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+
+    &--accent {
+      color: var(--color-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &--accent {
+    border-color: var(--color-primary);
+    .tasks-stat__label {
+      color: var(--color-primary);
+    }
+  }
+}
+
+// ── Table ──────────────────────────────────────────────────
+.tasks-table {
+  @include card(0);
+  overflow: hidden;
+
+  &__header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 100px 120px 80px 60px;
+    padding: $space-3 $space-6;
+    background: var(--color-bg-input);
+    border-bottom: 1px solid var(--color-border);
+    gap: $space-4;
+  }
+
+  &__col {
+    @include flex-start;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    &--priority {
+      justify-content: center;
+    }
+
+    &--access {
+      justify-content: center;
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 100px 120px 80px 60px;
+    padding: $space-4 $space-6;
+    border-bottom: 1px solid var(--color-border-light);
+    gap: $space-4;
+    align-items: center;
+    transition: background $transition-fast;
+    cursor: pointer;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: var(--color-bg-hover);
+    }
+
+    &--done {
+      .task-info__title {
+        text-decoration: line-through;
+        color: var(--color-text-muted);
+      }
+    }
+  }
+}
+
+// ── Task Info ──────────────────────────────────────────────
+.task-info {
+  @include flex-col;
+  gap: 3px;
+  min-width: 0;
+
+  &__title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-primary);
+    @include truncate;
+    transition: color $transition-fast;
+  }
+
+  &__desc {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    @include truncate;
+  }
+}
+
+// ── Categories ─────────────────────────────────────────────
+.task-categories {
+  @include flex-start;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.task-category-icon {
+  font-size: 18px;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 20;
+}
+
+// ── Status ─────────────────────────────────────────────────
+.task-status {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  border-radius: $radius-pill;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  &.status--open {
+    background: rgba(25, 118, 210, 0.12);
+    color: #1976d2;
+    .task-status__dot {
+      background: #1976d2;
+    }
+  }
+
+  &.status--in-progress {
+    background: rgba(249, 168, 37, 0.18);
+    color: #b7860b;
+    .task-status__dot {
+      background: #f9a825;
+    }
+  }
+
+  &.status--done {
+    background: rgba(67, 160, 71, 0.12);
+    color: #2e7d32;
+    .task-status__dot {
+      background: #43a047;
+    }
+  }
+}
+
+// ── Deadline ───────────────────────────────────────────────
+.task-deadline {
+  @include flex-col;
+  align-items: center;
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  padding: $space-2 $space-3;
+  min-width: 60px;
+  text-align: center;
+
+  &__month {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__day {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+
+  &__year {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+}
+
+// ── Priority ───────────────────────────────────────────────
+.task-priority {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-1 $space-3;
+  border-radius: $radius-pill;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+
+  &.priority--critical {
+    background: rgba(211, 47, 47, 0.15);
+    color: #c62828;
+    border: 1px solid rgba(211, 47, 47, 0.3);
+  }
+  &.priority--high {
+    background: rgba(245, 124, 0, 0.15);
+    color: #e65100;
+    border: 1px solid rgba(245, 124, 0, 0.3);
+  }
+  &.priority--medium {
+    background: rgba(249, 168, 37, 0.18);
+    color: #b7860b;
+    border: 1px solid rgba(249, 168, 37, 0.3);
+  }
+  &.priority--low {
+    background: rgba(25, 118, 210, 0.12);
+    color: #1565c0;
+    border: 1px solid rgba(25, 118, 210, 0.2);
+  }
+  &.priority--optional {
+    background: rgba(117, 117, 117, 0.12);
+    color: #616161;
+    border: 1px solid rgba(117, 117, 117, 0.2);
+  }
+}
+
+// ── Access Icon ────────────────────────────────────────────
+.task-access-icon {
+  font-size: 20px;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--public {
+    color: var(--color-primary);
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20;
+  }
+
+  &--private {
+    color: var(--color-text-muted);
+    opacity: 0.5;
+  }
+}
+
+// ── Menu ───────────────────────────────────────────────────
+.task-menu {
+  position: relative;
+
+  &__btn {
+    @include btn-ghost;
+    border-radius: $radius-md;
+    padding: $space-1;
+
+    .material-symbols-outlined {
+      font-size: 20px;
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + $space-1);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+    min-width: 140px;
+    overflow: hidden;
+  }
+
+  &__item {
+    @include flex-start;
+    gap: $space-2;
+    padding: $space-3 $space-4;
+    font-family: $font-family;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+
+    &:hover {
+      background: var(--color-bg-hover);
+    }
+
+    &--danger {
+      color: var(--color-danger);
+      &:hover {
+        background: rgba(211, 47, 47, 0.06);
+      }
+    }
+  }
+}

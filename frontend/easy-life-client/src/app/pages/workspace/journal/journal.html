@@ -1,0 +1,112 @@
+<!-- Page Header -->
+<div class="journal-header">
+  <div class="journal-header__text">
+    <p class="journal-header__label">Journal</p>
+    <p class="journal-header__subtitle">
+      Track your personal growth through daily reflections and mindful insights.
+    </p>
+  </div>
+  <div class="journal-header__actions">
+    <button class="btn-secondary">
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+    </button>
+    <button class="btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      New Entry
+    </button>
+  </div>
+</div>
+
+<!-- Entries Container -->
+<div class="journal-container">
+  @for (entry of entries(); track entry.id) {
+    <div class="journal-card">
+      <!-- Date + Mood Column -->
+      <div class="journal-card__aside">
+        <div class="journal-card__date">
+          <span class="journal-card__day">{{ entry.entryDay }}</span>
+          <span class="journal-card__month">{{ entry.entryMonth }} {{ entry.entryYear }}</span>
+        </div>
+        <div
+          class="journal-card__mood"
+          [style.color]="getMoodColor(entry.mood)"
+          [style.background]="getMoodColor(entry.mood) + '15'"
+          [title]="getMoodLabel(entry.mood)"
+        >
+          <span class="material-symbols-outlined">{{ getMoodIcon(entry.mood) }}</span>
+          <span class="journal-card__mood-label">{{ getMoodLabel(entry.mood) }}</span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="journal-card__content">
+        <!-- Title + Badges -->
+        <div class="journal-card__top">
+          <h3 class="journal-card__title">{{ entry.title }}</h3>
+          <div class="journal-card__badges">
+            @if (entry.learnings) {
+              <span class="journal-badge journal-badge--learnings">
+                <span class="material-symbols-outlined">lightbulb</span>
+                Has learnings
+              </span>
+            }
+            @if (entry.gratitude) {
+              <span class="journal-badge journal-badge--gratitude">
+                <span class="material-symbols-outlined">favorite</span>
+                Has gratitude
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Went Well + Went Bad -->
+        <div class="journal-card__sections">
+          <div class="journal-section journal-section--well">
+            <div class="journal-section__header">
+              <span class="material-symbols-outlined">trending_up</span>
+              WHAT WENT WELL
+            </div>
+            <p class="journal-section__text">{{ entry.wentWell }}</p>
+          </div>
+          <div class="journal-section journal-section--bad">
+            <div class="journal-section__header">
+              <span class="material-symbols-outlined">trending_down</span>
+              WHAT DIDN'T GO WELL
+            </div>
+            <p class="journal-section__text">{{ entry.wentBad }}</p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="journal-card__footer">
+          <div class="journal-card__cats">
+            @for (cat of entry.categories; track cat.id) {
+              <span
+                class="material-symbols-outlined journal-card__cat-icon"
+                [style.color]="cat.color"
+                >{{ cat.icon }}</span
+              >
+            }
+          </div>
+          <div class="journal-card__meta">
+            <span class="material-symbols-outlined">article</span>
+            {{ entry.wordCount | number }} words · {{ entry.readMinutes }} min read
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Pagination -->
+  <div class="journal-pagination">
+    <app-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [totalElements]="totalElements()"
+      [pageSize]="pageSize()"
+      (pageChange)="onPageChange($event)"
+      (aiClick)="onAiClick()"
+    />
+  </div>
+</div>

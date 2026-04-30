@@ -1,0 +1,117 @@
+<!-- Page Header -->
+<div class="weekplan-header">
+  <div class="weekplan-header__text">
+    <h1 class="weekplan-header__title">My Week</h1>
+    <p class="weekplan-header__subtitle">Strategize your goals and review your progress.</p>
+  </div>
+  <div class="weekplan-header__actions">
+    <button class="btn-secondary">
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+    </button>
+    <button class="btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      New Week
+    </button>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="weekplan-search">
+  <span class="material-symbols-outlined">search</span>
+  <input
+    type="text"
+    placeholder="Search weeks..."
+    [value]="searchQuery()"
+    (input)="searchQuery.set($any($event.target).value)"
+  />
+</div>
+
+<!-- Week Plans List -->
+<div class="weekplan-container">
+  @for (plan of weekplans(); track plan.id) {
+    <div class="week-card" [class]="'week-card--' + plan.status.toLowerCase()">
+      <!-- Card Header -->
+      <div class="week-card__header">
+        <div class="week-card__header-left">
+          <span [class]="'week-card__status ' + getStatusClass(plan.status)">
+            {{ plan.status }}
+          </span>
+          <div class="week-card__dates">
+            <span class="material-symbols-outlined">calendar_today</span>
+            {{ plan.startDate }} — {{ plan.endDate }}
+          </div>
+        </div>
+        <div class="week-card__progress-block">
+          <div class="week-card__progress-header">
+            <span class="week-card__progress-label">
+              {{ getProgressLabel(plan.status) }}
+            </span>
+            @if (plan.status === 'DRAFT') {
+              <span class="week-card__progress-count"> {{ plan.tasksTotal }} total </span>
+            } @else {
+              <span class="week-card__progress-count">
+                {{ plan.tasksDone }}/{{ plan.tasksTotal }}
+              </span>
+            }
+          </div>
+          @if (plan.status !== 'DRAFT') {
+            <div class="progress-bar week-card__progress-bar">
+              <div
+                class="progress-fill"
+                [style.width.%]="getProgressPercent(plan.tasksDone, plan.tasksTotal)"
+                [class.progress-fill--complete]="plan.tasksDone === plan.tasksTotal"
+              ></div>
+            </div>
+          }
+          <div class="week-card__meta">
+            <span class="week-card__created">CREATED: {{ plan.createdAt }}</span>
+            <span [class]="'week-card__action week-card__action--' + plan.status.toLowerCase()">
+              {{ getActionLabel(plan.status) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="week-card__body">
+        <h3 class="week-card__title">{{ plan.title }}</h3>
+        <p class="week-card__intention">"{{ plan.intention }}"</p>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="week-card__footer">
+        <div class="week-card__categories">
+          @for (dot of plan.categoryDots; track dot.color) {
+            <span class="material-symbols-outlined week-card__cat-icon" [style.color]="dot.color">{{
+              dot.icon
+            }}</span>
+          }
+        </div>
+        @if (plan.reflection) {
+          <div class="week-card__reflection">
+            <span class="material-symbols-outlined">rate_review</span>
+            <span>Reflection: {{ plan.reflection }}</span>
+          </div>
+        } @else {
+          <div class="week-card__reflection week-card__reflection--empty">
+            <span class="material-symbols-outlined">rate_review</span>
+            <span>No reflection yet — week hasn't started</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Pagination -->
+  <div class="weekplan-pagination">
+    <app-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [totalElements]="totalElements()"
+      [pageSize]="pageSize()"
+      (pageChange)="onPageChange($event)"
+      (aiClick)="onAiClick()"
+    />
+  </div>
+</div>

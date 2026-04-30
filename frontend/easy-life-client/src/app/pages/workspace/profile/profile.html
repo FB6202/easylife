@@ -1,0 +1,304 @@
+<div class="profile-page">
+  <!-- Page Header -->
+  <div class="profile-page__header">
+    <h1 class="profile-page__title">Account Settings</h1>
+    <p class="profile-page__subtitle">
+      Manage your personal information, address details and system preferences.
+    </p>
+  </div>
+
+  <!-- ── Profile Section ───────────────────────────────── -->
+  <div class="profile-section">
+    <div class="profile-section__label">
+      <h2 class="profile-section__title">Profile</h2>
+      <p class="profile-section__desc">Update your photo and personal details here.</p>
+    </div>
+    <div class="profile-section__card">
+      <!-- Avatar -->
+      <div class="profile-avatar">
+        @if (profileImagePath()) {
+          <img [src]="profileImagePath()" alt="Profile" class="profile-avatar__img" />
+        } @else {
+          <div class="profile-avatar__initials">{{ getInitials() }}</div>
+        }
+        <div class="profile-avatar__actions">
+          <button class="btn-primary btn-sm" (click)="onPhotoChange()">
+            <span class="material-symbols-outlined">photo_camera</span>
+            Change photo
+          </button>
+          <button class="btn-secondary btn-sm" (click)="onPhotoRemove()">Remove</button>
+          <span class="profile-avatar__hint">JPG, GIF or PNG. Max size 500K</span>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="profile-form">
+        <!-- First + Last Name -->
+        <div class="profile-form__row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              [(ngModel)]="profile().firstname"
+              (ngModelChange)="onProfileChange()"
+              placeholder="First name"
+            />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              [(ngModel)]="profile().lastname"
+              (ngModelChange)="onProfileChange()"
+              placeholder="Last name"
+            />
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="form-group">
+          <label>Username</label>
+          <div class="input-with-icon">
+            <span class="material-symbols-outlined">alternate_email</span>
+            <input
+              type="text"
+              [(ngModel)]="profile().username"
+              (ngModelChange)="onProfileChange()"
+              placeholder="username"
+            />
+          </div>
+        </div>
+
+        <!-- Email – read only (Keycloak) -->
+        <div class="form-group">
+          <label>
+            Email Address
+            <span class="form-group__hint">Managed by your account provider</span>
+          </label>
+          <input type="email" [value]="profile().email" readonly class="input--readonly" />
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea
+            [(ngModel)]="profile().bio"
+            (ngModelChange)="onProfileChange()"
+            [maxlength]="bioMaxLength"
+            placeholder="Tell us a little about yourself..."
+            rows="4"
+          ></textarea>
+          <span class="form-group__counter"> {{ bioLength() }}/{{ bioMaxLength }} characters </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Address Section ───────────────────────────────── -->
+  <div class="profile-section">
+    <div class="profile-section__label">
+      <h2 class="profile-section__title">Address</h2>
+      <p class="profile-section__desc">Your personal address details.</p>
+    </div>
+    <div class="profile-section__card">
+      <!-- Country -->
+      <div class="form-group">
+        <label>Country / Region</label>
+        <select [(ngModel)]="address().country" (ngModelChange)="onAddressChange()">
+          <option>Germany</option>
+          <option>Austria</option>
+          <option>Switzerland</option>
+          <option>United States</option>
+          <option>United Kingdom</option>
+        </select>
+      </div>
+
+      <!-- Street + Number -->
+      <div class="profile-form__row profile-form__row--3-1">
+        <div class="form-group">
+          <label>Street</label>
+          <input
+            type="text"
+            [(ngModel)]="address().street"
+            (ngModelChange)="onAddressChange()"
+            placeholder="Street name"
+          />
+        </div>
+        <div class="form-group">
+          <label>Number</label>
+          <input
+            type="text"
+            [(ngModel)]="address().number"
+            (ngModelChange)="onAddressChange()"
+            placeholder="No."
+          />
+        </div>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="form-group">
+        <label>Additional Info <span class="form-group__optional">optional</span></label>
+        <input
+          type="text"
+          [(ngModel)]="address().additionalAddressInfo"
+          (ngModelChange)="onAddressChange()"
+          placeholder="Apartment, suite, floor..."
+        />
+      </div>
+
+      <!-- City + ZIP -->
+      <div class="profile-form__row">
+        <div class="form-group">
+          <label>City</label>
+          <input
+            type="text"
+            [(ngModel)]="address().city"
+            (ngModelChange)="onAddressChange()"
+            placeholder="City"
+          />
+        </div>
+        <div class="form-group">
+          <label>ZIP / Postal Code</label>
+          <input
+            type="text"
+            [(ngModel)]="address().zipCode"
+            (ngModelChange)="onAddressChange()"
+            placeholder="ZIP"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Preferences Section ───────────────────────────── -->
+  <div class="profile-section">
+    <div class="profile-section__label">
+      <h2 class="profile-section__title">Preferences</h2>
+      <p class="profile-section__desc">Customize your interface and notification flow.</p>
+    </div>
+    <div class="profile-section__card">
+      <!-- Language -->
+      <div class="pref-row">
+        <div class="pref-row__label">
+          <span class="material-symbols-outlined">language</span>
+          <div>
+            <p class="pref-row__title">App Language</p>
+            <p class="pref-row__desc">Choose your preferred language</p>
+          </div>
+        </div>
+        <select
+          [(ngModel)]="settings().language"
+          (ngModelChange)="onSettingsChange()"
+          class="pref-select"
+        >
+          @for (lang of languages; track lang.value) {
+            <option [value]="lang.value">{{ lang.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="pref-divider"></div>
+
+      <!-- Web Theme -->
+      <div class="pref-row">
+        <div class="pref-row__label">
+          <span class="material-symbols-outlined">desktop_windows</span>
+          <div>
+            <p class="pref-row__title">Web Theme</p>
+            <p class="pref-row__desc">Choose the appearance for the web app</p>
+          </div>
+        </div>
+        <div class="theme-toggle">
+          @for (theme of themes; track theme.value) {
+            <button
+              [class.active]="settings().webColorTheme === theme.value"
+              (click)="setTheme(theme.value, 'web')"
+            >
+              <span class="material-symbols-outlined">{{ theme.icon }}</span>
+              {{ theme.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="pref-divider"></div>
+
+      <!-- Mobile Theme -->
+      <div class="pref-row">
+        <div class="pref-row__label">
+          <span class="material-symbols-outlined">smartphone</span>
+          <div>
+            <p class="pref-row__title">Mobile Theme</p>
+            <p class="pref-row__desc">Choose the appearance for the mobile app</p>
+          </div>
+        </div>
+        <div class="theme-toggle">
+          @for (theme of themes; track theme.value) {
+            <button
+              [class.active]="settings().mobileColorTheme === theme.value"
+              (click)="setTheme(theme.value, 'mobile')"
+            >
+              <span class="material-symbols-outlined">{{ theme.icon }}</span>
+              {{ theme.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="pref-divider"></div>
+
+      <!-- Notifications -->
+      <div class="pref-row">
+        <div class="pref-row__label">
+          <span class="material-symbols-outlined">notifications</span>
+          <div>
+            <p class="pref-row__title">Email Notifications</p>
+            <p class="pref-row__desc">Get a daily digest of your upcoming tasks and goals</p>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="settings().emailNotifications"
+            (ngModelChange)="onSettingsChange()"
+          />
+          <span class="toggle-switch__slider"></span>
+        </label>
+      </div>
+
+      <div class="pref-divider"></div>
+
+      <div class="pref-row">
+        <div class="pref-row__label">
+          <span class="material-symbols-outlined">phone_android</span>
+          <div>
+            <p class="pref-row__title">Push Notifications</p>
+            <p class="pref-row__desc">Receive real-time alerts on your mobile device</p>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="settings().pushNotifications"
+            (ngModelChange)="onSettingsChange()"
+          />
+          <span class="toggle-switch__slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Sticky Save Bar ────────────────────────────────────── -->
+@if (hasUnsavedChanges()) {
+  <div class="save-bar">
+    <span class="save-bar__hint">
+      <span class="material-symbols-outlined">info</span>
+      Unsaved changes detected
+    </span>
+    <div class="save-bar__actions">
+      <button class="btn-secondary" (click)="onCancel()">Cancel</button>
+      <button class="btn-primary" (click)="onSave()">Save Changes</button>
+    </div>
+  </div>
+}

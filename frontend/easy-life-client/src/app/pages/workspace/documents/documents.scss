@@ -1,0 +1,398 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+// ── Header ─────────────────────────────────────────────────
+.docs-header {
+  @include flex-between;
+  margin-bottom: $space-6;
+  gap: $space-4;
+  flex-wrap: wrap;
+
+  &__text {
+    @include flex-col;
+    gap: $space-1;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+  }
+
+  &__actions {
+    @include flex-start;
+    gap: $space-3;
+  }
+}
+
+// ── Stats ──────────────────────────────────────────────────
+.docs-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-4;
+  margin-bottom: $space-6;
+  max-width: 480px;
+}
+
+.docs-stat {
+  @include card($space-5);
+  @include flex-start;
+  gap: $space-4;
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-md;
+    background: var(--color-primary-light);
+    @include flex-center;
+    flex-shrink: 0;
+
+    .material-symbols-outlined {
+      font-size: 22px;
+      color: var(--color-primary);
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    }
+  }
+
+  &__content {
+    @include flex-col;
+    gap: 2px;
+    flex: 1;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__value {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+    line-height: 1;
+  }
+
+  &__badge {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--color-success);
+    background: rgba(67, 160, 71, 0.1);
+    padding: 2px $space-2;
+    border-radius: $radius-pill;
+    flex-shrink: 0;
+  }
+}
+
+// ── Container ──────────────────────────────────────────────
+.docs-container {
+  @include card(0);
+  overflow: hidden;
+}
+
+// ── Section Header ─────────────────────────────────────────
+.docs-section-header {
+  @include flex-between;
+  padding: $space-5 $space-6;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.docs-section-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text-primary);
+}
+
+// ── View Toggle ────────────────────────────────────────────
+.docs-view-toggle {
+  @include flex-start;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  button {
+    width: 36px;
+    height: 34px;
+    @include flex-center;
+    background: none;
+    border: none;
+    border-right: 1px solid var(--color-border);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: all $transition-fast;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    &:hover {
+      background: var(--color-bg-hover);
+      color: var(--color-text-primary);
+    }
+
+    &.active {
+      background: var(--color-primary);
+      color: white;
+    }
+  }
+}
+
+// ── Grid View ──────────────────────────────────────────────
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-4;
+  padding: $space-6;
+
+  @include below-lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @include below-md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.doc-card {
+  border: 1px solid var(--color-border);
+  border-radius: $radius-lg;
+  padding: $space-5;
+  background: var(--color-bg-card);
+  @include flex-col;
+  gap: $space-3;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &__top {
+    @include flex-between;
+    align-items: flex-start;
+  }
+
+  &__file-icon {
+    .material-symbols-outlined {
+      font-size: 28px;
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    }
+  }
+
+  &__access {
+    @include flex-start;
+    gap: 3px;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    padding: 2px $space-2;
+    border-radius: $radius-pill;
+
+    .material-symbols-outlined {
+      font-size: 12px;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-primary);
+    @include truncate(2);
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  &__footer {
+    @include flex-between;
+    align-items: center;
+    padding-top: $space-3;
+    border-top: 1px solid var(--color-border-light);
+    margin-top: auto;
+  }
+
+  &__date {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+
+  &__download {
+    @include btn-ghost;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: $radius-md;
+    background: var(--color-bg-input);
+    @include flex-center;
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+  }
+
+  // Add Card
+  &--add {
+    border: 2px dashed var(--color-border);
+    background: transparent;
+    min-height: 140px;
+
+    &:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+
+      .doc-card__add-inner {
+        color: var(--color-primary);
+      }
+    }
+  }
+
+  &__add-inner {
+    @include flex-col;
+    @include flex-center;
+    gap: $space-2;
+    height: 100%;
+    min-height: 120px;
+    color: var(--color-text-muted);
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: color $transition-base;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+    }
+  }
+}
+
+// ── Access Badges ──────────────────────────────────────────
+.access--public {
+  background: rgba(67, 160, 71, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(67, 160, 71, 0.2);
+}
+
+.access--private {
+  background: rgba(117, 117, 117, 0.1);
+  color: var(--color-text-muted);
+  border: 1px solid rgba(117, 117, 117, 0.15);
+}
+
+// ── List View ──────────────────────────────────────────────
+.docs-list {
+  &__header {
+    display: grid;
+    grid-template-columns: 2fr 80px 100px 120px 120px 80px;
+    padding: $space-3 $space-6;
+    background: var(--color-bg-input);
+    border-bottom: 1px solid var(--color-border);
+    gap: $space-4;
+  }
+
+  &__col {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    @include flex-start;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 2fr 80px 100px 120px 120px 80px;
+    padding: $space-4 $space-6;
+    border-bottom: 1px solid var(--color-border-light);
+    gap: $space-4;
+    align-items: center;
+    transition: background $transition-fast;
+    cursor: pointer;
+
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      background: var(--color-bg-hover);
+    }
+  }
+}
+
+.doc-list-name {
+  @include flex-start;
+  gap: $space-3;
+  min-width: 0;
+
+  &__icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+
+  &__title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+    @include truncate;
+  }
+}
+
+.doc-type-badge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.06em;
+}
+
+.doc-access-badge {
+  @include flex-start;
+  gap: 3px;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 2px $space-2;
+  border-radius: $radius-pill;
+
+  .material-symbols-outlined {
+    font-size: 12px;
+  }
+}
+
+.doc-action-btn {
+  @include btn-ghost;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: $radius-md;
+  @include flex-center;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+}
+
+.docs-list__col--actions {
+  @include flex-start;
+  gap: $space-1;
+  justify-content: flex-end;
+}

@@ -1,0 +1,161 @@
+<!-- Page Header -->
+<div class="tasks-header">
+  <div class="tasks-header__text">
+    <p class="tasks-header__label">Daily Actions</p>
+    <p class="tasks-header__subtitle">
+      Manage and prioritize your tasks to stay on top of everything.
+    </p>
+  </div>
+  <div class="tasks-header__actions">
+    <button class="btn-secondary">
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+    </button>
+    <button class="btn-primary" (click)="showCreateModal.set(true)">
+      <span class="material-symbols-outlined">add</span>
+      New Task
+    </button>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="tasks-stats">
+  <div class="tasks-stat">
+    <span class="tasks-stat__label">TOTAL PENDING</span>
+    <div class="tasks-stat__value">
+      <span class="tasks-stat__num">{{ pendingCount() }}</span>
+      <span class="tasks-stat__sub">+{{ dueTodayCount() }} today</span>
+    </div>
+  </div>
+  <div class="tasks-stat">
+    <span class="tasks-stat__label">IN PROGRESS</span>
+    <div class="tasks-stat__value">
+      <span class="tasks-stat__num tasks-stat__num--warning">
+        {{ inProgressCount() | number: '2.0' }}
+      </span>
+      <span class="tasks-stat__sub">{{ nearDueCount() }} near due</span>
+    </div>
+  </div>
+  <div class="tasks-stat">
+    <span class="tasks-stat__label">COMPLETED</span>
+    <div class="tasks-stat__value">
+      <span class="tasks-stat__num">{{ doneCount() }}</span>
+      <span class="tasks-stat__sub">{{ completionRate() }}% rate</span>
+    </div>
+  </div>
+  <div class="tasks-stat tasks-stat--accent">
+    <span class="tasks-stat__label">PRODUCTIVITY SCORE</span>
+    <div class="tasks-stat__value">
+      <span class="tasks-stat__num tasks-stat__num--accent">
+        {{ productivityScore() }}
+      </span>
+      <span class="tasks-stat__sub tasks-stat__sub--accent">
+        {{ productivityLabel() }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Tasks Table -->
+<div class="tasks-table">
+  <!-- Table Header -->
+  <div class="tasks-table__header">
+    <span class="tasks-table__col tasks-table__col--task">TASK</span>
+    <span class="tasks-table__col tasks-table__col--categories">CATEGORIES</span>
+    <span class="tasks-table__col tasks-table__col--status">STATUS</span>
+    <span class="tasks-table__col tasks-table__col--deadline">DEADLINE</span>
+    <span class="tasks-table__col tasks-table__col--priority">PRIORITY</span>
+    <span class="tasks-table__col tasks-table__col--access">ACCESS</span>
+    <span class="tasks-table__col tasks-table__col--actions"></span>
+  </div>
+
+  <!-- Table Rows -->
+  @for (task of tasks(); track task.id) {
+    <div class="tasks-table__row" [class.tasks-table__row--done]="task.done">
+      <!-- Task Info -->
+      <div class="tasks-table__col tasks-table__col--task">
+        <div class="task-info">
+          <span class="task-info__title">{{ task.title }}</span>
+          <span class="task-info__desc">{{ task.description }}</span>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="tasks-table__col tasks-table__col--categories">
+        <div class="task-categories">
+          @for (cat of task.categories; track cat.icon) {
+            <span class="material-symbols-outlined task-category-icon" [style.color]="cat.color">{{
+              cat.icon
+            }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="tasks-table__col tasks-table__col--status">
+        <span [class]="'task-status ' + getStatusClass(task.status)">
+          <span class="task-status__dot"></span>
+          {{ getStatusLabel(task.status) }}
+        </span>
+      </div>
+
+      <!-- Deadline -->
+      <div class="tasks-table__col tasks-table__col--deadline">
+        <div class="task-deadline">
+          <span class="task-deadline__month">{{ task.dueMonth }}</span>
+          <span class="task-deadline__day">{{ task.dueDay }}</span>
+          <span class="task-deadline__year">{{ task.dueYear }}</span>
+        </div>
+      </div>
+
+      <!-- Priority -->
+      <div class="tasks-table__col tasks-table__col--priority">
+        <span [class]="'task-priority ' + getPriorityClass(task.priority)">
+          {{ task.priority }}
+        </span>
+      </div>
+
+      <!-- Access -->
+      <div class="tasks-table__col tasks-table__col--access">
+        <span
+          class="material-symbols-outlined task-access-icon"
+          [class.task-access-icon--public]="task.isPublic"
+          [class.task-access-icon--private]="!task.isPublic"
+        >
+          {{ task.isPublic ? 'travel_explore' : 'lock' }}
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="tasks-table__col tasks-table__col--actions">
+        <div class="task-menu">
+          <button class="task-menu__btn" (click)="toggleMenu(task.id)">
+            <span class="material-symbols-outlined">more_vert</span>
+          </button>
+          @if (activeMenu() === task.id) {
+            <div class="task-menu__dropdown">
+              <button class="task-menu__item">
+                <span class="material-symbols-outlined">edit</span>
+                Edit
+              </button>
+              <button class="task-menu__item task-menu__item--danger">
+                <span class="material-symbols-outlined">delete</span>
+                Delete
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Pagination -->
+  <app-pagination
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    [pageSize]="pageSize()"
+    (pageChange)="onPageChange($event)"
+    (aiClick)="onAiClick()"
+  />
+</div>
