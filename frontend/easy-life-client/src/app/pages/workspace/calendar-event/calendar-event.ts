@@ -1,20 +1,40 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 type ViewMode = 'month' | 'week' | 'day';
 type EventType = 'APPOINTMENT' | 'REMINDER' | 'TASK' | 'BIRTHDAY';
+type RecurrenceType = 'NONE' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+type AccessType = 'PRIVATE' | 'PUBLIC';
 
 interface CalendarEvent {
   id: number;
   title: string;
-  time?: string;
-  endTime?: string;
-  location?: string;
-  type: EventType;
-  color: string;
-  isPublic: boolean;
-  accessLabel?: string;
+  description: string;
+  location: string;
+  eventColor: string;
+  startDateTime: string;
+  endDateTime: string;
+  allDay: boolean;
+  eventType: EventType;
+  recurrence: RecurrenceType;
+  accessType: AccessType;
   date: Date;
+  categoryIds: number[];
+}
+
+interface EventForm {
+  title: string;
+  description: string;
+  location: string;
+  eventColor: string;
+  startDateTime: string;
+  endDateTime: string;
+  allDay: boolean;
+  eventType: EventType;
+  recurrence: RecurrenceType;
+  accessType: AccessType;
+  categoryIds: number[];
 }
 
 interface DayCell {
@@ -32,22 +52,47 @@ interface WeekDay {
 
 @Component({
   selector: 'app-calendar',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './calendar-event.html',
-  styleUrl: './calendar-event.scss'
+  styleUrl: './calendar-event.scss',
 })
 export class CalendarComponent {
-
-  readonly today = new Date(2026, 3, 29); // 29. April 2026
+  readonly today = new Date(2026, 3, 29);
   readonly viewMode = signal<ViewMode>('month');
   readonly activeFilter = signal<EventType | 'ALL'>('ALL');
   readonly currentDate = signal(new Date(this.today));
+  readonly selectedDate = signal(new Date(this.today));
+
+  showCreateModal = signal(false);
+  showEditModal = signal(false);
+  selectedEvent = signal<CalendarEvent | null>(null);
 
   readonly eventTypes: { type: EventType; icon: string; label: string }[] = [
     { type: 'APPOINTMENT', icon: 'event', label: 'Appointments' },
     { type: 'REMINDER', icon: 'notifications', label: 'Reminders' },
     { type: 'TASK', icon: 'check_circle', label: 'Tasks' },
     { type: 'BIRTHDAY', icon: 'cake', label: 'Birthdays' },
+  ];
+
+  readonly eventColors = [
+    '#43a047',
+    '#1976d2',
+    '#f57c00',
+    '#9c27b0',
+    '#f44336',
+    '#00bcd4',
+    '#e91e63',
+    '#ff5722',
+    '#3f51b5',
+    '#009688',
+  ];
+
+  readonly recurrenceOptions: { value: RecurrenceType; label: string }[] = [
+    { value: 'NONE', label: 'Does not repeat' },
+    { value: 'DAILY', label: 'Every day' },
+    { value: 'WEEKLY', label: 'Every week' },
+    { value: 'MONTHLY', label: 'Every month' },
+    { value: 'YEARLY', label: 'Every year' },
   ];
 
   readonly weekDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -57,63 +102,206 @@ export class CalendarComponent {
     {
       id: 1,
       title: 'Team Standup',
-      time: '09:00',
-      endTime: '09:30',
+      description: 'Daily sync with the dev team',
       location: 'Google Meet',
-      type: 'APPOINTMENT',
-      color: '#43a047',
-      isPublic: true,
-      date: new Date(2026, 3, 29)
+      eventColor: '#43a047',
+      startDateTime: '09:00',
+      endDateTime: '09:30',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'DAILY',
+      accessType: 'PUBLIC',
+      date: new Date(2026, 3, 29),
+      categoryIds: [1],
     },
     {
       id: 2,
       title: 'Quarterly Review',
-      time: '14:00',
-      endTime: '15:30',
-      location: 'Office',
-      type: 'APPOINTMENT',
-      color: '#1976d2',
-      isPublic: false,
-      accessLabel: 'PRIVATE',
-      date: new Date(2026, 3, 29)
+      description: 'Q1 2026 results and Q2 planning session',
+      location: 'Conference Room B',
+      eventColor: '#1976d2',
+      startDateTime: '14:00',
+      endDateTime: '15:30',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'NONE',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 29),
+      categoryIds: [1, 2],
     },
     {
       id: 3,
-      title: 'Deploy Backend',
-      time: '11:00',
-      endTime: '12:00',
-      type: 'TASK',
-      color: '#f57c00',
-      isPublic: true,
-      date: new Date(2026, 3, 30)
+      title: 'Deploy Backend v2',
+      description: 'Production deployment of the new API',
+      location: '',
+      eventColor: '#f57c00',
+      startDateTime: '11:00',
+      endDateTime: '12:00',
+      allDay: false,
+      eventType: 'TASK',
+      recurrence: 'NONE',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 30),
+      categoryIds: [1],
     },
     {
       id: 4,
       title: "Felix's Birthday",
-      type: 'BIRTHDAY',
-      color: '#e91e63',
-      isPublic: false,
-      date: new Date(2026, 3, 28)
+      description: '',
+      location: '',
+      eventColor: '#e91e63',
+      startDateTime: '',
+      endDateTime: '',
+      allDay: true,
+      eventType: 'BIRTHDAY',
+      recurrence: 'YEARLY',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 28),
+      categoryIds: [],
     },
     {
       id: 5,
       title: 'Sprint Planning',
-      time: '10:00',
-      endTime: '11:30',
-      location: 'Conference Room',
-      type: 'APPOINTMENT',
-      color: '#9c27b0',
-      isPublic: true,
-      date: new Date(2026, 3, 27)
-    }
+      description: 'Planning session for Sprint 12',
+      location: 'Office - Room 3',
+      eventColor: '#9c27b0',
+      startDateTime: '10:00',
+      endDateTime: '11:30',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'NONE',
+      accessType: 'PUBLIC',
+      date: new Date(2026, 3, 27),
+      categoryIds: [1],
+    },
+    {
+      id: 6,
+      title: 'Dentist Appointment',
+      description: 'Annual checkup',
+      location: 'Dental Praxis Müller',
+      eventColor: '#00bcd4',
+      startDateTime: '08:30',
+      endDateTime: '09:30',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'NONE',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 30),
+      categoryIds: [3],
+    },
+    {
+      id: 7,
+      title: 'Easy Life Frontend Review',
+      description: 'Review all completed pages with Moritz',
+      location: 'Video Call',
+      eventColor: '#43a047',
+      startDateTime: '16:00',
+      endDateTime: '17:00',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'NONE',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 28),
+      categoryIds: [1],
+    },
+    {
+      id: 8,
+      title: 'Submit Tax Documents',
+      description: 'Deadline for annual tax submission',
+      location: '',
+      eventColor: '#f44336',
+      startDateTime: '',
+      endDateTime: '',
+      allDay: true,
+      eventType: 'REMINDER',
+      recurrence: 'NONE',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 30),
+      categoryIds: [2],
+    },
+    {
+      id: 9,
+      title: 'Morning Run',
+      description: '10km training run',
+      location: 'Stadtpark',
+      eventColor: '#8bc34a',
+      startDateTime: '06:30',
+      endDateTime: '07:30',
+      allDay: false,
+      eventType: 'TASK',
+      recurrence: 'DAILY',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 29),
+      categoryIds: [3],
+    },
+    {
+      id: 10,
+      title: 'Client Demo',
+      description: 'Product demo for Acme Corp',
+      location: 'Zoom',
+      eventColor: '#1976d2',
+      startDateTime: '15:00',
+      endDateTime: '16:00',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'NONE',
+      accessType: 'PUBLIC',
+      date: new Date(2026, 3, 27),
+      categoryIds: [1],
+    },
+    {
+      id: 11,
+      title: 'Weekly Journal',
+      description: 'Weekly reflection and journal entry',
+      location: '',
+      eventColor: '#9c27b0',
+      startDateTime: '20:00',
+      endDateTime: '20:30',
+      allDay: false,
+      eventType: 'REMINDER',
+      recurrence: 'WEEKLY',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 29),
+      categoryIds: [4],
+    },
+    {
+      id: 12,
+      title: 'Moritz Call',
+      description: 'Product strategy discussion',
+      location: 'Phone',
+      eventColor: '#ff5722',
+      startDateTime: '18:00',
+      endDateTime: '18:30',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'NONE',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 28),
+      categoryIds: [],
+    },
   ]);
 
-  // ── Computed Header ────────────────────────────────────────
+  readonly emptyForm = (): EventForm => ({
+    title: '',
+    description: '',
+    location: '',
+    eventColor: '#43a047',
+    startDateTime: '',
+    endDateTime: '',
+    allDay: false,
+    eventType: 'APPOINTMENT',
+    recurrence: 'NONE',
+    accessType: 'PRIVATE',
+    categoryIds: [],
+  });
 
+  createForm = signal<EventForm>(this.emptyForm());
+  editForm = signal<EventForm>(this.emptyForm());
+
+  // ── Header ─────────────────────────────────────────────
   readonly headerTitle = computed(() => {
     const d = this.currentDate();
     const view = this.viewMode();
-
     if (view === 'month') {
       return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
     }
@@ -127,8 +315,12 @@ export class CalendarComponent {
       }
       return `${first.toLocaleString('en-US', { month: 'short' })} ${first.getDate()} – ${last.toLocaleString('en-US', { month: 'short' })} ${last.getDate()}, ${last.getFullYear()}`;
     }
-    // day
-    return d.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    return d.toLocaleString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
   });
 
   readonly headerLabel = computed(() => {
@@ -142,27 +334,34 @@ export class CalendarComponent {
     const d = this.currentDate();
     const view = this.viewMode();
     if (view === 'month') {
-      return this.allEvents().filter(e =>
-        e.date.getMonth() === d.getMonth() &&
-        e.date.getFullYear() === d.getFullYear()
+      return this.allEvents().filter(
+        (e) => e.date.getMonth() === d.getMonth() && e.date.getFullYear() === d.getFullYear(),
       ).length;
     }
     if (view === 'week') {
       const week = this.currentWeekDays();
       const first = week[0].date;
       const last = week[6].date;
-      return this.allEvents().filter(e => e.date >= first && e.date <= last).length;
+      return this.allEvents().filter((e) => e.date >= first && e.date <= last).length;
     }
     return this.eventsForDay(d).length;
   });
 
-  // ── Month View ─────────────────────────────────────────────
+  // ── Selected Day Panel ─────────────────────────────────
+  readonly selectedDayLabel = computed(() => {
+    const d = this.selectedDate();
+    return d.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  });
 
+  readonly selectedDayEvents = computed(() => this.eventsForDay(this.selectedDate()));
+
+  readonly isSelectedDateToday = computed(() => this.isSameDay(this.selectedDate(), this.today));
+
+  // ── Month View ─────────────────────────────────────────
   readonly calendarDays = computed((): DayCell[] => {
     const date = this.currentDate();
     const year = date.getFullYear();
     const month = date.getMonth();
-
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
@@ -192,39 +391,26 @@ export class CalendarComponent {
     return days;
   });
 
-  // ── Week View ──────────────────────────────────────────────
-
+  // ── Week View ──────────────────────────────────────────
   readonly currentWeekDays = computed((): WeekDay[] => {
     const d = this.currentDate();
     const dow = d.getDay();
     const mondayOffset = dow === 0 ? -6 : 1 - dow;
     const monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() + mondayOffset);
-
     return Array.from({ length: 7 }, (_, i) => {
       const date = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
-      return {
-        date,
-        isToday: this.isSameDay(date, this.today),
-        events: this.eventsForDay(date)
-      };
+      return { date, isToday: this.isSameDay(date, this.today), events: this.eventsForDay(date) };
     });
   });
 
-  // ── Day View ───────────────────────────────────────────────
-
+  // ── Day View ───────────────────────────────────────────
   readonly dayEvents = computed(() =>
-    this.eventsForDay(this.currentDate())
-      .sort((a, b) => (a.time ?? '').localeCompare(b.time ?? ''))
+    this.eventsForDay(this.currentDate()).sort((a, b) =>
+      (a.startDateTime ?? '').localeCompare(b.startDateTime ?? ''),
+    ),
   );
 
-  // ── Today Panel ────────────────────────────────────────────
-
-  readonly todayEvents = computed(() =>
-    this.eventsForDay(this.today)
-  );
-
-  // ── Navigation ─────────────────────────────────────────────
-
+  // ── Navigation ─────────────────────────────────────────
   prev() {
     const d = this.currentDate();
     const view = this.viewMode();
@@ -251,26 +437,81 @@ export class CalendarComponent {
 
   goToday() {
     this.currentDate.set(new Date(this.today));
+    this.selectedDate.set(new Date(this.today));
   }
 
   setView(mode: ViewMode) {
     this.viewMode.set(mode);
   }
-
   setFilter(type: EventType | 'ALL') {
     this.activeFilter.set(type);
   }
 
-  // ── Helpers ────────────────────────────────────────────────
+  // ── Day Selection (Month View) ─────────────────────────
+  selectDay(date: Date) {
+    this.selectedDate.set(date);
+  }
 
+  isSelectedDay(date: Date): boolean {
+    return this.isSameDay(date, this.selectedDate());
+  }
+
+  // ── Create ─────────────────────────────────────────────
+  openCreate() {
+    this.createForm.set(this.emptyForm());
+    this.showCreateModal.set(true);
+  }
+
+  submitCreate() {
+    if (!this.createForm().title.trim()) return;
+    console.log('Create event:', this.createForm());
+    this.showCreateModal.set(false);
+  }
+
+  // ── Edit ───────────────────────────────────────────────
+  openEdit(event: CalendarEvent, $event?: Event) {
+    $event?.stopPropagation();
+    this.selectedEvent.set(event);
+    this.editForm.set({
+      title: event.title,
+      description: event.description,
+      location: event.location,
+      eventColor: event.eventColor,
+      startDateTime: event.startDateTime,
+      endDateTime: event.endDateTime,
+      allDay: event.allDay,
+      eventType: event.eventType,
+      recurrence: event.recurrence,
+      accessType: event.accessType,
+      categoryIds: event.categoryIds,
+    });
+    this.showEditModal.set(true);
+  }
+
+  submitEdit() {
+    if (!this.editForm().title.trim()) return;
+    console.log('Update event:', this.selectedEvent()?.id, this.editForm());
+    this.showEditModal.set(false);
+  }
+
+  deleteEvent() {
+    const id = this.selectedEvent()?.id;
+    if (id) this.allEvents.update((e) => e.filter((ev) => ev.id !== id));
+    this.showEditModal.set(false);
+    this.selectedEvent.set(null);
+  }
+
+  // ── Helpers ────────────────────────────────────────────
   eventsForDay(date: Date): CalendarEvent[] {
-    return this.allEvents().filter(e => this.isSameDay(e.date, date));
+    return this.allEvents().filter((e) => this.isSameDay(e.date, date));
   }
 
   isSameDay(a: Date, b: Date): boolean {
-    return a.getDate() === b.getDate() &&
-           a.getMonth() === b.getMonth() &&
-           a.getFullYear() === b.getFullYear();
+    return (
+      a.getDate() === b.getDate() &&
+      a.getMonth() === b.getMonth() &&
+      a.getFullYear() === b.getFullYear()
+    );
   }
 
   isWeekend(date: Date): boolean {
@@ -282,7 +523,13 @@ export class CalendarComponent {
   }
 
   formatHour(hour: number): string {
-    return hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`;
+    return hour === 0
+      ? '12 AM'
+      : hour < 12
+        ? `${hour} AM`
+        : hour === 12
+          ? '12 PM'
+          : `${hour - 12} PM`;
   }
 
   getEventTopPercent(time: string): number {
@@ -293,7 +540,17 @@ export class CalendarComponent {
   getEventHeightPercent(time: string, endTime: string): number {
     const [h1, m1] = time.split(':').map(Number);
     const [h2, m2] = endTime.split(':').map(Number);
-    const duration = (h2 * 60 + m2) - (h1 * 60 + m1);
+    const duration = h2 * 60 + m2 - (h1 * 60 + m1);
     return (duration / (24 * 60)) * 100;
+  }
+
+  getEventTypeIcon(type: EventType): string {
+    const map: Record<EventType, string> = {
+      APPOINTMENT: 'event',
+      REMINDER: 'notifications',
+      TASK: 'check_circle',
+      BIRTHDAY: 'cake',
+    };
+    return map[type];
   }
 }

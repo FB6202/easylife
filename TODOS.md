@@ -1,4 +1,4 @@
-To Do's:
+## To Do's:
 - keycloak
 - security
 - payments
@@ -7,6 +7,48 @@ To Do's:
 - pricing models corresponding to storage (size and amount)
 - website + social media?
 - delete mechanism for efficient db storage using ;)
+- tests for edge cases
 
-Frontend:
-- 
+## Frontend (Pages):
+- dashboard
+- pagination with side limit
+- searchbar (general or page wise) - 'search results page'
+- searchbar for corresponding page in filter component
+- settings work
+- profile click work
+- logout button work
+- login button work
+- toaster on actions
+- tasks
+  - actions menu → is cut off below pagination (higher z-index?)
+  - filter (open filter menu)
+  - pagination working?
+- categories
+  - filter (open filter menu)
+  - pagination working?
+  - more icons + colors
+- goals
+  - improve goals tasks on modals
+  - filter (open filter menu)
+  - pagination working?
+- calendar
+  - filters (tags above)
+  - modal --> colors - categories (icons)
+  - delete with confirm dialog
+- documents
+  - create modal (button)
+  - edit/details modal (item click) - with delete option
+  - actions (edit + delete + download + [preview])
+  - filter (open filter menu)
+  - list view - no caps!
+  - pagination working?
+- my week
+  - searchbar probably not necessary - filter
+  - edit/details modal (item click) - with delete option
+  - filter (open filter menu)
+  - pagination working?
+- journal
+  - create modal (button)
+  - edit/details modal (item click) - with delete option
+  - filter (open filter menu)
+  - pagination working?

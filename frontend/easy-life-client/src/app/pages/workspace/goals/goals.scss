@@ -25,7 +25,6 @@
     font-size: $font-size-sm;
     color: var(--color-text-secondary);
   }
-
   &__actions {
     @include flex-start;
     gap: $space-3;
@@ -41,10 +40,13 @@
 // ── Grid ───────────────────────────────────────────────────
 .goals-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $space-5;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-4;
   padding: $space-6;
 
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
   @include below-lg {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -71,10 +73,9 @@
     transform: translateY(-2px);
   }
 
-  // ── Image ───────────────────────────────────────────────
   &__image {
     position: relative;
-    height: 160px;
+    aspect-ratio: 16/9;
     overflow: hidden;
     flex-shrink: 0;
 
@@ -92,9 +93,9 @@
     @include flex-center;
 
     .material-symbols-outlined {
-      font-size: 48px;
+      font-size: 40px;
       color: var(--color-primary);
-      opacity: 0.3;
+      opacity: 0.25;
       font-variation-settings:
         'FILL' 0,
         'wght' 300,
@@ -103,44 +104,20 @@
     }
   }
 
-  &__status {
-    position: absolute;
-    top: $space-3;
-    left: $space-3;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-bold;
-    padding: 3px $space-3;
-    border-radius: $radius-pill;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-
-    &.status--active {
-      background: rgba(67, 160, 71, 0.85);
-      color: white;
-    }
-
-    &.status--completed {
-      background: rgba(25, 118, 210, 0.85);
-      color: white;
-    }
-
-    &.status--abandoned {
-      background: rgba(117, 117, 117, 0.85);
-      color: white;
-    }
+  &__body {
+    padding: $space-4;
+    @include flex-col;
+    gap: $space-3;
+    flex: 1;
   }
 
-  // ── Body ────────────────────────────────────────────────
-  &__body {
-    padding: $space-5;
-    display: flex;
-    flex-direction: column;
-    gap: $space-3;
-    flex: 1; // nimmt restliche Kartenhöhe ein
+  &__meta-row {
+    @include flex-between;
+    align-items: center;
   }
 
   &__title {
-    font-size: $font-size-base;
+    font-size: $font-size-sm;
     font-weight: $font-weight-bold;
     color: var(--color-text-primary);
     @include truncate(2);
@@ -152,15 +129,14 @@
     color: var(--color-text-secondary);
     line-height: 1.6;
     @include truncate(2);
-    flex: 1; // schiebt alles darunter nach unten
+    flex: 1;
   }
 
-  // ── Target Tag ──────────────────────────────────────────
   &__target {
     @include flex-start;
     gap: $space-1;
     display: inline-flex;
-    padding: 3px $space-3;
+    padding: 2px $space-2;
     background: var(--color-bg-input);
     border: 1px solid var(--color-border);
     border-radius: $radius-pill;
@@ -169,12 +145,11 @@
     width: fit-content;
 
     .material-symbols-outlined {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--color-primary);
     }
   }
 
-  // ── Progress ────────────────────────────────────────────
   &__progress {
     @include flex-col;
     gap: $space-2;
@@ -193,46 +168,42 @@
     font-size: $font-size-sm;
     font-weight: $font-weight-bold;
     color: var(--color-primary);
-
-    &.pct--complete {
-      color: var(--color-primary);
-    }
   }
 
-  // ── Deadline ────────────────────────────────────────────
-  &__deadline {
-    @include flex-start;
-    gap: $space-2;
-    font-size: $font-size-xs;
-    color: var(--color-text-secondary);
-
-    .material-symbols-outlined {
-      font-size: 14px;
-      color: var(--color-text-muted);
-    }
-  }
-
-  // ── Footer ──────────────────────────────────────────────
   &__footer {
     @include flex-between;
     padding-top: $space-3;
     border-top: 1px solid var(--color-border-light);
   }
 
-  &__dots {
+  &__deadline {
+    @include flex-start;
+    gap: $space-1;
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+
+    .material-symbols-outlined {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__categories {
     @include flex-start;
     gap: $space-2;
   }
 
-  &__dot {
-    width: 10px;
-    height: 10px;
-    border-radius: $radius-full;
-    display: inline-block;
+  &__cat-icon {
+    font-size: 18px;
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20;
   }
 
   &__access {
-    font-size: 18px;
+    font-size: 16px;
     font-variation-settings:
       'FILL' 0,
       'wght' 400,
@@ -247,7 +218,6 @@
         'GRAD' 0,
         'opsz' 20;
     }
-
     &--private {
       color: var(--color-text-muted);
       opacity: 0.5;
@@ -255,7 +225,631 @@
   }
 }
 
-// ── Progress Bar Override ──────────────────────────────────
-.progress-fill--complete {
-  background: var(--color-primary) !important;
+// ── Goal Status Badge ──────────────────────────────────────
+.goal-status {
+  @include flex-start;
+  gap: $space-1;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 3px $space-2;
+  border-radius: $radius-pill;
+  white-space: nowrap;
+
+  .material-symbols-outlined {
+    font-size: 13px;
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20;
+  }
+
+  &.status--active {
+    background: rgba(67, 160, 71, 0.12);
+    color: #2e7d32;
+    border: 1px solid rgba(67, 160, 71, 0.2);
+  }
+
+  &.status--completed {
+    background: rgba(25, 118, 210, 0.12);
+    color: #1565c0;
+    border: 1px solid rgba(25, 118, 210, 0.2);
+  }
+
+  &.status--abandoned {
+    background: rgba(117, 117, 117, 0.12);
+    color: #616161;
+    border: 1px solid rgba(117, 117, 117, 0.2);
+  }
+}
+
+// ══ MODAL OVERLAY ════════════════════════════════════════
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  @include flex-center;
+  padding: $space-4;
+}
+
+// ══ GOAL MODAL ════════════════════════════════════════════
+.goal-modal {
+  background: var(--color-bg-card);
+  border-radius: $radius-xl;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  @include scrollbar-thin;
+  @include flex-col;
+  gap: $space-4;
+  padding: $space-8;
+
+  &__header {
+    @include flex-between;
+    align-items: flex-start;
+    gap: $space-4;
+  }
+
+  &__header-actions {
+    @include flex-start;
+    gap: $space-2;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  &__close {
+    @include btn-ghost;
+    border-radius: $radius-md;
+    padding: $space-1;
+    flex-shrink: 0;
+    .material-symbols-outlined {
+      font-size: 22px;
+    }
+  }
+
+  &__action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-md;
+    border: none;
+    @include flex-center;
+    cursor: pointer;
+    transition: all $transition-fast;
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    &--delete {
+      background: rgba(211, 47, 47, 0.1);
+      color: var(--color-danger);
+      &:hover {
+        background: rgba(211, 47, 47, 0.2);
+      }
+    }
+  }
+
+  &__title-input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    padding: $space-2 0;
+    font-family: $font-family;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-primary);
+    background: transparent;
+    outline: none;
+    transition: border-color $transition-fast;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__section-label {
+    @include flex-start;
+    gap: $space-2;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: $space-3 0 $space-1;
+    border-top: 1px solid var(--color-border-light);
+
+    .material-symbols-outlined {
+      font-size: 15px;
+      color: var(--color-primary);
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-3;
+
+    &--2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @include below-md {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__add-task-btn {
+    @include flex-start;
+    gap: $space-1;
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-family: $font-family;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--color-primary);
+    cursor: pointer;
+    padding: 0;
+    transition: opacity $transition-fast;
+
+    .material-symbols-outlined {
+      font-size: 15px;
+    }
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &__footer {
+    @include flex-between;
+    padding-top: $space-4;
+    border-top: 1px solid var(--color-border-light);
+  }
+}
+
+// ── Status Picker ──────────────────────────────────────────
+.modal-status-picker {
+  @include flex-start;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.modal-status-btn {
+  @include flex-start;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  border-radius: $radius-pill;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 14px;
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20;
+  }
+
+  &--active.active {
+    background: rgba(67, 160, 71, 0.12);
+    color: #2e7d32;
+    border-color: rgba(67, 160, 71, 0.3);
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+  }
+
+  &--completed.active {
+    background: rgba(25, 118, 210, 0.12);
+    color: #1565c0;
+    border-color: rgba(25, 118, 210, 0.3);
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+  }
+
+  &--abandoned.active {
+    background: rgba(117, 117, 117, 0.12);
+    color: #616161;
+    border-color: rgba(117, 117, 117, 0.3);
+  }
+
+  &:hover:not(.active) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}
+
+// ── Goal Tasks List ────────────────────────────────────────
+.goal-tasks-list {
+  @include flex-col;
+  gap: $space-2;
+}
+
+.goal-task-row {
+  @include flex-start;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  flex-wrap: wrap;
+
+  &__check {
+    flex-shrink: 0;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+  }
+
+  &__title {
+    flex: 1;
+    min-width: 120px;
+    border: none;
+    background: transparent;
+    font-family: $font-family;
+    font-size: $font-size-sm;
+    color: var(--color-text-primary);
+    outline: none;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &--done {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__meta {
+    @include flex-start;
+    gap: $space-2;
+    flex-shrink: 0;
+  }
+
+  &__progress {
+    width: 60px;
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    padding: $space-1 $space-2;
+    font-family: $font-family;
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-card);
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__date {
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    padding: $space-1 $space-2;
+    font-family: $font-family;
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-card);
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__remove {
+    @include btn-ghost;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border-radius: $radius-sm;
+    @include flex-center;
+    color: var(--color-text-muted);
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+    &:hover {
+      color: var(--color-danger);
+      background: rgba(211, 47, 47, 0.06);
+    }
+  }
+}
+
+.goal-tasks-empty {
+  font-size: $font-size-sm;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: $space-4;
+  background: var(--color-bg-input);
+  border-radius: $radius-md;
+  border: 1px dashed var(--color-border);
+}
+
+// ══ SHARED MODAL ELEMENTS ════════════════════════════════
+
+.modal-cat-picker {
+  @include flex-start;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.modal-cat-chip {
+  @include flex-start;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-pill;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+
+  &:hover {
+    border-color: var(--cat-color, var(--color-primary));
+    color: var(--cat-color, var(--color-primary));
+  }
+
+  &--active {
+    background: var(--cat-color, var(--color-primary));
+    border-color: var(--cat-color, var(--color-primary));
+    color: white;
+  }
+}
+
+.modal-access-toggle {
+  @include flex-start;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.modal-access-btn {
+  @include flex-start;
+  gap: $space-2;
+  flex: 1;
+  padding: $space-2 $space-3;
+  border: none;
+  background: none;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all $transition-fast;
+  border-right: 1px solid var(--color-border);
+  justify-content: center;
+
+  &:last-child {
+    border-right: none;
+  }
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+  &:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+  }
+  &.active {
+    background: var(--color-primary);
+    color: white;
+  }
+}
+
+// ══ CONFIRM DIALOG ════════════════════════════════════════
+.confirm-dialog {
+  background: var(--color-bg-card);
+  border-radius: $radius-xl;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: $space-8;
+  @include flex-col;
+  align-items: center;
+  text-align: center;
+  gap: $space-4;
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-full;
+    @include flex-center;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    }
+
+    &--danger {
+      background: rgba(211, 47, 47, 0.12);
+      color: var(--color-danger);
+    }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+  }
+  &__text {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+  &__actions {
+    @include flex-center;
+    gap: $space-3;
+    margin-top: $space-2;
+  }
+}
+
+.btn-danger {
+  @include btn-base;
+  background: var(--color-danger);
+  color: white;
+  &:hover:not(:disabled) {
+    background: #c62828;
+  }
+}
+
+// ══ GOAL IMAGE UPLOAD ════════════════════════════════════
+.goal-image-upload {
+  position: relative;
+
+  &__input {
+    display: none;
+  }
+
+  &__empty {
+    @include flex-col;
+    @include flex-center;
+    gap: $space-2;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: 2px dashed var(--color-border);
+    border-radius: $radius-lg;
+    background: var(--color-bg-input);
+    cursor: pointer;
+    transition: all $transition-fast;
+    text-align: center;
+
+    .material-symbols-outlined {
+      font-size: 32px;
+      color: var(--color-text-muted);
+      opacity: 0.5;
+    }
+
+    &:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+
+      .material-symbols-outlined {
+        opacity: 1;
+        color: var(--color-primary);
+      }
+      .goal-image-upload__label {
+        color: var(--color-primary);
+      }
+    }
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-secondary);
+    transition: color $transition-fast;
+  }
+
+  &__hint {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+
+  &__preview {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &:hover .goal-image-upload__overlay {
+      opacity: 1;
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    @include flex-center;
+    gap: $space-3;
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &__btn {
+    @include flex-start;
+    gap: $space-2;
+    padding: $space-2 $space-4;
+    border-radius: $radius-pill;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-family: $font-family;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: background $transition-fast;
+    backdrop-filter: blur(4px);
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    &--remove {
+      &:hover {
+        background: rgba(211, 47, 47, 0.5);
+        border-color: rgba(211, 47, 47, 0.6);
+      }
+    }
+  }
 }

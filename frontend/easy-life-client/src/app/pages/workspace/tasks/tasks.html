@@ -11,7 +11,7 @@
       <span class="material-symbols-outlined">tune</span>
       Filters
     </button>
-    <button class="btn-primary" (click)="showCreateModal.set(true)">
+    <button class="btn-primary" (click)="openCreate()">
       <span class="material-symbols-outlined">add</span>
       New Task
     </button>
@@ -24,41 +24,40 @@
     <span class="tasks-stat__label">TOTAL PENDING</span>
     <div class="tasks-stat__value">
       <span class="tasks-stat__num">{{ pendingCount() }}</span>
-      <span class="tasks-stat__sub">+{{ dueTodayCount() }} today</span>
     </div>
   </div>
   <div class="tasks-stat">
     <span class="tasks-stat__label">IN PROGRESS</span>
     <div class="tasks-stat__value">
       <span class="tasks-stat__num tasks-stat__num--warning">
-        {{ inProgressCount() | number: '2.0' }}
+        {{ inProgressCount() }}
       </span>
-      <span class="tasks-stat__sub">{{ nearDueCount() }} near due</span>
     </div>
   </div>
   <div class="tasks-stat">
     <span class="tasks-stat__label">COMPLETED</span>
     <div class="tasks-stat__value">
       <span class="tasks-stat__num">{{ doneCount() }}</span>
-      <span class="tasks-stat__sub">{{ completionRate() }}% rate</span>
     </div>
   </div>
   <div class="tasks-stat tasks-stat--accent">
     <span class="tasks-stat__label">PRODUCTIVITY SCORE</span>
     <div class="tasks-stat__value">
-      <span class="tasks-stat__num tasks-stat__num--accent">
-        {{ productivityScore() }}
-      </span>
-      <span class="tasks-stat__sub tasks-stat__sub--accent">
-        {{ productivityLabel() }}
-      </span>
+      <span class="tasks-stat__num tasks-stat__num--accent">{{ productivityScore() }}</span>
+      <span class="tasks-stat__sub tasks-stat__sub--accent">{{ productivityLabel() }}</span>
+      <div class="tasks-stat__tooltip-wrapper">
+        <span class="material-symbols-outlined tasks-stat__info">help</span>
+        <div class="tasks-stat__tooltip">
+          Score 0–10 based on your task completion rate. Elite ≥ 9 · High ≥ 7 · Good ≥ 5 · Building
+          &lt; 5
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Tasks Table -->
 <div class="tasks-table">
-  <!-- Table Header -->
   <div class="tasks-table__header">
     <span class="tasks-table__col tasks-table__col--task">TASK</span>
     <span class="tasks-table__col tasks-table__col--categories">CATEGORIES</span>
@@ -69,10 +68,12 @@
     <span class="tasks-table__col tasks-table__col--actions"></span>
   </div>
 
-  <!-- Table Rows -->
   @for (task of tasks(); track task.id) {
-    <div class="tasks-table__row" [class.tasks-table__row--done]="task.done">
-      <!-- Task Info -->
+    <div
+      class="tasks-table__row"
+      [class.tasks-table__row--done]="task.done"
+      (click)="openEdit(task)"
+    >
       <div class="tasks-table__col tasks-table__col--task">
         <div class="task-info">
           <span class="task-info__title">{{ task.title }}</span>
@@ -80,10 +81,9 @@
         </div>
       </div>
 
-      <!-- Categories -->
       <div class="tasks-table__col tasks-table__col--categories">
         <div class="task-categories">
-          @for (cat of task.categories; track cat.icon) {
+          @for (cat of task.categories; track cat.id) {
             <span class="material-symbols-outlined task-category-icon" [style.color]="cat.color">{{
               cat.icon
             }}</span>
@@ -91,15 +91,21 @@
         </div>
       </div>
 
-      <!-- Status -->
       <div class="tasks-table__col tasks-table__col--status">
         <span [class]="'task-status ' + getStatusClass(task.status)">
-          <span class="task-status__dot"></span>
+          <span class="material-symbols-outlined task-status__icon">
+            {{
+              task.status === 'DONE'
+                ? 'check_circle'
+                : task.status === 'IN_PROGRESS'
+                  ? 'pending'
+                  : 'radio_button_unchecked'
+            }}
+          </span>
           {{ getStatusLabel(task.status) }}
         </span>
       </div>
 
-      <!-- Deadline -->
       <div class="tasks-table__col tasks-table__col--deadline">
         <div class="task-deadline">
           <span class="task-deadline__month">{{ task.dueMonth }}</span>
@@ -108,37 +114,43 @@
         </div>
       </div>
 
-      <!-- Priority -->
       <div class="tasks-table__col tasks-table__col--priority">
         <span [class]="'task-priority ' + getPriorityClass(task.priority)">
           {{ task.priority }}
         </span>
       </div>
 
-      <!-- Access -->
       <div class="tasks-table__col tasks-table__col--access">
         <span
           class="material-symbols-outlined task-access-icon"
-          [class.task-access-icon--public]="task.isPublic"
-          [class.task-access-icon--private]="!task.isPublic"
+          [class.task-access-icon--public]="task.accessType === 'PUBLIC'"
+          [class.task-access-icon--private]="task.accessType === 'PRIVATE'"
         >
-          {{ task.isPublic ? 'travel_explore' : 'lock' }}
+          {{ task.accessType === 'PUBLIC' ? 'travel_explore' : 'lock' }}
         </span>
       </div>
 
-      <!-- Actions -->
       <div class="tasks-table__col tasks-table__col--actions">
-        <div class="task-menu">
-          <button class="task-menu__btn" (click)="toggleMenu(task.id)">
+        <div class="task-menu" (click)="$event.stopPropagation()">
+          <button class="task-menu__btn" (click)="toggleMenu(task.id, $event)">
             <span class="material-symbols-outlined">more_vert</span>
           </button>
           @if (activeMenu() === task.id) {
             <div class="task-menu__dropdown">
-              <button class="task-menu__item">
+              <button class="task-menu__item" (click)="openEdit(task)">
                 <span class="material-symbols-outlined">edit</span>
                 Edit
               </button>
-              <button class="task-menu__item task-menu__item--danger">
+              @if (!task.done) {
+                <button class="task-menu__item" (click)="openDoneConfirm(task)">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  Mark as done
+                </button>
+              }
+              <button
+                class="task-menu__item task-menu__item--danger"
+                (click)="openDeleteConfirm(task)"
+              >
                 <span class="material-symbols-outlined">delete</span>
                 Delete
               </button>
@@ -149,7 +161,6 @@
     </div>
   }
 
-  <!-- Pagination -->
   <app-pagination
     [currentPage]="currentPage()"
     [totalPages]="totalPages()"
@@ -159,3 +170,303 @@
     (aiClick)="onAiClick()"
   />
 </div>
+
+<!-- ══ CREATE MODAL ══════════════════════════════════════ -->
+@if (showCreateModal()) {
+  <div class="modal-overlay" (click)="showCreateModal.set(false)">
+    <div class="task-modal" (click)="$event.stopPropagation()">
+      <div class="task-modal__header">
+        <div>
+          <h2 class="task-modal__title">New Task</h2>
+          <p class="task-modal__subtitle">Add a task to your productivity flow.</p>
+        </div>
+        <button class="task-modal__close" (click)="showCreateModal.set(false)">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Title -->
+      <input
+        type="text"
+        class="task-modal__title-input"
+        placeholder="Task Title"
+        [(ngModel)]="createForm().title"
+      />
+
+      <!-- Description -->
+      <div class="form-group">
+        <label>Description</label>
+        <textarea
+          rows="3"
+          placeholder="Tell us more about this task..."
+          [(ngModel)]="createForm().description"
+        ></textarea>
+      </div>
+
+      <!-- Categories -->
+      <div class="form-group">
+        <label>Categories <span class="form-group__hint">max 5</span></label>
+        <div class="modal-cat-picker">
+          @for (cat of availableCategories(); track cat.id) {
+            <button
+              [class]="
+                'modal-cat-chip ' +
+                (createForm().categoryIds.includes(cat.id) ? 'modal-cat-chip--active' : '')
+              "
+              [style.--cat-color]="cat.color"
+              (click)="toggleCreateCategory(cat.id)"
+            >
+              <span
+                class="material-symbols-outlined"
+                [style.color]="createForm().categoryIds.includes(cat.id) ? 'white' : cat.color"
+              >
+                {{ cat.icon }}
+              </span>
+              {{ cat.name }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Priority + Status -->
+      <div class="task-modal__row">
+        <div class="form-group">
+          <label>Priority</label>
+          <div class="modal-priority-picker">
+            @for (p of priorities; track p) {
+              <button
+                [class]="
+                  'modal-priority-btn modal-priority-btn--' +
+                  p.toLowerCase() +
+                  (createForm().priority === p ? ' active' : '')
+                "
+                (click)="createForm.update((f) => ({ ...f, priority: p }))"
+              >
+                {{ p }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="createForm().status">
+            @for (s of statuses; track s) {
+              <option [value]="s">{{ getStatusLabel(s) }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Due Date + Access -->
+      <div class="task-modal__row">
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" [(ngModel)]="createForm().dueDate" />
+        </div>
+        <div class="form-group">
+          <label>Access</label>
+          <div class="modal-access-toggle">
+            <button
+              [class]="
+                'modal-access-btn ' + (createForm().accessType === 'PRIVATE' ? 'active' : '')
+              "
+              (click)="createForm.update((f) => ({ ...f, accessType: 'PRIVATE' }))"
+            >
+              <span class="material-symbols-outlined">lock</span>
+              Private
+            </button>
+            <button
+              [class]="'modal-access-btn ' + (createForm().accessType === 'PUBLIC' ? 'active' : '')"
+              (click)="createForm.update((f) => ({ ...f, accessType: 'PUBLIC' }))"
+            >
+              <span class="material-symbols-outlined">travel_explore</span>
+              Public
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-modal__footer">
+        <button class="btn-secondary" (click)="showCreateModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="submitCreate()">Create Task</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ EDIT / DETAILS MODAL ══════════════════════════════ -->
+@if (showEditModal() && selectedTask()) {
+  <div class="modal-overlay" (click)="showEditModal.set(false)">
+    <div class="task-modal" (click)="$event.stopPropagation()">
+      <div class="task-modal__header">
+        <div>
+          <h2 class="task-modal__title">Edit Task</h2>
+          <p class="task-modal__subtitle">Update the details of your task.</p>
+        </div>
+        <div class="task-modal__header-actions">
+          <button
+            class="task-modal__action-btn task-modal__action-btn--done"
+            (click)="showEditModal.set(false); openDoneConfirm(selectedTask()!)"
+            [disabled]="selectedTask()!.done"
+            title="Mark as done"
+          >
+            <span class="material-symbols-outlined">check_circle</span>
+          </button>
+          <button
+            class="task-modal__action-btn task-modal__action-btn--delete"
+            (click)="showEditModal.set(false); openDeleteConfirm(selectedTask()!)"
+            title="Delete task"
+          >
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+          <button class="task-modal__close" (click)="showEditModal.set(false)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <input
+        type="text"
+        class="task-modal__title-input"
+        placeholder="Task Title"
+        [(ngModel)]="editForm().title"
+      />
+
+      <!-- Description -->
+      <div class="form-group">
+        <label>Description</label>
+        <textarea
+          rows="3"
+          placeholder="Tell us more about this task..."
+          [(ngModel)]="editForm().description"
+        ></textarea>
+      </div>
+
+      <!-- Categories -->
+      <div class="form-group">
+        <label>Categories <span class="form-group__hint">max 5</span></label>
+        <div class="modal-cat-picker">
+          @for (cat of availableCategories(); track cat.id) {
+            <button
+              [class]="
+                'modal-cat-chip ' +
+                (editForm().categoryIds.includes(cat.id) ? 'modal-cat-chip--active' : '')
+              "
+              [style.--cat-color]="cat.color"
+              (click)="toggleEditCategory(cat.id)"
+            >
+              <span
+                class="material-symbols-outlined"
+                [style.color]="editForm().categoryIds.includes(cat.id) ? 'white' : cat.color"
+              >
+                {{ cat.icon }}
+              </span>
+              {{ cat.name }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Priority + Status -->
+      <div class="task-modal__row">
+        <div class="form-group">
+          <label>Priority</label>
+          <div class="modal-priority-picker">
+            @for (p of priorities; track p) {
+              <button
+                [class]="
+                  'modal-priority-btn modal-priority-btn--' +
+                  p.toLowerCase() +
+                  (editForm().priority === p ? ' active' : '')
+                "
+                (click)="editForm.update((f) => ({ ...f, priority: p }))"
+              >
+                {{ p }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="editForm().status">
+            @for (s of statuses; track s) {
+              <option [value]="s">{{ getStatusLabel(s) }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Due Date + Access -->
+      <div class="task-modal__row">
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" [(ngModel)]="editForm().dueDate" />
+        </div>
+        <div class="form-group">
+          <label>Access</label>
+          <div class="modal-access-toggle">
+            <button
+              [class]="'modal-access-btn ' + (editForm().accessType === 'PRIVATE' ? 'active' : '')"
+              (click)="editForm.update((f) => ({ ...f, accessType: 'PRIVATE' }))"
+            >
+              <span class="material-symbols-outlined">lock</span>
+              Private
+            </button>
+            <button
+              [class]="'modal-access-btn ' + (editForm().accessType === 'PUBLIC' ? 'active' : '')"
+              (click)="editForm.update((f) => ({ ...f, accessType: 'PUBLIC' }))"
+            >
+              <span class="material-symbols-outlined">travel_explore</span>
+              Public
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-modal__footer">
+        <button class="btn-secondary" (click)="showEditModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="submitEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ DELETE CONFIRM ════════════════════════════════════ -->
+@if (showDeleteConfirm() && selectedTask()) {
+  <div class="modal-overlay" (click)="showDeleteConfirm.set(false)">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <div class="confirm-dialog__icon confirm-dialog__icon--danger">
+        <span class="material-symbols-outlined">delete</span>
+      </div>
+      <h3 class="confirm-dialog__title">Delete Task</h3>
+      <p class="confirm-dialog__text">
+        Are you sure you want to delete
+        <strong>"{{ selectedTask()!.title }}"</strong>? This action cannot be undone.
+      </p>
+      <div class="confirm-dialog__actions">
+        <button class="btn-secondary" (click)="showDeleteConfirm.set(false)">Cancel</button>
+        <button class="btn-danger" (click)="confirmDelete()">Delete Task</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ DONE CONFIRM ══════════════════════════════════════ -->
+@if (showDoneConfirm() && selectedTask()) {
+  <div class="modal-overlay" (click)="showDoneConfirm.set(false)">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <div class="confirm-dialog__icon confirm-dialog__icon--success">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <h3 class="confirm-dialog__title">Mark as Done</h3>
+      <p class="confirm-dialog__text">
+        Mark <strong>"{{ selectedTask()!.title }}"</strong> as completed?
+      </p>
+      <div class="confirm-dialog__actions">
+        <button class="btn-secondary" (click)="showDoneConfirm.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="confirmDone()">Mark as Done</button>
+      </div>
+    </div>
+  </div>
+}
