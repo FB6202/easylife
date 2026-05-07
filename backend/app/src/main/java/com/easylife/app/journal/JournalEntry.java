@@ -43,5 +43,7 @@ class JournalEntry {
     private List<Long> categoryIds;
     @Enumerated(EnumType.STRING)
     private MoodLevel mood;
+    @Column(name = "week_plan_id")
+    private Long weekPlanId;
 
 }

@@ -2,53 +2,50 @@
 - keycloak
 - security
 - payments
+- ai-general
 - ai-screenshots backend changes
 - max storage capacity for docs (including profile image + goals images)
 - pricing models corresponding to storage (size and amount)
 - website + social media?
 - delete mechanism for efficient db storage using ;)
 - tests for edge cases
+- clean backend code (especially entities)
+- notifications when event is created
+- categories in modals - especially filter (dropdown?)
 
 ## Frontend (Pages):
-- dashboard
-- pagination with side limit
-- searchbar (general or page wise) - 'search results page'
-- searchbar for corresponding page in filter component
-- settings work
+- pagination working
+- settings work (incl. dark mode)
 - profile click work
-- logout button work
-- login button work
-- toaster on actions
+- login/logout buttons
+- toaster on a few actions (create / delete)
+- categories (max. 5) on all dialogs
+- dashboard
+  - widgets self-service
 - tasks
   - actions menu → is cut off below pagination (higher z-index?)
-  - filter (open filter menu)
-  - pagination working?
 - categories
   - filter (open filter menu)
-  - pagination working?
   - more icons + colors
 - goals
   - improve goals tasks on modals
   - filter (open filter menu)
-  - pagination working?
 - calendar
+  - event create notification directly
   - filters (tags above)
-  - modal --> colors - categories (icons)
-  - delete with confirm dialog
+  - modal → colors - categories (icons)
 - documents
-  - create modal (button)
-  - edit/details modal (item click) - with delete option
-  - actions (edit + delete + download + [preview])
-  - filter (open filter menu)
-  - list view - no caps!
-  - pagination working?
+  - actions (preview + download)
+  - more file types (also in filter)
 - my week
-  - searchbar probably not necessary - filter
-  - edit/details modal (item click) - with delete option
-  - filter (open filter menu)
-  - pagination working?
+  - drop down for existing tasks (for items)
+  - week items - toggle 'create tasks' off
 - journal
-  - create modal (button)
-  - edit/details modal (item click) - with delete option
-  - filter (open filter menu)
-  - pagination working?
+- profile
+  - contract change
+  - delete account
+  - size for profile image
+- people
+- network
+- notifications
+  - channels (all?)

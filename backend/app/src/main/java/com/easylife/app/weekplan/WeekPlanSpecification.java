@@ -1,44 +1,36 @@
 package com.easylife.app.weekplan;
 
-import com.easylife.app.shared.enums.WeekPlanStatus;
 import com.easylife.app.weekplan.api.WeekPlanFilter;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.time.LocalDate;
+import jakarta.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 
 class WeekPlanSpecification {
 
     static Specification<WeekPlan> build(Long userId, WeekPlanFilter filter) {
-        return Specification
-                .where(byUserId(userId))
-                .and(byStatus(filter.status()))
-                .and(byStartDateBetween(filter.startDateFrom(), filter.startDateTo()))
-                .and(byCategoryIds(filter.categoryIds()));
-    }
-
-    private static Specification<WeekPlan> byUserId(Long userId) {
-        return (root, query, cb) -> cb.equal(root.get("userId"), userId);
-    }
-
-    private static Specification<WeekPlan> byStatus(WeekPlanStatus status) {
-        return (root, query, cb) -> status == null ? null
-                : cb.equal(root.get("status"), status);
-    }
-
-    private static Specification<WeekPlan> byStartDateBetween(LocalDate from, LocalDate to) {
         return (root, query, cb) -> {
-            if (from == null && to == null) return null;
-            if (from == null) return cb.lessThanOrEqualTo(root.get("startDate"), to);
-            if (to == null) return cb.greaterThanOrEqualTo(root.get("startDate"), from);
-            return cb.between(root.get("startDate"), from, to);
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(root.get("userId"), userId));
+
+            if (filter != null) {
+                if (filter.status() != null) {
+                    predicates.add(cb.equal(root.get("status"), filter.status()));
+                }
+                if (filter.startDateFrom() != null) {
+                    predicates.add(cb.greaterThanOrEqualTo(
+                            root.get("startDate"), filter.startDateFrom()
+                    ));
+                }
+                if (filter.startDateTo() != null) {
+                    predicates.add(cb.lessThanOrEqualTo(
+                            root.get("startDate"), filter.startDateTo()
+                    ));
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
-
-    private static Specification<WeekPlan> byCategoryIds(List<Long> categoryIds) {
-        return (root, query, cb) ->
-                categoryIds == null || categoryIds.isEmpty() ? null
-                        : root.join("categoryIds").in(categoryIds);
-    }
-
 }

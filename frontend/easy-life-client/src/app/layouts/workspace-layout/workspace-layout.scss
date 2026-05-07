@@ -91,6 +91,19 @@
         background: rgba(211, 47, 47, 0.06);
       }
     }
+
+    .sidebar__badge {
+      margin-left: auto;
+      background: var(--color-danger);
+      color: white;
+      font-size: 10px;
+      font-weight: $font-weight-bold;
+      padding: 1px 6px;
+      border-radius: $radius-pill;
+      min-width: 18px;
+      text-align: center;
+      line-height: 16px;
+    }
   }
 
   &__main {

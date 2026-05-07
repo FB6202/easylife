@@ -4,7 +4,7 @@
 // ── Header ─────────────────────────────────────────────────
 .weekplan-header {
   @include flex-between;
-  margin-bottom: $space-5;
+  margin-bottom: $space-6;
   gap: $space-4;
   flex-wrap: wrap;
 
@@ -30,40 +30,10 @@
   }
 }
 
-// ── Search ─────────────────────────────────────────────────
-.weekplan-search {
-  @include flex-start;
-  gap: $space-3;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: $radius-md;
-  padding: $space-3 $space-4;
-  margin-bottom: $space-5;
-
-  .material-symbols-outlined {
-    font-size: 18px;
-    color: var(--color-text-muted);
-    flex-shrink: 0;
-  }
-
-  input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-family: $font-family;
-    font-size: $font-size-sm;
-    color: var(--color-text-primary);
-    background: transparent;
-    &::placeholder {
-      color: var(--color-text-muted);
-    }
-  }
-}
-
 // ── Container ──────────────────────────────────────────────
 .weekplan-container {
   @include flex-col;
-  gap: $space-3; // Gap zwischen den Cards
+  gap: $space-3;
 }
 
 // ── Week Card ──────────────────────────────────────────────
@@ -81,7 +51,6 @@
     transform: translateY(-1px);
   }
 
-  // ── Header ──────────────────────────────────────────────
   &__header {
     @include flex-between;
     gap: $space-6;
@@ -96,13 +65,24 @@
   }
 
   &__status {
+    @include flex-start;
+    gap: $space-1;
     font-size: $font-size-xs;
     font-weight: $font-weight-bold;
-    padding: 2px $space-3;
+    padding: 3px $space-3;
     border-radius: $radius-pill;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
+
+    .material-symbols-outlined {
+      font-size: 13px;
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
 
     &.status--active {
       background: rgba(67, 160, 71, 0.12);
@@ -140,7 +120,6 @@
     }
   }
 
-  // ── Progress Block ───────────────────────────────────────
   &__progress-block {
     @include flex-col;
     gap: $space-2;
@@ -190,7 +169,6 @@
     &:hover {
       opacity: 0.7;
     }
-
     &--active {
       color: var(--color-primary);
     }
@@ -205,10 +183,9 @@
     }
   }
 
-  // ── Body ────────────────────────────────────────────────
   &__body {
     @include flex-col;
-    gap: $space-2;
+    gap: $space-3;
   }
 
   &__title {
@@ -223,7 +200,54 @@
     font-style: italic;
   }
 
-  // ── Footer ──────────────────────────────────────────────
+  &__items-preview {
+    @include flex-col;
+    gap: $space-1;
+    padding: $space-3 $space-4;
+    background: var(--color-bg-input);
+    border-radius: $radius-md;
+    border: 1px solid var(--color-border-light);
+  }
+
+  &__item {
+    @include flex-start;
+    gap: $space-2;
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+
+    .material-symbols-outlined {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      flex-shrink: 0;
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+
+    &--done {
+      color: var(--color-text-muted);
+      text-decoration: line-through;
+
+      .material-symbols-outlined {
+        color: var(--color-primary);
+        font-variation-settings:
+          'FILL' 1,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 20;
+      }
+    }
+  }
+
+  &__items-more {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    padding-left: $space-6;
+    font-style: italic;
+  }
+
   &__footer {
     @include flex-start;
     gap: $space-6;
@@ -270,10 +294,8 @@
     }
   }
 
-  // ── Abandoned State ──────────────────────────────────────
   &--abandoned {
     opacity: 0.7;
-
     .week-card__title {
       text-decoration: line-through;
       color: var(--color-text-muted);
@@ -281,9 +303,564 @@
   }
 }
 
-// ── Pagination wrapper ─────────────────────────────────────
+// ── Pagination Wrapper ─────────────────────────────────────
 .weekplan-pagination {
   @include card(0);
   overflow: hidden;
-  margin-top: $space-2;
+}
+
+// ══ MODAL OVERLAY ════════════════════════════════════════
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  @include flex-center;
+  padding: $space-4;
+}
+
+// ══ WEEKPLAN MODAL ════════════════════════════════════════
+.weekplan-modal {
+  background: var(--color-bg-card);
+  border-radius: $radius-xl;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  @include scrollbar-thin;
+  @include flex-col;
+  gap: $space-5;
+  padding: $space-8;
+
+  &__header {
+    @include flex-between;
+    align-items: flex-start;
+    gap: $space-4;
+  }
+
+  &__header-actions {
+    @include flex-start;
+    gap: $space-2;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  &__close {
+    @include btn-ghost;
+    border-radius: $radius-md;
+    padding: $space-1;
+    flex-shrink: 0;
+    .material-symbols-outlined {
+      font-size: 22px;
+    }
+  }
+
+  &__action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-md;
+    border: none;
+    @include flex-center;
+    cursor: pointer;
+    transition: all $transition-fast;
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    &--delete {
+      background: rgba(211, 47, 47, 0.1);
+      color: var(--color-danger);
+      &:hover {
+        background: rgba(211, 47, 47, 0.2);
+      }
+    }
+  }
+
+  &__title-input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    padding: $space-2 0;
+    font-family: $font-family;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-primary);
+    background: transparent;
+    outline: none;
+    transition: border-color $transition-fast;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4;
+    @include below-md {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__section-label {
+    @include flex-start;
+    gap: $space-2;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: $space-2 0 $space-1;
+    border-top: 1px solid var(--color-border-light);
+
+    .material-symbols-outlined {
+      font-size: 15px;
+      color: var(--color-primary);
+    }
+  }
+
+  &__section-actions {
+    @include flex-start;
+    gap: $space-3;
+    margin-left: auto;
+  }
+
+  &__convert-all-btn {
+    @include flex-start;
+    gap: $space-1;
+    background: none;
+    border: none;
+    font-family: $font-family;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0;
+    transition: color $transition-fast;
+
+    .material-symbols-outlined {
+      font-size: 14px;
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+
+    &:hover {
+      color: var(--color-primary);
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 1,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 20;
+      }
+    }
+  }
+
+  &__add-item-btn {
+    @include flex-start;
+    gap: $space-1;
+    background: none;
+    border: none;
+    font-family: $font-family;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--color-primary);
+    cursor: pointer;
+    padding: 0;
+    transition: opacity $transition-fast;
+
+    .material-symbols-outlined {
+      font-size: 15px;
+    }
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &__footer {
+    @include flex-between;
+    padding-top: $space-4;
+    border-top: 1px solid var(--color-border-light);
+  }
+}
+
+// ── Week Items List ────────────────────────────────────────
+.week-items-list {
+  @include flex-col;
+  gap: $space-2;
+}
+
+.week-item-row {
+  @include flex-start;
+  gap: $space-3;
+  padding: $space-2 $space-3;
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  transition:
+    border-color $transition-fast,
+    background $transition-fast;
+
+  &--task {
+    border-color: var(--color-primary);
+    background: rgba(67, 160, 71, 0.04);
+  }
+
+  &__check {
+    flex-shrink: 0;
+
+    input[type='checkbox'] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+  }
+
+  &__title {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: $font-family;
+    font-size: $font-size-sm;
+    color: var(--color-text-primary);
+    outline: none;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &--done {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__date {
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    padding: $space-1 $space-2;
+    font-family: $font-family;
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-card);
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__task-toggle {
+    @include btn-ghost;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: $radius-sm;
+    @include flex-center;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    transition: all $transition-fast;
+
+    .material-symbols-outlined {
+      font-size: 18px;
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+
+    &:hover {
+      color: var(--color-primary);
+      background: rgba(67, 160, 71, 0.08);
+    }
+
+    &--active {
+      color: var(--color-primary);
+
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 1,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 20;
+      }
+    }
+  }
+
+  &__remove {
+    @include btn-ghost;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border-radius: $radius-sm;
+    @include flex-center;
+    color: var(--color-text-muted);
+
+    .material-symbols-outlined {
+      font-size: 15px;
+    }
+    &:hover {
+      color: var(--color-danger);
+      background: rgba(211, 47, 47, 0.06);
+    }
+  }
+}
+
+.week-items-empty {
+  font-size: $font-size-sm;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: $space-4;
+  background: var(--color-bg-input);
+  border-radius: $radius-md;
+  border: 1px dashed var(--color-border);
+}
+
+// ── Task Summary ───────────────────────────────────────────
+.week-items-task-summary {
+  @include flex-start;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  background: rgba(67, 160, 71, 0.08);
+  border: 1px solid rgba(67, 160, 71, 0.2);
+  border-radius: $radius-md;
+  font-size: $font-size-xs;
+  color: var(--color-primary);
+
+  .material-symbols-outlined {
+    font-size: 16px;
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20;
+    flex-shrink: 0;
+  }
+
+  strong {
+    font-weight: $font-weight-bold;
+  }
+}
+
+// ── Status Picker ──────────────────────────────────────────
+.modal-status-picker {
+  @include flex-start;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.modal-status-btn {
+  @include flex-start;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  border-radius: $radius-pill;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 14px;
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20;
+  }
+
+  &--active.active {
+    background: rgba(67, 160, 71, 0.12);
+    color: #2e7d32;
+    border-color: rgba(67, 160, 71, 0.3);
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+  }
+
+  &--completed.active {
+    background: rgba(25, 118, 210, 0.12);
+    color: #1565c0;
+    border-color: rgba(25, 118, 210, 0.3);
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 20;
+    }
+  }
+
+  &--draft.active {
+    background: rgba(117, 117, 117, 0.12);
+    color: #616161;
+    border-color: rgba(117, 117, 117, 0.3);
+  }
+
+  &--abandoned.active {
+    background: rgba(158, 158, 158, 0.12);
+    color: #757575;
+    border-color: rgba(158, 158, 158, 0.3);
+  }
+
+  &:hover:not(.active) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}
+
+// ── Category Picker ────────────────────────────────────────
+.modal-cat-picker {
+  @include flex-start;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.modal-cat-chip {
+  @include flex-start;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-pill;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+
+  &:hover {
+    border-color: var(--cat-color, var(--color-primary));
+    color: var(--cat-color, var(--color-primary));
+  }
+
+  &--active {
+    background: var(--cat-color, var(--color-primary));
+    border-color: var(--cat-color, var(--color-primary));
+    color: white;
+  }
+}
+
+// ── Form Group overrides ───────────────────────────────────
+.form-group {
+  label {
+    @include flex-start;
+    gap: $space-1;
+
+    .material-symbols-outlined {
+      font-size: 15px;
+      color: var(--color-primary);
+    }
+  }
+}
+
+// ══ CONFIRM DIALOG ════════════════════════════════════════
+.confirm-dialog {
+  background: var(--color-bg-card);
+  border-radius: $radius-xl;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: $space-8;
+  @include flex-col;
+  align-items: center;
+  text-align: center;
+  gap: $space-4;
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-full;
+    @include flex-center;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    }
+
+    &--danger {
+      background: rgba(211, 47, 47, 0.12);
+      color: var(--color-danger);
+    }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+  }
+  &__text {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+  &__actions {
+    @include flex-center;
+    gap: $space-3;
+    margin-top: $space-2;
+  }
+}
+
+.btn-danger {
+  @include btn-base;
+  background: var(--color-danger);
+  color: white;
+  &:hover:not(:disabled) {
+    background: #c62828;
+  }
+}
+
+.btn-secondary--active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.filter-active-badge {
+  background: var(--color-primary);
+  color: white;
+  font-size: 11px;
+  font-weight: $font-weight-bold;
+  padding: 1px 6px;
+  border-radius: $radius-pill;
+  margin-left: $space-1;
+  min-width: 18px;
+  text-align: center;
 }

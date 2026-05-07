@@ -16,5 +16,8 @@ public record WeekPlanResponse(
         String reflection,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        List<Long> categoryIds
+        List<Long> categoryIds,
+        List<WeekPlanItemResponse> items,
+        int itemsDone,
+        int itemsTotal
 ) {}

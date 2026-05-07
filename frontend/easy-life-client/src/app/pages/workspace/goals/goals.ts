@@ -2,6 +2,11 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
+import {
+  FilterPanelComponent,
+  FilterField,
+  FilterValues,
+} from '../../../shared/components/filter/filter';
 
 type GoalStatus = 'ACTIVE' | 'COMPLETED' | 'ABANDONED';
 type AccessType = 'PRIVATE' | 'PUBLIC';
@@ -55,7 +60,7 @@ interface GoalForm {
 
 @Component({
   selector: 'app-goals',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, FilterPanelComponent],
   templateUrl: './goals.html',
   styleUrl: './goals.scss',
 })
@@ -230,6 +235,76 @@ export class GoalsComponent {
     },
   ]);
 
+  showFilter = signal(false);
+  activeFilters = signal<FilterValues>({});
+
+  readonly goalFilterFields: FilterField[] = [
+    {
+      key: 'search',
+      label: 'Search',
+      type: 'text',
+      icon: 'search',
+      placeholder: 'Search goals...',
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'multiselect',
+      icon: 'flag',
+      options: [
+        { value: 'ACTIVE', label: 'Active', icon: 'rocket_launch', color: '#43a047' },
+        { value: 'COMPLETED', label: 'Completed', icon: 'check_circle', color: '#1976d2' },
+        { value: 'ABANDONED', label: 'Abandoned', icon: 'cancel', color: '#757575' },
+      ],
+    },
+    {
+      key: 'accessType',
+      label: 'Access',
+      type: 'multiselect',
+      icon: 'lock',
+      options: [
+        { value: 'PUBLIC', label: 'Public', icon: 'travel_explore', color: '#43a047' },
+        { value: 'PRIVATE', label: 'Private', icon: 'lock', color: '#757575' },
+      ],
+    },
+    {
+      key: 'categories',
+      label: 'Categories',
+      type: 'multiselect',
+      icon: 'category',
+      options: [
+        { value: '1', label: 'Work', icon: 'work', color: '#1976d2' },
+        { value: '2', label: 'Finance', icon: 'payments', color: '#f57c00' },
+        { value: '3', label: 'Health', icon: 'self_improvement', color: '#43a047' },
+        { value: '4', label: 'Personal', icon: 'person', color: '#9c27b0' },
+        { value: '5', label: 'Learning', icon: 'school', color: '#e91e63' },
+      ],
+    },
+    {
+      key: 'progress',
+      label: 'Progress',
+      type: 'select',
+      icon: 'trending_up',
+      options: [
+        { value: 'not_started', label: 'Not started (0%)' },
+        { value: 'in_progress', label: 'In progress (1–99%)' },
+        { value: 'completed', label: 'Completed (100%)' },
+      ],
+    },
+    {
+      key: 'deadline',
+      label: 'Deadline Range',
+      type: 'date-range',
+      icon: 'calendar_today',
+    },
+    {
+      key: 'hasImage',
+      label: 'Has Cover Image',
+      type: 'toggle',
+      icon: 'image',
+    },
+  ];
+
   readonly currentPage = signal(0);
   readonly totalPages = signal(5);
   readonly totalElements = signal(18);
@@ -259,6 +334,25 @@ export class GoalsComponent {
 
   createForm = signal<GoalForm>(this.emptyForm());
   editForm = signal<GoalForm>(this.emptyForm());
+
+  readonly activeFilterCount = computed(
+    () =>
+      Object.values(this.activeFilters()).filter((v) => {
+        if (!v || v === '') return false;
+        if (Array.isArray(v)) return v.length > 0;
+        return true;
+      }).length,
+  );
+
+  onFilterApply(values: FilterValues) {
+    this.activeFilters.set(values);
+    this.showFilter.set(false);
+    console.log('Goal filter applied:', values);
+  }
+
+  onFilterReset() {
+    this.activeFilters.set({});
+  }
 
   // ── Tasks in Form ──────────────────────────────────────
   addTaskToCreate() {

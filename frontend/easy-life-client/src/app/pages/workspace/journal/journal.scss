@@ -60,7 +60,6 @@
   }
 }
 
-// ── Aside (Date + Mood) ────────────────────────────────────
 .journal-card__aside {
   @include flex-col;
   align-items: center;
@@ -124,7 +123,6 @@
   letter-spacing: 0.06em;
 }
 
-// ── Content ────────────────────────────────────────────────
 .journal-card__content {
   @include flex-col;
   gap: $space-4;
@@ -153,7 +151,6 @@
   flex-shrink: 0;
 }
 
-// ── Badges ─────────────────────────────────────────────────
 .journal-badge {
   @include flex-start;
   gap: $space-1;
@@ -183,9 +180,16 @@
     color: #e91e63;
     border: 1px solid rgba(233, 30, 99, 0.2);
   }
+
+  &--weekplan {
+    background: rgba(67, 160, 71, 0.1);
+    color: var(--color-primary);
+    border: 1px solid rgba(67, 160, 71, 0.2);
+    max-width: 180px;
+    @include truncate;
+  }
 }
 
-// ── Sections (Well + Bad) ──────────────────────────────────
 .journal-card__sections {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -240,7 +244,6 @@
   }
 }
 
-// ── Footer ─────────────────────────────────────────────────
 .journal-card__footer {
   @include flex-between;
   padding-top: $space-3;
@@ -252,16 +255,15 @@
 .journal-card__cats {
   @include flex-start;
   gap: $space-2;
+}
 
-  .journal-card__cat-icon {
-    font-size: 18px;
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 20;
-    // KEIN color hier – damit [style.color] aus dem HTML greift
-  }
+.journal-card__cat-icon {
+  font-size: 18px;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 20;
 }
 
 .journal-card__meta {
@@ -275,8 +277,339 @@
   }
 }
 
-// ── Pagination Wrapper ─────────────────────────────────────
 .journal-pagination {
   @include card(0);
   overflow: hidden;
+}
+
+// ══ MODAL OVERLAY ════════════════════════════════════════
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  @include flex-center;
+  padding: $space-4;
+}
+
+// ══ JOURNAL MODAL ════════════════════════════════════════
+.journal-modal {
+  background: var(--color-bg-card);
+  border-radius: $radius-xl;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  @include scrollbar-thin;
+  @include flex-col;
+  gap: $space-5;
+  padding: $space-8;
+
+  &__header {
+    @include flex-between;
+    align-items: flex-start;
+    gap: $space-4;
+  }
+
+  &__header-actions {
+    @include flex-start;
+    gap: $space-2;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  &__close {
+    @include btn-ghost;
+    border-radius: $radius-md;
+    padding: $space-1;
+    flex-shrink: 0;
+    .material-symbols-outlined {
+      font-size: 22px;
+    }
+  }
+
+  &__action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-md;
+    border: none;
+    @include flex-center;
+    cursor: pointer;
+    transition: all $transition-fast;
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    &--delete {
+      background: rgba(211, 47, 47, 0.1);
+      color: var(--color-danger);
+      &:hover {
+        background: rgba(211, 47, 47, 0.2);
+      }
+    }
+  }
+
+  &__title-input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    padding: $space-2 0;
+    font-family: $font-family;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-primary);
+    background: transparent;
+    outline: none;
+    transition: border-color $transition-fast;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4;
+    @include below-md {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__section-label {
+    @include flex-start;
+    gap: $space-2;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    margin-bottom: $space-1;
+
+    .material-symbols-outlined {
+      font-size: 16px;
+    }
+
+    &--well {
+      color: #2e7d32;
+    }
+    &--bad {
+      color: #c62828;
+    }
+    &--learnings {
+      color: #1976d2;
+    }
+    &--gratitude {
+      color: #e91e63;
+    }
+  }
+
+  &__weekplan-current {
+    @include flex-start;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    background: rgba(67, 160, 71, 0.08);
+    border: 1px solid rgba(67, 160, 71, 0.2);
+    border-radius: $radius-md;
+    font-size: $font-size-xs;
+    color: var(--color-primary);
+    margin-bottom: $space-2;
+
+    .material-symbols-outlined {
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__weekplan-dates {
+    color: var(--color-text-muted);
+    margin-left: $space-1;
+  }
+
+  &__footer {
+    @include flex-between;
+    padding-top: $space-4;
+    border-top: 1px solid var(--color-border-light);
+  }
+}
+
+// ── Mood Picker ────────────────────────────────────────────
+.mood-picker {
+  @include flex-start;
+  gap: $space-2;
+}
+
+.mood-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-md;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  @include flex-center;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 22px;
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+
+  &:hover {
+    border-color: var(--mood-color, var(--color-primary));
+    background: rgba(0, 0, 0, 0.04);
+    transform: scale(1.1);
+  }
+
+  &--active {
+    background: var(--mood-color, var(--color-primary));
+    border-color: var(--mood-color, var(--color-primary));
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ── Category Picker ────────────────────────────────────────
+.modal-cat-picker {
+  @include flex-start;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.modal-cat-chip {
+  @include flex-start;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-pill;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+
+  &:hover {
+    border-color: var(--cat-color, var(--color-primary));
+    color: var(--cat-color, var(--color-primary));
+  }
+
+  &--active {
+    background: var(--cat-color, var(--color-primary));
+    border-color: var(--cat-color, var(--color-primary));
+    color: white;
+  }
+}
+
+// ══ CONFIRM DIALOG ════════════════════════════════════════
+.confirm-dialog {
+  background: var(--color-bg-card);
+  border-radius: $radius-xl;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: $space-8;
+  @include flex-col;
+  align-items: center;
+  text-align: center;
+  gap: $space-4;
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-full;
+    @include flex-center;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+      font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    }
+
+    &--danger {
+      background: rgba(211, 47, 47, 0.12);
+      color: var(--color-danger);
+    }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-primary);
+  }
+  &__text {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+  &__actions {
+    @include flex-center;
+    gap: $space-3;
+    margin-top: $space-2;
+  }
+}
+
+.btn-danger {
+  @include btn-base;
+  background: var(--color-danger);
+  color: white;
+  &:hover:not(:disabled) {
+    background: #c62828;
+  }
+}
+
+// ── Form Group Label Override ──────────────────────────────
+.journal-modal {
+  .form-group label:not(.journal-modal__section-label) {
+    @include flex-start;
+    gap: $space-2;
+    align-items: center;
+
+    .material-symbols-outlined {
+      font-size: 15px;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+  }
+}
+
+.btn-secondary--active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.filter-active-badge {
+  background: var(--color-primary);
+  color: white;
+  font-size: 11px;
+  font-weight: $font-weight-bold;
+  padding: 1px 6px;
+  border-radius: $radius-pill;
+  margin-left: $space-1;
+  min-width: 18px;
+  text-align: center;
 }

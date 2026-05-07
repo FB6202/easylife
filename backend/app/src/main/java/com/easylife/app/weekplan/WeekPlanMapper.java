@@ -1,17 +1,24 @@
 package com.easylife.app.weekplan;
 
-import com.easylife.app.shared.enums.WeekPlanStatus;
-import com.easylife.app.weekplan.api.WeekPlanRequest;
-import com.easylife.app.weekplan.api.WeekPlanResponse;
+import com.easylife.app.weekplan.api.*;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Component
 class WeekPlanMapper {
 
-    public WeekPlanResponse toResponse(WeekPlan weekPlan) {
+    WeekPlanResponse toResponse(WeekPlan weekPlan) {
+        List<WeekPlanItemResponse> itemResponses = weekPlan.getItems()
+                .stream()
+                .map(this::toItemResponse)
+                .toList();
+
+        int itemsDone = (int) weekPlan.getItems().stream()
+                .filter(WeekPlanItem::getDone)
+                .count();
+
+        int itemsTotal = weekPlan.getItems().size();
+
         return new WeekPlanResponse(
                 weekPlan.getId(),
                 weekPlan.getTitle(),
@@ -22,32 +29,57 @@ class WeekPlanMapper {
                 weekPlan.getReflection(),
                 weekPlan.getCreatedAt(),
                 weekPlan.getUpdatedAt(),
-                weekPlan.getCategoryIds()
+                weekPlan.getCategoryIds(),
+                itemResponses,
+                itemsDone,
+                itemsTotal
         );
     }
 
-    public WeekPlan toEntity(WeekPlanRequest request, Long userId) {
-        return WeekPlan.builder()
-                .title(request.title())
-                .intention(request.intention())
-                .startDate(request.startDate())
-                .endDate(request.endDate())
-                .status(request.status() != null ? request.status() : WeekPlanStatus.DRAFT)
-                .reflection(request.reflection())
-                .createdAt(LocalDateTime.now())
-                .userId(userId)
-                .categoryIds(request.categoryIds() != null ? request.categoryIds() : new ArrayList<>())
-                .build();
+    WeekPlanItemResponse toItemResponse(WeekPlanItem item) {
+        return new WeekPlanItemResponse(
+                item.getId(),
+                item.getTitle(),
+                item.getDescription(),
+                item.getDone(),
+                item.getDueDate(),
+                item.getCreatedAt(),
+                item.getUpdatedAt()
+        );
     }
 
-    public void update(WeekPlan weekPlan, WeekPlanRequest request) {
+    WeekPlan toEntity(WeekPlanRequest request, Long userId) {
+        WeekPlan weekPlan = new WeekPlan();
+        weekPlan.setUserId(userId);
+        applyRequest(weekPlan, request);
+        return weekPlan;
+    }
+
+    void applyRequest(WeekPlan weekPlan, WeekPlanRequest request) {
         weekPlan.setTitle(request.title());
         weekPlan.setIntention(request.intention());
         weekPlan.setStartDate(request.startDate());
         weekPlan.setEndDate(request.endDate());
-        weekPlan.setStatus(request.status());
+        if (request.status() != null) {
+            weekPlan.setStatus(request.status());
+        }
         weekPlan.setReflection(request.reflection());
-        weekPlan.setCategoryIds(request.categoryIds() != null ? request.categoryIds() : new ArrayList<>());
+        weekPlan.setCategoryIds(
+                request.categoryIds() != null ? request.categoryIds() : List.of()
+        );
     }
 
+    WeekPlanItem toItemEntity(WeekPlanItemRequest request, WeekPlan weekPlan) {
+        WeekPlanItem item = new WeekPlanItem();
+        item.setWeekPlan(weekPlan);
+        applyItemRequest(item, request);
+        return item;
+    }
+
+    void applyItemRequest(WeekPlanItem item, WeekPlanItemRequest request) {
+        item.setTitle(request.title());
+        item.setDescription(request.description());
+        item.setDone(request.done() != null ? request.done() : false);
+        item.setDueDate(request.dueDate());
+    }
 }

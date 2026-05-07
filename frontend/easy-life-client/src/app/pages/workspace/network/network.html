@@ -1,15 +1,22 @@
 <!-- Page Header -->
 <div class="network-header">
   <div class="network-header__text">
-    <h1 class="network-header__title">Network.</h1>
+    <h1 class="network-header__title">People</h1>
     <p class="network-header__subtitle">Manage your personal and professional relationships.</p>
   </div>
   <div class="network-header__actions">
-    <button class="btn-secondary">
+    <button
+      class="btn-secondary"
+      [class.btn-secondary--active]="activeFilterCount() > 0"
+      (click)="showFilter.set(true)"
+    >
       <span class="material-symbols-outlined">tune</span>
       Filters
+      @if (activeFilterCount() > 0) {
+        <span class="filter-active-badge">{{ activeFilterCount() }}</span>
+      }
     </button>
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openCreate()">
       <span class="material-symbols-outlined">add</span>
       Add Contact
     </button>
@@ -34,39 +41,63 @@
 
 <!-- Contacts Table -->
 <div class="network-container">
-  <!-- Table Header -->
   <div class="network-table__header">
-    <span class="network-col network-col--contact">CONTACT</span>
-    <span class="network-col network-col--company">COMPANY & POSITION</span>
-    <span class="network-col network-col--type">TYPE</span>
-    <span class="network-col network-col--last">LAST CONTACT</span>
-    <span class="network-col network-col--actions">ACTIONS</span>
+    <span class="network-col network-col--contact">Contact</span>
+    <span class="network-col network-col--skills">Skills & Keywords</span>
+    <span class="network-col network-col--type">Type</span>
+    <span class="network-col network-col--cats">Categories</span>
+    <span class="network-col network-col--last">Last Contact</span>
   </div>
 
-  <!-- Rows -->
   @for (contact of filteredContacts(); track contact.id) {
-    <div class="network-table__row">
+    <div class="network-table__row" (click)="openEdit(contact)">
       <!-- Contact -->
       <div class="network-col network-col--contact">
         <div class="contact-avatar" [style.background]="contact.avatarColor">
           {{ contact.initials }}
         </div>
-        <span class="contact-name"> {{ contact.firstname }} {{ contact.lastname }} </span>
+        <div class="contact-info">
+          <span class="contact-info__name"> {{ contact.firstname }} {{ contact.lastname }} </span>
+          <span class="contact-info__role">
+            {{ contact.position }}
+            @if (contact.company) {
+              · {{ contact.company }}
+            }
+          </span>
+        </div>
       </div>
 
-      <!-- Company & Position -->
-      <div class="network-col network-col--company">
-        <div class="contact-company">
-          <span class="contact-company__name">{{ contact.company }}</span>
-          <span class="contact-company__position">{{ contact.position }}</span>
+      <!-- Skills -->
+      <div class="network-col network-col--skills">
+        <div class="contact-skills">
+          @for (skill of contact.skills.slice(0, 3); track skill) {
+            <span class="contact-skill-tag">{{ skill }}</span>
+          }
+          @if (contact.skills.length > 3) {
+            <span class="contact-skill-more">+{{ contact.skills.length - 3 }}</span>
+          }
         </div>
       </div>
 
       <!-- Type -->
       <div class="network-col network-col--type">
         <span [class]="'contact-type ' + getRelationshipClass(contact.relationshipType)">
-          {{ contact.relationshipType }}
+          {{ getRelationshipLabel(contact.relationshipType) }}
         </span>
+      </div>
+
+      <!-- Categories -->
+      <div class="network-col network-col--cats">
+        <div class="contact-cats">
+          @for (cat of contact.categories; track cat.id) {
+            <span
+              class="material-symbols-outlined contact-cat-icon"
+              [style.color]="cat.color"
+              [title]="cat.name"
+              >{{ cat.icon }}</span
+            >
+          }
+        </div>
       </div>
 
       <!-- Last Contact -->
@@ -74,32 +105,9 @@
         <span class="material-symbols-outlined contact-last__icon">schedule</span>
         <span class="contact-last__text">{{ contact.lastContactedAt }}</span>
       </div>
-
-      <!-- Actions -->
-      <div class="network-col network-col--actions">
-        @if (contact.email) {
-          <button class="contact-action-btn" [title]="contact.email">
-            <span class="material-symbols-outlined">mail</span>
-          </button>
-        }
-        @if (contact.phone) {
-          <button class="contact-action-btn" [title]="contact.phone">
-            <span class="material-symbols-outlined">call</span>
-          </button>
-        }
-        @if (contact.linkedinUrl) {
-          <button class="contact-action-btn" title="LinkedIn">
-            <span class="material-symbols-outlined">link</span>
-          </button>
-        }
-        <button class="contact-action-btn">
-          <span class="material-symbols-outlined">more_vert</span>
-        </button>
-      </div>
     </div>
   }
 
-  <!-- Pagination -->
   <app-pagination
     [currentPage]="currentPage()"
     [totalPages]="totalPages()"
@@ -109,3 +117,365 @@
     (aiClick)="onAiClick()"
   />
 </div>
+
+<!-- ══ FILTER PANEL ══════════════════════════════════════ -->
+@if (showFilter()) {
+  <app-filter-panel
+    title="Filter People"
+    [fields]="networkFilterFields"
+    [initialValues]="activeFilters()"
+    (apply)="onFilterApply($event)"
+    (reset)="onFilterReset()"
+    (close)="showFilter.set(false)"
+  />
+}
+
+<!-- ══ CREATE MODAL ══════════════════════════════════════ -->
+@if (showCreateModal()) {
+  <div class="modal-overlay" (click)="showCreateModal.set(false)">
+    <div class="contact-modal" (click)="$event.stopPropagation()">
+      <div class="contact-modal__header">
+        <div>
+          <h2 class="contact-modal__title">Add Contact</h2>
+          <p class="contact-modal__subtitle">Add someone to your people network.</p>
+        </div>
+        <button class="contact-modal__close" (click)="showCreateModal.set(false)">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Name Row -->
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" placeholder="Jane" [(ngModel)]="createForm().firstname" />
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" placeholder="Doe" [(ngModel)]="createForm().lastname" />
+        </div>
+      </div>
+
+      <!-- Company + Position -->
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>Company <span class="form-group__optional">optional</span></label>
+          <input type="text" placeholder="Company name" [(ngModel)]="createForm().company" />
+        </div>
+        <div class="form-group">
+          <label>Position <span class="form-group__optional">optional</span></label>
+          <input type="text" placeholder="Job title" [(ngModel)]="createForm().position" />
+        </div>
+      </div>
+
+      <!-- Email + Phone -->
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>Email <span class="form-group__optional">optional</span></label>
+          <input type="email" placeholder="jane@example.com" [(ngModel)]="createForm().email" />
+        </div>
+        <div class="form-group">
+          <label>Phone <span class="form-group__optional">optional</span></label>
+          <input type="tel" placeholder="+49 123 456789" [(ngModel)]="createForm().phone" />
+        </div>
+      </div>
+
+      <!-- LinkedIn + Website -->
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>LinkedIn <span class="form-group__optional">optional</span></label>
+          <input
+            type="url"
+            placeholder="linkedin.com/in/..."
+            [(ngModel)]="createForm().linkedinUrl"
+          />
+        </div>
+        <div class="form-group">
+          <label>Website <span class="form-group__optional">optional</span></label>
+          <input type="url" placeholder="https://..." [(ngModel)]="createForm().websiteUrl" />
+        </div>
+      </div>
+
+      <!-- Relationship Type -->
+      <div class="form-group">
+        <label>Relationship Type</label>
+        <div class="modal-type-picker">
+          @for (type of relationshipTypes; track type) {
+            <button
+              [class]="
+                'modal-type-btn modal-type-btn--' +
+                type.toLowerCase() +
+                (createForm().relationshipType === type ? ' active' : '')
+              "
+              (click)="createForm.update((f) => ({ ...f, relationshipType: type }))"
+            >
+              {{ getRelationshipLabel(type) }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="form-group">
+        <label>Skills & Keywords</label>
+        <div class="skill-input-row">
+          <input
+            type="text"
+            placeholder="Add skill and press Enter..."
+            [value]="newSkillInput()"
+            (input)="newSkillInput.set($any($event.target).value)"
+            (keydown)="onSkillKeydown($event, 'create')"
+          />
+          <button class="skill-add-btn" (click)="addSkillToCreate()">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        </div>
+        @if (createForm().skills.length > 0) {
+          <div class="skill-tags">
+            @for (skill of createForm().skills; track skill) {
+              <span class="skill-tag">
+                {{ skill }}
+                <button (click)="removeSkillFromCreate(skill)">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label>Notes <span class="form-group__optional">optional</span></label>
+        <textarea
+          rows="3"
+          placeholder="How did you meet? What's important to remember?"
+          [(ngModel)]="createForm().notes"
+        ></textarea>
+      </div>
+
+      <!-- Categories -->
+      <div class="form-group">
+        <label>Categories <span class="form-group__hint">max 5</span></label>
+        <div class="modal-cat-picker">
+          @for (cat of availableCategories(); track cat.id) {
+            <button
+              [class]="
+                'modal-cat-chip ' +
+                (createForm().categoryIds.includes(cat.id) ? 'modal-cat-chip--active' : '')
+              "
+              [style.--cat-color]="cat.color"
+              (click)="toggleCreateCategory(cat.id)"
+            >
+              <span
+                class="material-symbols-outlined"
+                [style.color]="createForm().categoryIds.includes(cat.id) ? 'white' : cat.color"
+              >
+                {{ cat.icon }}
+              </span>
+              {{ cat.name }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="contact-modal__footer">
+        <button class="btn-secondary" (click)="showCreateModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="submitCreate()">Add Contact</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ EDIT MODAL ════════════════════════════════════════ -->
+@if (showEditModal() && selectedContact()) {
+  <div class="modal-overlay" (click)="showEditModal.set(false)">
+    <div class="contact-modal" (click)="$event.stopPropagation()">
+      <div class="contact-modal__header">
+        <div class="contact-modal__header-info">
+          <div class="contact-modal__avatar" [style.background]="selectedContact()!.avatarColor">
+            {{ selectedContact()!.initials }}
+          </div>
+          <div>
+            <h2 class="contact-modal__title">
+              {{ selectedContact()!.firstname }} {{ selectedContact()!.lastname }}
+            </h2>
+            <p class="contact-modal__subtitle">
+              {{ selectedContact()!.position }}
+              @if (selectedContact()!.company) {
+                · {{ selectedContact()!.company }}
+              }
+            </p>
+          </div>
+        </div>
+        <div class="contact-modal__header-actions">
+          <button
+            class="contact-modal__action-btn contact-modal__action-btn--delete"
+            (click)="openDeleteConfirm()"
+            title="Delete contact"
+          >
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+          <button class="contact-modal__close" (click)="showEditModal.set(false)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Name Row -->
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" placeholder="Jane" [(ngModel)]="editForm().firstname" />
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" placeholder="Doe" [(ngModel)]="editForm().lastname" />
+        </div>
+      </div>
+
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>Company <span class="form-group__optional">optional</span></label>
+          <input type="text" placeholder="Company name" [(ngModel)]="editForm().company" />
+        </div>
+        <div class="form-group">
+          <label>Position <span class="form-group__optional">optional</span></label>
+          <input type="text" placeholder="Job title" [(ngModel)]="editForm().position" />
+        </div>
+      </div>
+
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>Email <span class="form-group__optional">optional</span></label>
+          <input type="email" placeholder="jane@example.com" [(ngModel)]="editForm().email" />
+        </div>
+        <div class="form-group">
+          <label>Phone <span class="form-group__optional">optional</span></label>
+          <input type="tel" placeholder="+49 123 456789" [(ngModel)]="editForm().phone" />
+        </div>
+      </div>
+
+      <div class="contact-modal__row">
+        <div class="form-group">
+          <label>LinkedIn <span class="form-group__optional">optional</span></label>
+          <input
+            type="url"
+            placeholder="linkedin.com/in/..."
+            [(ngModel)]="editForm().linkedinUrl"
+          />
+        </div>
+        <div class="form-group">
+          <label>Website <span class="form-group__optional">optional</span></label>
+          <input type="url" placeholder="https://..." [(ngModel)]="editForm().websiteUrl" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Relationship Type</label>
+        <div class="modal-type-picker">
+          @for (type of relationshipTypes; track type) {
+            <button
+              [class]="
+                'modal-type-btn modal-type-btn--' +
+                type.toLowerCase() +
+                (editForm().relationshipType === type ? ' active' : '')
+              "
+              (click)="editForm.update((f) => ({ ...f, relationshipType: type }))"
+            >
+              {{ getRelationshipLabel(type) }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="form-group">
+        <label>Skills & Keywords</label>
+        <div class="skill-input-row">
+          <input
+            type="text"
+            placeholder="Add skill and press Enter..."
+            [value]="newSkillInput()"
+            (input)="newSkillInput.set($any($event.target).value)"
+            (keydown)="onSkillKeydown($event, 'edit')"
+          />
+          <button class="skill-add-btn" (click)="addSkillToEdit()">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        </div>
+        @if (editForm().skills.length > 0) {
+          <div class="skill-tags">
+            @for (skill of editForm().skills; track skill) {
+              <span class="skill-tag">
+                {{ skill }}
+                <button (click)="removeSkillFromEdit(skill)">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Notes <span class="form-group__optional">optional</span></label>
+        <textarea
+          rows="3"
+          placeholder="How did you meet? What's important to remember?"
+          [(ngModel)]="editForm().notes"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Categories <span class="form-group__hint">max 5</span></label>
+        <div class="modal-cat-picker">
+          @for (cat of availableCategories(); track cat.id) {
+            <button
+              [class]="
+                'modal-cat-chip ' +
+                (editForm().categoryIds.includes(cat.id) ? 'modal-cat-chip--active' : '')
+              "
+              [style.--cat-color]="cat.color"
+              (click)="toggleEditCategory(cat.id)"
+            >
+              <span
+                class="material-symbols-outlined"
+                [style.color]="editForm().categoryIds.includes(cat.id) ? 'white' : cat.color"
+              >
+                {{ cat.icon }}
+              </span>
+              {{ cat.name }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="contact-modal__footer">
+        <button class="btn-secondary" (click)="showEditModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="submitEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ DELETE CONFIRM ════════════════════════════════════ -->
+@if (showDeleteConfirm() && selectedContact()) {
+  <div class="modal-overlay" (click)="showDeleteConfirm.set(false)">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <div class="confirm-dialog__icon confirm-dialog__icon--danger">
+        <span class="material-symbols-outlined">delete</span>
+      </div>
+      <h3 class="confirm-dialog__title">Delete Contact</h3>
+      <p class="confirm-dialog__text">
+        Are you sure you want to delete
+        <strong>"{{ selectedContact()!.firstname }} {{ selectedContact()!.lastname }}"</strong>?
+        This action cannot be undone.
+      </p>
+      <div class="confirm-dialog__actions">
+        <button class="btn-secondary" (click)="showDeleteConfirm.set(false)">Cancel</button>
+        <button class="btn-danger" (click)="confirmDelete()">Delete Contact</button>
+      </div>
+    </div>
+  </div>
+}

@@ -14,5 +14,6 @@ public record WeekPlanRequest(
         @NotNull LocalDate endDate,
         WeekPlanStatus status,
         String reflection,
-        List<Long> categoryIds
+        List<Long> categoryIds,
+        List<WeekPlanItemRequest> items
 ) {}

@@ -31,11 +31,13 @@ export class WorkspaceLayoutComponent {
     { label: 'Journal', route: 'journal', icon: 'menu_book' },
   ];
 
-  readonly accountItems: NavItem[] = [
-    { label: 'Profile', route: 'profile', icon: 'person' },
-    { label: 'People', route: 'network', icon: 'people' },
-    { label: 'Network', route: 'following', icon: 'person_add' },
-    { label: 'Notifications', route: 'notifications', icon: 'notifications' },
+  readonly unreadNotificationCount = signal(3);
+
+  readonly accountItems = [
+    { route: 'profile', label: 'Profile', icon: 'person' },
+    { route: 'network', label: 'People', icon: 'people' },
+    { route: 'following', label: 'Network', icon: 'person_add' },
+    { route: 'notifications', label: 'Notifications', icon: 'notifications', badge: true },
   ];
 
   toggleSidebar() {

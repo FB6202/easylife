@@ -40,6 +40,12 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/workspace/dashboard/dashboard').then((m) => m.DashboardComponent),
+        title: 'Dashboard - Easy Life',
+      },
+      {
         path: 'tasks',
         loadComponent: () => import('./pages/workspace/tasks/tasks').then((m) => m.TasksComponent),
         title: 'Tasks - Easy Life',
@@ -106,6 +112,22 @@ export const routes: Routes = [
             (m) => m.NotificationsComponent,
           ),
         title: 'Notifications - Easy Life',
+      },
+      {
+        path: 'network/search',
+        loadComponent: () =>
+          import('./pages/workspace/network-search/network-search').then(
+            (m) => m.NetworkSearchComponent,
+          ),
+        title: 'Find People - Easy Life',
+      },
+      {
+        path: 'network/user/:userId',
+        loadComponent: () =>
+          import('./pages/workspace/network-profile/network-profile').then(
+            (m) => m.NetworkProfileComponent,
+          ),
+        title: 'User Profile - Easy Life',
       },
     ],
   },

@@ -1,42 +1,67 @@
-<div class="pagination">
-  <div class="pagination__info">
-    <span>
-      Showing <strong>{{ startItem }} to {{ endItem }}</strong> of
-      <strong>{{ totalElements() }}</strong> results
+<div class="pagination-wrapper">
+  <!-- Left: Page Size + Info -->
+  <div class="pagination-left">
+    <div class="pagination-size">
+      <span class="pagination-size__label">Per page</span>
+      <div class="pagination-size__options">
+        @for (size of pageSizeOptions; track size) {
+          <button
+            [class]="
+              'pagination-size__btn ' + (pageSize() === size ? 'pagination-size__btn--active' : '')
+            "
+            (click)="onSizeChange(size)"
+          >
+            {{ size }}
+          </button>
+        }
+      </div>
+    </div>
+    <span class="pagination-info">
+      {{ startItem() }}–{{ endItem() }} of {{ totalElements() }}
     </span>
-    @if (showAiButton()) {
-      <button class="pagination__ai-btn" (click)="aiClick.emit()">
-        <span class="material-symbols-outlined">auto_awesome</span>
-        <span>Ask AI</span>
-      </button>
-    }
   </div>
 
-  <div class="pagination__controls">
+  <!-- Center: Page Buttons -->
+  <div class="pagination-pages">
     <button
-      class="pagination__btn"
+      class="pagination-btn pagination-btn--nav"
       [disabled]="currentPage() === 0"
-      (click)="goTo(currentPage() - 1)"
+      (click)="prev()"
     >
       <span class="material-symbols-outlined">chevron_left</span>
     </button>
 
-    @for (page of pages; track page) {
-      <button
-        class="pagination__btn"
-        [class.pagination__btn--active]="page === currentPage()"
-        (click)="goTo(page)"
-      >
-        {{ page + 1 }}
-      </button>
+    @for (page of visiblePages(); track $index) {
+      @if (isEllipsis(page)) {
+        <span class="pagination-ellipsis">···</span>
+      } @else {
+        <button
+          [class]="
+            'pagination-btn ' + (currentPage() === asNumber(page) ? 'pagination-btn--active' : '')
+          "
+          (click)="goTo(asNumber(page))"
+        >
+          {{ asNumber(page) + 1 }}
+        </button>
+      }
     }
 
     <button
-      class="pagination__btn"
+      class="pagination-btn pagination-btn--nav"
       [disabled]="currentPage() === totalPages() - 1"
-      (click)="goTo(currentPage() + 1)"
+      (click)="next()"
     >
       <span class="material-symbols-outlined">chevron_right</span>
     </button>
+  </div>
+
+  <!-- Right: AI Button -->
+  <div class="pagination-right">
+    @if (showAiButton()) {
+      <button class="pagination-ai-btn" (click)="onAiClick()">
+        <span class="material-symbols-outlined">auto_awesome</span>
+        Ask AI
+      </button>
+    }
   </div>
 </div>

@@ -7,10 +7,31 @@
     </p>
   </div>
   <div class="tasks-header__actions">
-    <button class="btn-secondary">
+    <!-- Filter Button mit Badge -->
+    <button
+      class="btn-secondary"
+      [class.btn-secondary--active]="activeFilterCount() > 0"
+      (click)="showFilter.set(true)"
+    >
       <span class="material-symbols-outlined">tune</span>
       Filters
+      @if (activeFilterCount() > 0) {
+        <span class="filter-active-badge">{{ activeFilterCount() }}</span>
+      }
     </button>
+
+    <!-- Filter Panel -->
+    @if (showFilter()) {
+      <app-filter-panel
+        title="Filter Tasks"
+        [fields]="taskFilterFields"
+        [initialValues]="activeFilters()"
+        (apply)="onFilterApply($event)"
+        (reset)="onFilterReset()"
+        (close)="showFilter.set(false)"
+      />
+    }
+
     <button class="btn-primary" (click)="openCreate()">
       <span class="material-symbols-outlined">add</span>
       New Task

@@ -65,6 +65,8 @@ export class CalendarComponent {
 
   showCreateModal = signal(false);
   showEditModal = signal(false);
+  showDeleteConfirm = signal(false);
+
   selectedEvent = signal<CalendarEvent | null>(null);
 
   readonly eventTypes: { type: EventType; icon: string; label: string }[] = [
@@ -492,6 +494,18 @@ export class CalendarComponent {
     if (!this.editForm().title.trim()) return;
     console.log('Update event:', this.selectedEvent()?.id, this.editForm());
     this.showEditModal.set(false);
+  }
+
+  openDeleteConfirm() {
+    this.showDeleteConfirm.set(true);
+  }
+
+  confirmDelete() {
+    const id = this.selectedEvent()?.id;
+    if (id) this.allEvents.update((e) => e.filter((ev) => ev.id !== id));
+    this.showDeleteConfirm.set(false);
+    this.showEditModal.set(false);
+    this.selectedEvent.set(null);
   }
 
   deleteEvent() {

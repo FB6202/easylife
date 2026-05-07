@@ -2,6 +2,11 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
+import {
+  FilterField,
+  FilterValues,
+  FilterPanelComponent,
+} from '../../../shared/components/filter/filter';
 
 type Priority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'OPTIONAL';
 type Status = 'OPEN' | 'IN_PROGRESS' | 'DONE';
@@ -41,12 +46,11 @@ interface TaskForm {
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, FilterPanelComponent],
   templateUrl: './tasks.html',
-  styleUrl: './tasks.scss'
+  styleUrl: './tasks.scss',
 })
 export class TasksComponent {
-
   // Available categories (later from API)
   readonly availableCategories = signal<CategoryOption[]>([
     { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
@@ -68,9 +72,11 @@ export class TasksComponent {
       status: 'IN_PROGRESS',
       priority: 'HIGH',
       accessType: 'PRIVATE',
-      dueDay: '24', dueMonth: 'OCT', dueYear: '2025',
+      dueDay: '24',
+      dueMonth: 'OCT',
+      dueYear: '2025',
       dueDate: '2025-10-24',
-      done: false
+      done: false,
     },
     {
       id: 2,
@@ -83,23 +89,25 @@ export class TasksComponent {
       status: 'OPEN',
       priority: 'MEDIUM',
       accessType: 'PUBLIC',
-      dueDay: '02', dueMonth: 'NOV', dueYear: '2025',
+      dueDay: '02',
+      dueMonth: 'NOV',
+      dueYear: '2025',
       dueDate: '2025-11-02',
-      done: false
+      done: false,
     },
     {
       id: 3,
       title: 'Product Website Refresh Design',
       description: 'Finalizing the visual identity and component library',
-      categories: [
-        { id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' },
-      ],
+      categories: [{ id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' }],
       status: 'DONE',
       priority: 'LOW',
       accessType: 'PUBLIC',
-      dueDay: '12', dueMonth: 'OCT', dueYear: '2025',
+      dueDay: '12',
+      dueMonth: 'OCT',
+      dueYear: '2025',
       dueDate: '2025-10-12',
-      done: true
+      done: true,
     },
     {
       id: 4,
@@ -113,11 +121,66 @@ export class TasksComponent {
       status: 'IN_PROGRESS',
       priority: 'HIGH',
       accessType: 'PRIVATE',
-      dueDay: '28', dueMonth: 'OCT', dueYear: '2025',
+      dueDay: '28',
+      dueMonth: 'OCT',
+      dueYear: '2025',
       dueDate: '2025-10-28',
-      done: false
-    }
+      done: false,
+    },
   ]);
+
+  showFilter = signal(false);
+  activeFilters = signal<FilterValues>({});
+
+  readonly taskFilterFields: FilterField[] = [
+    {
+      key: 'search',
+      label: 'Search',
+      type: 'text',
+      icon: 'search',
+      placeholder: 'Search tasks...',
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'multiselect',
+      icon: 'radio_button_checked',
+      options: [
+        { value: 'OPEN', label: 'Open', icon: 'radio_button_unchecked', color: '#1976d2' },
+        { value: 'IN_PROGRESS', label: 'Ongoing', icon: 'pending', color: '#f9a825' },
+        { value: 'DONE', label: 'Done', icon: 'check_circle', color: '#43a047' },
+      ],
+    },
+    {
+      key: 'priority',
+      label: 'Priority',
+      type: 'multiselect',
+      icon: 'flag',
+      options: [
+        { value: 'CRITICAL', label: 'Critical', color: '#d32f2f' },
+        { value: 'HIGH', label: 'High', color: '#f57c00' },
+        { value: 'MEDIUM', label: 'Medium', color: '#f9a825' },
+        { value: 'LOW', label: 'Low', color: '#1976d2' },
+        { value: 'OPTIONAL', label: 'Optional', color: '#757575' },
+      ],
+    },
+    {
+      key: 'access',
+      label: 'Access',
+      type: 'select',
+      icon: 'lock',
+      options: [
+        { value: 'PRIVATE', label: 'Private' },
+        { value: 'PUBLIC', label: 'Public' },
+      ],
+    },
+    {
+      key: 'dueDate',
+      label: 'Due Date Range',
+      type: 'date-range',
+      icon: 'calendar_today',
+    },
+  ];
 
   readonly currentPage = signal(0);
   readonly totalPages = signal(3);
@@ -125,23 +188,17 @@ export class TasksComponent {
   readonly pageSize = signal(4);
 
   // Stats
-  readonly pendingCount = computed(() =>
-    this.tasks().filter(t => t.status !== 'DONE').length
+  readonly pendingCount = computed(() => this.tasks().filter((t) => t.status !== 'DONE').length);
+  readonly inProgressCount = computed(
+    () => this.tasks().filter((t) => t.status === 'IN_PROGRESS').length,
   );
-  readonly inProgressCount = computed(() =>
-    this.tasks().filter(t => t.status === 'IN_PROGRESS').length
-  );
-  readonly doneCount = computed(() =>
-    this.tasks().filter(t => t.status === 'DONE').length
-  );
+  readonly doneCount = computed(() => this.tasks().filter((t) => t.status === 'DONE').length);
   readonly completionRate = computed(() => {
     const total = this.tasks().length;
     if (total === 0) return 0;
     return Math.round((this.doneCount() / total) * 100);
   });
-  readonly productivityScore = computed(() =>
-    (this.completionRate() / 10).toFixed(1)
-  );
+  readonly productivityScore = computed(() => (this.completionRate() / 10).toFixed(1));
   readonly productivityLabel = computed(() => {
     const score = parseFloat(this.productivityScore());
     if (score >= 9) return 'Elite';
@@ -166,7 +223,7 @@ export class TasksComponent {
     status: 'OPEN',
     accessType: 'PRIVATE',
     dueDate: '',
-    categoryIds: []
+    categoryIds: [],
   });
 
   // Edit Form
@@ -177,7 +234,7 @@ export class TasksComponent {
     status: 'OPEN',
     accessType: 'PRIVATE',
     dueDate: '',
-    categoryIds: []
+    categoryIds: [],
   });
 
   readonly priorities: Priority[] = ['OPTIONAL', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
@@ -186,20 +243,47 @@ export class TasksComponent {
   // ── Create ──────────────────────────────────────────────
   openCreate() {
     this.createForm.set({
-      title: '', description: '', priority: 'MEDIUM',
-      status: 'OPEN', accessType: 'PRIVATE', dueDate: '', categoryIds: []
+      title: '',
+      description: '',
+      priority: 'MEDIUM',
+      status: 'OPEN',
+      accessType: 'PRIVATE',
+      dueDate: '',
+      categoryIds: [],
     });
     this.showCreateModal.set(true);
   }
 
   toggleCreateCategory(id: number) {
-    this.createForm.update(f => {
+    this.createForm.update((f) => {
       const ids = f.categoryIds.includes(id)
-        ? f.categoryIds.filter(i => i !== id)
-        : f.categoryIds.length < 5 ? [...f.categoryIds, id] : f.categoryIds;
+        ? f.categoryIds.filter((i) => i !== id)
+        : f.categoryIds.length < 5
+          ? [...f.categoryIds, id]
+          : f.categoryIds;
       return { ...f, categoryIds: ids };
     });
   }
+
+  onFilterApply(values: FilterValues) {
+    this.activeFilters.set(values);
+    this.showFilter.set(false);
+    console.log('Filter applied:', values);
+    // later: reload tasks with filter params
+  }
+
+  onFilterReset() {
+    this.activeFilters.set({});
+  }
+
+  readonly activeFilterCount = computed(
+    () =>
+      Object.values(this.activeFilters()).filter((v) => {
+        if (!v || v === '') return false;
+        if (Array.isArray(v)) return v.length > 0;
+        return true;
+      }).length,
+  );
 
   submitCreate() {
     if (!this.createForm().title.trim()) return;
@@ -218,17 +302,19 @@ export class TasksComponent {
       status: task.status,
       accessType: task.accessType,
       dueDate: task.dueDate,
-      categoryIds: task.categories.map(c => c.id)
+      categoryIds: task.categories.map((c) => c.id),
     });
     this.activeMenu.set(null);
     this.showEditModal.set(true);
   }
 
   toggleEditCategory(id: number) {
-    this.editForm.update(f => {
+    this.editForm.update((f) => {
       const ids = f.categoryIds.includes(id)
-        ? f.categoryIds.filter(i => i !== id)
-        : f.categoryIds.length < 5 ? [...f.categoryIds, id] : f.categoryIds;
+        ? f.categoryIds.filter((i) => i !== id)
+        : f.categoryIds.length < 5
+          ? [...f.categoryIds, id]
+          : f.categoryIds;
       return { ...f, categoryIds: ids };
     });
   }
@@ -250,7 +336,7 @@ export class TasksComponent {
   confirmDelete() {
     const id = this.selectedTask()?.id;
     if (id) {
-      this.tasks.update(t => t.filter(task => task.id !== id));
+      this.tasks.update((t) => t.filter((task) => task.id !== id));
     }
     this.showDeleteConfirm.set(false);
     this.selectedTask.set(null);
@@ -266,11 +352,8 @@ export class TasksComponent {
   confirmDone() {
     const id = this.selectedTask()?.id;
     if (id) {
-      this.tasks.update(t =>
-        t.map(task => task.id === id
-          ? { ...task, status: 'DONE', done: true }
-          : task
-        )
+      this.tasks.update((t) =>
+        t.map((task) => (task.id === id ? { ...task, status: 'DONE', done: true } : task)),
       );
     }
     this.showDoneConfirm.set(false);
@@ -280,7 +363,7 @@ export class TasksComponent {
   // ── Helpers ─────────────────────────────────────────────
   toggleMenu(id: number, event: Event) {
     event.stopPropagation();
-    this.activeMenu.update(v => v === id ? null : id);
+    this.activeMenu.update((v) => (v === id ? null : id));
   }
 
   getPriorityClass(priority: Priority): string {
@@ -291,18 +374,24 @@ export class TasksComponent {
     const map: Record<Status, string> = {
       OPEN: 'status--open',
       IN_PROGRESS: 'status--in-progress',
-      DONE: 'status--done'
+      DONE: 'status--done',
     };
     return map[status];
   }
 
   getStatusLabel(status: Status): string {
     const map: Record<Status, string> = {
-      OPEN: 'Open', IN_PROGRESS: 'Ongoing', DONE: 'Done'
+      OPEN: 'Open',
+      IN_PROGRESS: 'Ongoing',
+      DONE: 'Done',
     };
     return map[status];
   }
 
-  onPageChange(page: number) { this.currentPage.set(page); }
-  onAiClick() { console.log('AI clicked'); }
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onAiClick() {
+    console.log('AI clicked');
+  }
 }

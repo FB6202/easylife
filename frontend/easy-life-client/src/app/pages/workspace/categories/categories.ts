@@ -2,6 +2,11 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
+import {
+  FilterPanelComponent,
+  FilterField,
+  FilterValues,
+} from '../../../shared/components/filter/filter';
 
 type AccessType = 'PRIVATE' | 'PUBLIC';
 
@@ -25,7 +30,7 @@ interface CategoryForm {
 
 @Component({
   selector: 'app-categories',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, FilterPanelComponent],
   templateUrl: './categories.html',
   styleUrl: './categories.scss',
 })
@@ -91,6 +96,51 @@ export class CategoriesComponent {
   readonly totalPages = signal(3);
   readonly totalElements = signal(24);
   readonly pageSize = signal(6);
+
+  showFilter = signal(false);
+  activeFilters = signal<FilterValues>({});
+
+  readonly categoryFilterFields: FilterField[] = [
+    {
+      key: 'search',
+      label: 'Search',
+      type: 'text',
+      icon: 'search',
+      placeholder: 'Search categories...',
+    },
+    {
+      key: 'accessType',
+      label: 'Access',
+      type: 'multiselect',
+      icon: 'lock',
+      options: [
+        { value: 'PUBLIC', label: 'Public', icon: 'travel_explore', color: '#43a047' },
+        { value: 'PRIVATE', label: 'Private', icon: 'lock', color: '#757575' },
+      ],
+    },
+    {
+      key: 'color',
+      label: 'Color',
+      type: 'multiselect',
+      icon: 'palette',
+      options: [
+        { value: 'green', label: 'Green', color: '#43a047' },
+        { value: 'blue', label: 'Blue', color: '#1976d2' },
+        { value: 'red', label: 'Red', color: '#d32f2f' },
+        { value: 'orange', label: 'Orange', color: '#f57c00' },
+        { value: 'purple', label: 'Purple', color: '#7b1fa2' },
+        { value: 'pink', label: 'Pink', color: '#c2185b' },
+        { value: 'teal', label: 'Teal', color: '#00796b' },
+        { value: 'cyan', label: 'Cyan', color: '#0097a7' },
+      ],
+    },
+    {
+      key: 'createdAt',
+      label: 'Created',
+      type: 'date-range',
+      icon: 'calendar_today',
+    },
+  ];
 
   readonly availableColors: string[] = [
     '#1b5e20',
@@ -282,6 +332,26 @@ export class CategoriesComponent {
       accessType: 'PRIVATE',
     });
     this.showCreateModal.set(true);
+  }
+
+  readonly activeFilterCount = computed(
+    () =>
+      Object.values(this.activeFilters()).filter((v) => {
+        if (!v || v === '') return false;
+        if (Array.isArray(v)) return v.length > 0;
+        return true;
+      }).length,
+  );
+
+  onFilterApply(values: FilterValues) {
+    this.activeFilters.set(values);
+    this.showFilter.set(false);
+    console.log('Category filter applied:', values);
+    // later: reload categories with filter params
+  }
+
+  onFilterReset() {
+    this.activeFilters.set({});
   }
 
   submitCreate() {

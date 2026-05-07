@@ -9,11 +9,12 @@ import java.util.List;
 
 public record JournalEntryRequest(
         @NotBlank String title,
-        MoodLevel mood,
+        @NotNull MoodLevel mood,
         String wentWell,
         String wentBad,
         String learnings,
         String gratitude,
         @NotNull LocalDate entryDate,
-        List<Long> categoryIds
+        List<Long> categoryIds,
+        Long weekPlanId
 ) {}

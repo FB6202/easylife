@@ -407,7 +407,7 @@
         <div class="event-modal__header-actions">
           <button
             class="event-modal__action-btn event-modal__action-btn--delete"
-            (click)="deleteEvent()"
+            (click)="openDeleteConfirm()"
             title="Delete event"
           >
             <span class="material-symbols-outlined">delete</span>
@@ -541,6 +541,26 @@
       <div class="event-modal__footer">
         <button class="btn-secondary" (click)="showEditModal.set(false)">Cancel</button>
         <button class="btn-primary" (click)="submitEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ DELETE CONFIRM ════════════════════════════════════ -->
+@if (showDeleteConfirm() && selectedEvent()) {
+  <div class="modal-overlay" (click)="showDeleteConfirm.set(false)">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <div class="confirm-dialog__icon confirm-dialog__icon--danger">
+        <span class="material-symbols-outlined">delete</span>
+      </div>
+      <h3 class="confirm-dialog__title">Delete Event</h3>
+      <p class="confirm-dialog__text">
+        Are you sure you want to delete
+        <strong>"{{ selectedEvent()!.title }}"</strong>? This action cannot be undone.
+      </p>
+      <div class="confirm-dialog__actions">
+        <button class="btn-secondary" (click)="showDeleteConfirm.set(false)">Cancel</button>
+        <button class="btn-danger" (click)="confirmDelete()">Delete Event</button>
       </div>
     </div>
   </div>

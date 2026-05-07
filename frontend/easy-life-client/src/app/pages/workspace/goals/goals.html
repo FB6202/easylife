@@ -5,9 +5,16 @@
     <p class="goals-header__subtitle">Manage and track your primary objectives and key results.</p>
   </div>
   <div class="goals-header__actions">
-    <button class="btn-secondary">
+    <button
+      class="btn-secondary"
+      [class.btn-secondary--active]="activeFilterCount() > 0"
+      (click)="showFilter.set(true)"
+    >
       <span class="material-symbols-outlined">tune</span>
       Filters
+      @if (activeFilterCount() > 0) {
+        <span class="filter-active-badge">{{ activeFilterCount() }}</span>
+      }
     </button>
     <button class="btn-primary" (click)="openCreate()">
       <span class="material-symbols-outlined">add</span>
@@ -102,6 +109,18 @@
     (aiClick)="onAiClick()"
   />
 </div>
+
+<!-- ══ FILTER PANEL ══════════════════════════════════════ -->
+@if (showFilter()) {
+  <app-filter-panel
+    title="Filter Goals"
+    [fields]="goalFilterFields"
+    [initialValues]="activeFilters()"
+    (apply)="onFilterApply($event)"
+    (reset)="onFilterReset()"
+    (close)="showFilter.set(false)"
+  />
+}
 
 <!-- ══ CREATE MODAL ══════════════════════════════════════ -->
 @if (showCreateModal()) {

@@ -21,6 +21,11 @@
           <a [routerLink]="item.route" routerLinkActive="active" class="sidebar__item">
             <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
             <span class="sidebar__label">{{ item.label }}</span>
+            @if (item.badge && unreadNotificationCount() > 0) {
+              <span class="sidebar__badge">
+                {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
+              </span>
+            }
           </a>
         }
       </div>

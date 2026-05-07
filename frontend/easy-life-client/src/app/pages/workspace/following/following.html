@@ -5,9 +5,20 @@
     <p class="following-header__subtitle">Manage who you follow and who follows you.</p>
   </div>
   <div class="following-header__actions">
-    <button class="btn-primary">
+    <button
+      class="btn-secondary"
+      [class.btn-secondary--active]="activeFilterCount() > 0"
+      (click)="showFilter.set(true)"
+    >
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+      @if (activeFilterCount() > 0) {
+        <span class="filter-active-badge">{{ activeFilterCount() }}</span>
+      }
+    </button>
+    <button class="btn-primary" (click)="goToSearch()">
       <span class="material-symbols-outlined">person_search</span>
-      Find People
+      Search People
     </button>
   </div>
 </div>
@@ -136,3 +147,15 @@
     (aiClick)="onAiClick()"
   />
 </div>
+
+<!-- ══ FILTER PANEL ══════════════════════════════════════ -->
+@if (showFilter()) {
+  <app-filter-panel
+    title="Filter Network"
+    [fields]="followingFilterFields"
+    [initialValues]="activeFilters()"
+    (apply)="onFilterApply($event)"
+    (reset)="onFilterReset()"
+    (close)="showFilter.set(false)"
+  />
+}

@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -42,5 +43,18 @@ class WeekPlan {
     private List<Long> categoryIds;
     @Enumerated(EnumType.STRING)
     private WeekPlanStatus status;
+    @OneToMany(mappedBy = "weekPlan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WeekPlanItem> items = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
 }

@@ -4,17 +4,33 @@
     <p class="notif-header__label">Notifications</p>
     <p class="notif-header__subtitle">Stay on top of your tasks, goals and system updates.</p>
   </div>
-  @if (unreadCount() > 0) {
-    <button class="btn-secondary" (click)="markAllRead()">
-      <span class="material-symbols-outlined">done_all</span>
-      Mark all as read
+  <div class="notif-header__actions">
+    @if (unreadCount() > 0) {
+      <button class="btn-secondary" (click)="markAllRead()">
+        <span class="material-symbols-outlined">done_all</span>
+        Mark all as read
+      </button>
+    }
+    <button
+      class="btn-secondary"
+      [class.btn-secondary--active]="activeFilterCount() > 0"
+      (click)="showFilter.set(true)"
+    >
+      <span class="material-symbols-outlined">tune</span>
+      Filters
+      @if (activeFilterCount() > 0) {
+        <span class="filter-active-badge">{{ activeFilterCount() }}</span>
+      }
     </button>
-  }
+    <button class="btn-primary" (click)="openCreate()">
+      <span class="material-symbols-outlined">add</span>
+      Create
+    </button>
+  </div>
 </div>
 
 <!-- Stats + Filter Row -->
 <div class="notif-stats">
-  <!-- Unread Count -->
   <div class="notif-unread">
     <span class="notif-unread__label">UNREAD</span>
     <div class="notif-unread__value">
@@ -23,7 +39,6 @@
     </div>
   </div>
 
-  <!-- Filter Chips by Type -->
   <div class="notif-filter-chips">
     <button
       [class]="'notif-chip ' + (activeFilter() === 'ALL' ? 'notif-chip--active' : '')"
@@ -96,21 +111,21 @@
     <div
       class="notif-item"
       [class.notif-item--unread]="!notif.alreadyRead"
-      (click)="markRead(notif.id)"
+      (click)="openEdit(notif)"
     >
-      <!-- Type Icon -->
       <div [class]="'notif-item__icon ' + getTypeClass(notif.type)">
         <span class="material-symbols-outlined">{{ getTypeIcon(notif.type) }}</span>
       </div>
 
-      <!-- Content -->
       <div class="notif-item__content">
         <div class="notif-item__top">
           <h3 class="notif-item__title">{{ notif.title }}</h3>
           <div class="notif-item__meta">
-            <span class="notif-item__ref-badge">
-              {{ getReferenceLabel(notif.referenceType) }}
-            </span>
+            @if (notif.referenceType) {
+              <span class="notif-item__ref-badge">
+                {{ getReferenceLabel(notif.referenceType) }}
+              </span>
+            }
             @if (!notif.alreadyRead) {
               <span class="notif-item__dot"></span>
             }
@@ -118,12 +133,6 @@
         </div>
         <p class="notif-item__message">{{ notif.message }}</p>
         <div class="notif-item__footer">
-          @if (notif.actionLabel) {
-            <button class="notif-item__action">
-              <span class="material-symbols-outlined">arrow_forward</span>
-              {{ notif.actionLabel }}
-            </button>
-          }
           <span class="notif-item__time">{{ notif.sentAt }}</span>
         </div>
       </div>
@@ -138,7 +147,6 @@
     </div>
   }
 
-  <!-- Pagination -->
   <app-pagination
     [currentPage]="currentPage()"
     [totalPages]="totalPages()"
@@ -148,3 +156,302 @@
     (aiClick)="onAiClick()"
   />
 </div>
+
+<!-- ══ FILTER PANEL ══════════════════════════════════════ -->
+@if (showFilter()) {
+  <app-filter-panel
+    title="Filter Notifications"
+    [fields]="notificationFilterFields"
+    [initialValues]="activeFilters()"
+    (apply)="onFilterApply($event)"
+    (reset)="onFilterReset()"
+    (close)="showFilter.set(false)"
+  />
+}
+
+<!-- ══ CREATE MODAL ══════════════════════════════════════ -->
+@if (showCreateModal()) {
+  <div class="modal-overlay" (click)="showCreateModal.set(false)">
+    <div class="notif-modal" (click)="$event.stopPropagation()">
+      <div class="notif-modal__header">
+        <div>
+          <h2 class="notif-modal__title">New Notification</h2>
+          <p class="notif-modal__subtitle">Create a reminder or alert for yourself.</p>
+        </div>
+        <button class="notif-modal__close" (click)="showCreateModal.set(false)">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Title -->
+      <input
+        class="notif-modal__title-input"
+        type="text"
+        placeholder="Notification Title"
+        [(ngModel)]="createForm().title"
+      />
+
+      <!-- Message -->
+      <div class="form-group">
+        <label>Message</label>
+        <textarea
+          rows="3"
+          placeholder="Describe what this notification is about..."
+          [(ngModel)]="createForm().message"
+        ></textarea>
+      </div>
+
+      <!-- Type -->
+      <div class="form-group">
+        <label>Type</label>
+        <div class="notif-type-picker">
+          @for (type of notificationTypes; track type) {
+            <button
+              [class]="
+                'notif-type-btn notif-type-btn--' +
+                type.toLowerCase() +
+                (createForm().type === type ? ' active' : '')
+              "
+              (click)="createForm.update((f) => ({ ...f, type: type }))"
+            >
+              <span class="material-symbols-outlined">{{ getTypeIcon(type) }}</span>
+              {{ getTypeLabel(type) }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Channel + Scheduled -->
+      <div class="notif-modal__row">
+        <div class="form-group">
+          <label>Channel</label>
+          <div class="notif-channel-picker">
+            @for (ch of channelOptions; track ch.value) {
+              <button
+                [class]="'notif-channel-btn ' + (createForm().channel === ch.value ? 'active' : '')"
+                (click)="createForm.update((f) => ({ ...f, channel: ch.value }))"
+              >
+                <span class="material-symbols-outlined">{{ ch.icon }}</span>
+                {{ ch.label }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Scheduled At <span class="form-group__optional">optional</span></label>
+          <input type="datetime-local" [(ngModel)]="createForm().scheduledAt" />
+        </div>
+      </div>
+
+      <!-- Reference Link -->
+      <div class="notif-modal__section-label">
+        <span class="material-symbols-outlined">link</span>
+        Link to Item
+        <span class="form-group__optional" style="text-transform: none; letter-spacing: 0"
+          >optional</span
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Item Type</label>
+        <div class="notif-ref-type-picker">
+          <button
+            [class]="'notif-ref-btn ' + (createForm().referenceType === null ? 'active' : '')"
+            (click)="onRefTypeChange(null, 'create')"
+          >
+            None
+          </button>
+          @for (opt of referenceTypeOptions; track opt.value) {
+            <button
+              [class]="
+                'notif-ref-btn ' + (createForm().referenceType === opt.value ? 'active' : '')
+              "
+              (click)="onRefTypeChange(opt.value, 'create')"
+            >
+              <span class="material-symbols-outlined">{{ opt.icon }}</span>
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (createForm().referenceType && filteredReferenceOptions().length > 0) {
+        <div class="form-group">
+          <label>Select {{ getReferenceLabel(createForm().referenceType!) }}</label>
+          <select
+            [ngModel]="createForm().referenceId"
+            (ngModelChange)="createForm.update((f) => ({ ...f, referenceId: $event }))"
+          >
+            <option [ngValue]="null">Select...</option>
+            @for (opt of filteredReferenceOptions(); track opt.id) {
+              <option [ngValue]="opt.id">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="notif-modal__footer">
+        <button class="btn-secondary" (click)="showCreateModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="submitCreate()">Create Notification</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ EDIT MODAL ════════════════════════════════════════ -->
+@if (showEditModal() && selectedNotification()) {
+  <div class="modal-overlay" (click)="showEditModal.set(false)">
+    <div class="notif-modal" (click)="$event.stopPropagation()">
+      <div class="notif-modal__header">
+        <div class="notif-modal__header-type">
+          <div [class]="'notif-modal__type-icon ' + getTypeClass(selectedNotification()!.type)">
+            <span class="material-symbols-outlined">{{
+              getTypeIcon(selectedNotification()!.type)
+            }}</span>
+          </div>
+          <div>
+            <h2 class="notif-modal__title">Edit Notification</h2>
+            <p class="notif-modal__subtitle">{{ selectedNotification()!.sentAt }}</p>
+          </div>
+        </div>
+        <div class="notif-modal__header-actions">
+          <button
+            class="notif-modal__action-btn notif-modal__action-btn--delete"
+            (click)="openDeleteConfirm()"
+            title="Delete notification"
+          >
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+          <button class="notif-modal__close" (click)="showEditModal.set(false)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <input
+        class="notif-modal__title-input"
+        type="text"
+        placeholder="Notification Title"
+        [(ngModel)]="editForm().title"
+      />
+
+      <div class="form-group">
+        <label>Message</label>
+        <textarea
+          rows="3"
+          placeholder="Describe what this notification is about..."
+          [(ngModel)]="editForm().message"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <div class="notif-type-picker">
+          @for (type of notificationTypes; track type) {
+            <button
+              [class]="
+                'notif-type-btn notif-type-btn--' +
+                type.toLowerCase() +
+                (editForm().type === type ? ' active' : '')
+              "
+              (click)="editForm.update((f) => ({ ...f, type: type }))"
+            >
+              <span class="material-symbols-outlined">{{ getTypeIcon(type) }}</span>
+              {{ getTypeLabel(type) }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="notif-modal__row">
+        <div class="form-group">
+          <label>Channel</label>
+          <div class="notif-channel-picker">
+            @for (ch of channelOptions; track ch.value) {
+              <button
+                [class]="'notif-channel-btn ' + (editForm().channel === ch.value ? 'active' : '')"
+                (click)="editForm.update((f) => ({ ...f, channel: ch.value }))"
+              >
+                <span class="material-symbols-outlined">{{ ch.icon }}</span>
+                {{ ch.label }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Scheduled At <span class="form-group__optional">optional</span></label>
+          <input type="datetime-local" [(ngModel)]="editForm().scheduledAt" />
+        </div>
+      </div>
+
+      <div class="notif-modal__section-label">
+        <span class="material-symbols-outlined">link</span>
+        Link to Item
+        <span class="form-group__optional" style="text-transform: none; letter-spacing: 0"
+          >optional</span
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Item Type</label>
+        <div class="notif-ref-type-picker">
+          <button
+            [class]="'notif-ref-btn ' + (editForm().referenceType === null ? 'active' : '')"
+            (click)="onRefTypeChange(null, 'edit')"
+          >
+            None
+          </button>
+          @for (opt of referenceTypeOptions; track opt.value) {
+            <button
+              [class]="'notif-ref-btn ' + (editForm().referenceType === opt.value ? 'active' : '')"
+              (click)="onRefTypeChange(opt.value, 'edit')"
+            >
+              <span class="material-symbols-outlined">{{ opt.icon }}</span>
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (editForm().referenceType && filteredEditReferenceOptions().length > 0) {
+        <div class="form-group">
+          <label>Select {{ getReferenceLabel(editForm().referenceType!) }}</label>
+          <select
+            [ngModel]="editForm().referenceId"
+            (ngModelChange)="editForm.update((f) => ({ ...f, referenceId: $event }))"
+          >
+            <option [ngValue]="null">Select...</option>
+            @for (opt of filteredEditReferenceOptions(); track opt.id) {
+              <option [ngValue]="opt.id">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="notif-modal__footer">
+        <button class="btn-secondary" (click)="showEditModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="submitEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══ DELETE CONFIRM ════════════════════════════════════ -->
+@if (showDeleteConfirm() && selectedNotification()) {
+  <div class="modal-overlay" (click)="showDeleteConfirm.set(false)">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <div class="confirm-dialog__icon confirm-dialog__icon--danger">
+        <span class="material-symbols-outlined">delete</span>
+      </div>
+      <h3 class="confirm-dialog__title">Delete Notification</h3>
+      <p class="confirm-dialog__text">
+        Are you sure you want to delete
+        <strong>"{{ selectedNotification()!.title }}"</strong>?
+      </p>
+      <div class="confirm-dialog__actions">
+        <button class="btn-secondary" (click)="showDeleteConfirm.set(false)">Cancel</button>
+        <button class="btn-danger" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+}

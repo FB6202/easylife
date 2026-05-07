@@ -1,6 +1,12 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  FilterPanelComponent,
+  FilterField,
+  FilterValues,
+} from '../../../shared/components/filter/filter';
 
 type FollowStatus = 'ACCEPTED' | 'PENDING';
 
@@ -25,7 +31,7 @@ type ActiveTab = 'following' | 'followers';
 
 @Component({
   selector: 'app-following',
-  imports: [CommonModule, PaginationComponent],
+  imports: [CommonModule, PaginationComponent, FilterPanelComponent],
   templateUrl: './following.html',
   styleUrl: './following.scss',
 })
@@ -103,6 +109,11 @@ export class FollowingComponent {
     },
   ]);
 
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
+
   readonly currentPage = signal(0);
   readonly totalPages = signal(3);
   readonly totalElements = computed(() =>
@@ -110,11 +121,75 @@ export class FollowingComponent {
   );
   readonly pageSize = signal(10);
 
+  showFilter = signal(false);
+  activeFilters = signal<FilterValues>({});
+
+  readonly followingFilterFields: FilterField[] = [
+    {
+      key: 'search',
+      label: 'Search',
+      type: 'text',
+      icon: 'search',
+      placeholder: 'Search by name or username...',
+    },
+    {
+      key: 'tab',
+      label: 'View',
+      type: 'select',
+      icon: 'people',
+      options: [
+        { value: 'following', label: 'Following' },
+        { value: 'followers', label: 'Followers' },
+      ],
+    },
+    {
+      key: 'followStatus',
+      label: 'Follow Status',
+      type: 'multiselect',
+      icon: 'person_add',
+      options: [
+        { value: 'FOLLOWING', label: 'Following', icon: 'how_to_reg', color: '#43a047' },
+        { value: 'REQUESTED', label: 'Requested', icon: 'schedule', color: '#f9a825' },
+      ],
+    },
+    {
+      key: 'hasPublicGoals',
+      label: 'Has Public Goals',
+      type: 'toggle',
+      icon: 'flag',
+    },
+    {
+      key: 'hasPublicContacts',
+      label: 'Has Public Contacts',
+      type: 'toggle',
+      icon: 'people',
+    },
+  ];
+
   readonly pendingCount = computed(() => this.pendingRequests().length);
 
   readonly activeList = computed(() =>
     this.activeTab() === 'following' ? this.following() : this.followers(),
   );
+
+  readonly activeFilterCount = computed(
+    () =>
+      Object.values(this.activeFilters()).filter((v) => {
+        if (!v || v === '') return false;
+        if (Array.isArray(v)) return v.length > 0;
+        return true;
+      }).length,
+  );
+
+  onFilterApply(values: FilterValues) {
+    this.activeFilters.set(values);
+    this.showFilter.set(false);
+    console.log('Following filter applied:', values);
+  }
+
+  onFilterReset() {
+    this.activeFilters.set({});
+  }
 
   acceptRequest(id: number) {
     this.pendingRequests.update((r) => r.filter((p) => p.id !== id));
@@ -143,5 +218,10 @@ export class FollowingComponent {
 
   onAiClick() {
     console.log('AI clicked');
+  }
+
+  goToSearch() {
+    const username = this.route.snapshot.paramMap.get('username');
+    this.router.navigate([`/workspace/${username}/network/search`]);
   }
 }
