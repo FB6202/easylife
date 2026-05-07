@@ -186,12 +186,124 @@ export class NetworkComponent {
       initials: 'AS',
       avatarColor: '#e91e63',
     },
+    {
+      id: 6,
+      firstname: 'Nina',
+      lastname: 'Vogel',
+      company: 'Vogel Media',
+      position: 'Creative Director',
+      email: 'nina@vogelmedia.de',
+      phone: '+49 162 9876543',
+      linkedinUrl: 'https://linkedin.com/in/nina-vogel',
+      websiteUrl: 'https://vogelmedia.de',
+      notes: 'Met at the Hamburg design conference. Very inspiring work.',
+      tags: [{ id: 2, label: 'Business' }],
+      skills: ['Creative Direction', 'Motion Design', 'Brand Strategy'],
+      lastContactedAt: '1 week ago',
+      relationshipType: 'BUSINESS',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      initials: 'NV',
+      avatarColor: '#00bcd4',
+    },
+    {
+      id: 7,
+      firstname: 'Tom',
+      lastname: 'Richter',
+      company: 'Freelance',
+      position: 'Backend Engineer',
+      email: 'tom@richterdev.de',
+      phone: null,
+      linkedinUrl: null,
+      websiteUrl: 'https://richterdev.de',
+      notes: 'Helped with early backend architecture. Sharp engineer.',
+      tags: [{ id: 3, label: 'Colleague' }],
+      skills: ['Java', 'Spring Boot', 'PostgreSQL', 'Docker'],
+      lastContactedAt: '3 weeks ago',
+      relationshipType: 'COLLEAGUE',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      initials: 'TR',
+      avatarColor: '#43a047',
+    },
+    {
+      id: 8,
+      firstname: 'Lena',
+      lastname: 'Hartmann',
+      company: 'Hartmann Consulting',
+      position: 'Strategy Consultant',
+      email: 'lena@hartmann-consulting.com',
+      phone: '+49 174 1234567',
+      linkedinUrl: 'https://linkedin.com/in/lena-hartmann',
+      websiteUrl: null,
+      notes: 'Brilliant strategist. Great for sanity checks on business decisions.',
+      tags: [{ id: 4, label: 'Mentor' }],
+      skills: ['Strategy', 'Business Development', 'Coaching', 'OKRs'],
+      lastContactedAt: '2 weeks ago',
+      relationshipType: 'MENTOR',
+      categories: [
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+        { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
+      ],
+      initials: 'LH',
+      avatarColor: '#9c27b0',
+    },
+    {
+      id: 9,
+      firstname: 'Max',
+      lastname: 'Fischer',
+      company: 'TechBridge GmbH',
+      position: 'Product Manager',
+      email: 'max@techbridge.de',
+      phone: null,
+      linkedinUrl: 'https://linkedin.com/in/max-fischer',
+      websiteUrl: null,
+      notes: 'Ex-colleague from a previous startup. Great PM instincts.',
+      tags: [{ id: 3, label: 'Colleague' }],
+      skills: ['Product Management', 'Agile', 'Roadmapping', 'User Research'],
+      lastContactedAt: 'Yesterday',
+      relationshipType: 'COLLEAGUE',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      initials: 'MF',
+      avatarColor: '#f57c00',
+    },
+    {
+      id: 10,
+      firstname: 'Sophie',
+      lastname: 'Braun',
+      company: 'Braun & Partner',
+      position: 'Tax Advisor',
+      email: 'sophie@braunpartner.de',
+      phone: '+49 89 7654321',
+      linkedinUrl: null,
+      websiteUrl: 'https://braunpartner.de',
+      notes: 'Our tax advisor. Very reliable and thorough.',
+      tags: [{ id: 2, label: 'Business' }],
+      skills: ['Tax Law', 'Financial Planning', 'GDPR Compliance'],
+      lastContactedAt: '1 month ago',
+      relationshipType: 'BUSINESS',
+      categories: [{ id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' }],
+      initials: 'SB',
+      avatarColor: '#e91e63',
+    },
   ]);
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(9);
-  readonly totalElements = signal(42);
-  readonly pageSize = signal(5);
+  readonly pageSize = signal(10);
+
+  readonly totalElements = computed(() => this.filteredContacts().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedContacts = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.filteredContacts().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   showFilter = signal(false);
   activeFilters = signal<FilterValues>({});
@@ -438,9 +550,7 @@ export class NetworkComponent {
   setActiveTag(id: number) {
     this.activeTagId.set(id);
   }
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
+
   onAiClick() {
     console.log('AI clicked');
   }

@@ -14,7 +14,6 @@
 - categories in filter modal as dropdown?
 
 ## Frontend (Pages):
-- pagination working
 - settings work (incl. dark mode)
 - profile click work
 - login/logout buttons
@@ -49,3 +48,4 @@
 - network
 - notifications
   - channels (all?)
+  - start application - load all (for unread...)

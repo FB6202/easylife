@@ -27,7 +27,7 @@
 
 <!-- Entries -->
 <div class="journal-container">
-  @for (entry of entries(); track entry.id) {
+  @for (entry of paginatedEntries(); track entry.id) {
     <div class="journal-card" (click)="openEdit(entry)">
       <div class="journal-card__aside">
         <div class="journal-card__date">
@@ -112,6 +112,7 @@
       [totalElements]="totalElements()"
       [pageSize]="pageSize()"
       (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
       (aiClick)="onAiClick()"
     />
   </div>

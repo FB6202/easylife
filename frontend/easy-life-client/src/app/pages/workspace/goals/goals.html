@@ -26,7 +26,7 @@
 <!-- Goals Grid -->
 <div class="goals-container">
   <div class="goals-grid">
-    @for (goal of goals(); track goal.id) {
+    @for (goal of paginatedGoals(); track goal.id) {
       <div class="goal-card" (click)="openEdit(goal)">
         <!-- Image -->
         <div class="goal-card__image">
@@ -106,6 +106,7 @@
     [totalElements]="totalElements()"
     [pageSize]="pageSize()"
     (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
     (aiClick)="onAiClick()"
   />
 </div>

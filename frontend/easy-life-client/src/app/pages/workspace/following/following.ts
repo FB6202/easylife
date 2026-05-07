@@ -38,88 +38,225 @@ type ActiveTab = 'following' | 'followers';
 export class FollowingComponent {
   readonly activeTab = signal<ActiveTab>('following');
 
-  readonly pendingRequests = signal<PendingRequest[]>([
+  // Bestehende pendingRequests bleiben + ergänzen:
+  readonly pendingRequests = signal([
     {
       id: 1,
-      username: '@arivers_design',
-      displayName: 'Alex Rivers',
-      initials: 'AR',
+      username: 'max_builder',
+      firstname: 'Max',
+      lastname: 'Builder',
       avatarColor: '#1976d2',
+      initials: 'MB',
+      requestedAt: '2 days ago',
     },
     {
       id: 2,
-      username: '@ev_strat',
-      displayName: 'Elena Vance',
-      initials: 'EV',
-      avatarColor: '#9c27b0',
-    },
-  ]);
-
-  readonly following = signal<FollowUser[]>([
-    {
-      id: 1,
-      username: '@jsmith_exec',
-      displayName: 'Jordan Smith',
-      initials: 'JS',
-      avatarColor: '#43a047',
-      status: 'ACCEPTED',
-    },
-    {
-      id: 2,
-      username: '@sarah_c_vision',
-      displayName: 'Sarah Chen',
-      initials: 'SC',
-      avatarColor: '#f57c00',
-      status: 'PENDING',
+      username: 'nina_creates',
+      firstname: 'Nina',
+      lastname: 'Creates',
+      avatarColor: '#e91e63',
+      initials: 'NC',
+      requestedAt: '5 days ago',
     },
     {
       id: 3,
-      username: '@lowe_m_dev',
-      displayName: 'Marcus Lowe',
-      initials: 'ML',
-      avatarColor: '#e91e63',
-      status: 'ACCEPTED',
-    },
-    {
-      id: 4,
-      username: '@julia_ortiz_ux',
-      displayName: 'Julia Ortiz',
-      initials: 'JO',
-      avatarColor: '#00bcd4',
-      status: 'ACCEPTED',
+      username: 'tom_dev',
+      firstname: 'Tom',
+      lastname: 'Dev',
+      avatarColor: '#43a047',
+      initials: 'TD',
+      requestedAt: '1 week ago',
     },
   ]);
 
-  readonly followers = signal<FollowUser[]>([
+  // Bestehende following + followers ergänzen:
+  readonly following = signal([
+    {
+      id: 1,
+      username: 'sarah_creates',
+      firstname: 'Sarah',
+      lastname: 'Creates',
+      avatarColor: '#e91e63',
+      initials: 'SC',
+      followStatus: 'FOLLOWING',
+      publicGoals: 3,
+      publicCategories: 7,
+    },
+    {
+      id: 2,
+      username: 'felix_dev',
+      firstname: 'Felix',
+      lastname: 'Dev',
+      avatarColor: '#43a047',
+      initials: 'FD',
+      followStatus: 'FOLLOWING',
+      publicGoals: 8,
+      publicCategories: 5,
+    },
+    {
+      id: 3,
+      username: 'moritz_pm',
+      firstname: 'Moritz',
+      lastname: 'PM',
+      avatarColor: '#f57c00',
+      initials: 'MP',
+      followStatus: 'REQUESTED',
+      publicGoals: 4,
+      publicCategories: 3,
+    },
+    {
+      id: 4,
+      username: 'lena_builds',
+      firstname: 'Lena',
+      lastname: 'Builds',
+      avatarColor: '#9c27b0',
+      initials: 'LB',
+      followStatus: 'FOLLOWING',
+      publicGoals: 6,
+      publicCategories: 4,
+    },
     {
       id: 5,
-      username: '@max_builder',
-      displayName: 'Max Builder',
-      initials: 'MB',
-      avatarColor: '#ff5722',
-      status: 'ACCEPTED',
+      username: 'jan_strategy',
+      firstname: 'Jan',
+      lastname: 'Strategy',
+      avatarColor: '#00bcd4',
+      initials: 'JS',
+      followStatus: 'FOLLOWING',
+      publicGoals: 2,
+      publicCategories: 6,
     },
     {
       id: 6,
-      username: '@anna_k_pro',
-      displayName: 'Anna Kovalski',
-      initials: 'AK',
-      avatarColor: '#607d8b',
-      status: 'ACCEPTED',
+      username: 'anna_design',
+      firstname: 'Anna',
+      lastname: 'Design',
+      avatarColor: '#ff5722',
+      initials: 'AD',
+      followStatus: 'FOLLOWING',
+      publicGoals: 5,
+      publicCategories: 3,
+    },
+    {
+      id: 7,
+      username: 'peter_vc',
+      firstname: 'Peter',
+      lastname: 'VC',
+      avatarColor: '#3f51b5',
+      initials: 'PV',
+      followStatus: 'REQUESTED',
+      publicGoals: 9,
+      publicCategories: 2,
+    },
+    {
+      id: 8,
+      username: 'mia_founder',
+      firstname: 'Mia',
+      lastname: 'Founder',
+      avatarColor: '#795548',
+      initials: 'MF',
+      followStatus: 'FOLLOWING',
+      publicGoals: 7,
+      publicCategories: 5,
     },
   ]);
+
+  readonly followers = signal([
+    {
+      id: 1,
+      username: 'max_builder',
+      firstname: 'Max',
+      lastname: 'Builder',
+      avatarColor: '#1976d2',
+      initials: 'MB',
+      followStatus: 'FOLLOWING',
+      publicGoals: 6,
+      publicCategories: 4,
+    },
+    {
+      id: 2,
+      username: 'julia_ops',
+      firstname: 'Julia',
+      lastname: 'Ops',
+      avatarColor: '#43a047',
+      initials: 'JO',
+      followStatus: 'FOLLOWING',
+      publicGoals: 3,
+      publicCategories: 2,
+    },
+    {
+      id: 3,
+      username: 'ben_product',
+      firstname: 'Ben',
+      lastname: 'Product',
+      avatarColor: '#f57c00',
+      initials: 'BP',
+      followStatus: 'NONE',
+      publicGoals: 5,
+      publicCategories: 3,
+    },
+    {
+      id: 4,
+      username: 'clara_ux',
+      firstname: 'Clara',
+      lastname: 'UX',
+      avatarColor: '#e91e63',
+      initials: 'CU',
+      followStatus: 'NONE',
+      publicGoals: 4,
+      publicCategories: 6,
+    },
+    {
+      id: 5,
+      username: 'david_finance',
+      firstname: 'David',
+      lastname: 'Finance',
+      avatarColor: '#9c27b0',
+      initials: 'DF',
+      followStatus: 'FOLLOWING',
+      publicGoals: 2,
+      publicCategories: 1,
+    },
+    {
+      id: 6,
+      username: 'sophie_growth',
+      firstname: 'Sophie',
+      lastname: 'Growth',
+      avatarColor: '#00bcd4',
+      initials: 'SG',
+      followStatus: 'NONE',
+      publicGoals: 8,
+      publicCategories: 4,
+    },
+  ]);
+
+  readonly currentPage = signal(0);
+  readonly pageSize = signal(10);
+
+  readonly activeList = computed(() =>
+    this.activeTab() === 'following' ? this.following() : this.followers(),
+  );
+
+  readonly totalElements = computed(() => this.activeList().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedList = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.activeList().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
   ) {}
-
-  readonly currentPage = signal(0);
-  readonly totalPages = signal(3);
-  readonly totalElements = computed(() =>
-    this.activeTab() === 'following' ? this.following().length : this.followers().length,
-  );
-  readonly pageSize = signal(10);
 
   showFilter = signal(false);
   activeFilters = signal<FilterValues>({});
@@ -168,10 +305,6 @@ export class FollowingComponent {
 
   readonly pendingCount = computed(() => this.pendingRequests().length);
 
-  readonly activeList = computed(() =>
-    this.activeTab() === 'following' ? this.following() : this.followers(),
-  );
-
   readonly activeFilterCount = computed(
     () =>
       Object.values(this.activeFilters()).filter((v) => {
@@ -210,10 +343,6 @@ export class FollowingComponent {
   setTab(tab: ActiveTab) {
     this.activeTab.set(tab);
     this.currentPage.set(0);
-  }
-
-  onPageChange(page: number) {
-    this.currentPage.set(page);
   }
 
   onAiClick() {

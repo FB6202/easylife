@@ -89,7 +89,7 @@
     <span class="tasks-table__col tasks-table__col--actions"></span>
   </div>
 
-  @for (task of tasks(); track task.id) {
+  @for (task of paginatedTasks(); track task.id) {
     <div
       class="tasks-table__row"
       [class.tasks-table__row--done]="task.done"
@@ -188,6 +188,7 @@
     [totalElements]="totalElements()"
     [pageSize]="pageSize()"
     (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
     (aiClick)="onAiClick()"
   />
 </div>

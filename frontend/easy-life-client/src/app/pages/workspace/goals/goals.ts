@@ -140,22 +140,6 @@ export class GoalsComponent {
           progressContribution: 15,
           dueDate: '',
         },
-        {
-          id: 2,
-          title: 'Open brokerage account',
-          description: '',
-          done: true,
-          progressContribution: 15,
-          dueDate: '',
-        },
-        {
-          id: 3,
-          title: 'Allocate first investment',
-          description: '',
-          done: false,
-          progressContribution: 20,
-          dueDate: '',
-        },
       ],
     },
     {
@@ -180,22 +164,6 @@ export class GoalsComponent {
           progressContribution: 30,
           dueDate: '',
         },
-        {
-          id: 2,
-          title: 'Write documentation',
-          description: '',
-          done: true,
-          progressContribution: 30,
-          dueDate: '',
-        },
-        {
-          id: 3,
-          title: 'Stakeholder review',
-          description: '',
-          done: true,
-          progressContribution: 40,
-          dueDate: '',
-        },
       ],
     },
     {
@@ -214,24 +182,67 @@ export class GoalsComponent {
         { id: 5, name: 'Learning', icon: 'school', color: '#e91e63' },
         { id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' },
       ],
-      tasks: [
-        {
-          id: 1,
-          title: 'Daily Duolingo 20min',
-          description: '',
-          done: false,
-          progressContribution: 10,
-          dueDate: '',
-        },
-        {
-          id: 2,
-          title: 'Weekly conversation partner',
-          description: '',
-          done: false,
-          progressContribution: 20,
-          dueDate: '',
-        },
-      ],
+      tasks: [],
+    },
+    {
+      id: 5,
+      title: 'Build Easy Life MVP',
+      description: 'Ship the full frontend and backend of Easy Life to first 100 users.',
+      imagePath: null,
+      measurableTarget: '100 users',
+      targetValue: 100,
+      targetUnit: 'users',
+      currentProgress: 60,
+      deadline: 'DEC 31, 2025',
+      status: 'ACTIVE',
+      accessType: 'PRIVATE',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      tasks: [],
+    },
+    {
+      id: 6,
+      title: 'Run a Half Marathon',
+      description: 'Train consistently and complete a half marathon under 2 hours.',
+      imagePath: null,
+      measurableTarget: '21 km',
+      targetValue: 21,
+      targetUnit: 'km',
+      currentProgress: 25,
+      deadline: 'MAR 15, 2025',
+      status: 'ACTIVE',
+      accessType: 'PUBLIC',
+      categories: [{ id: 3, name: 'Health', icon: 'self_improvement', color: '#43a047' }],
+      tasks: [],
+    },
+    {
+      id: 7,
+      title: 'Read 24 Books',
+      description: 'Two books per month across different genres.',
+      imagePath: null,
+      measurableTarget: '24 books',
+      targetValue: 24,
+      targetUnit: 'books',
+      currentProgress: 100,
+      deadline: 'DEC 31, 2023',
+      status: 'COMPLETED',
+      accessType: 'PUBLIC',
+      categories: [{ id: 5, name: 'Learning', icon: 'school', color: '#e91e63' }],
+      tasks: [],
+    },
+    {
+      id: 8,
+      title: 'Save Emergency Fund',
+      description: 'Build 6 months of expenses as emergency reserve.',
+      imagePath: null,
+      measurableTarget: '15000 €',
+      targetValue: 15000,
+      targetUnit: '€',
+      currentProgress: 53,
+      deadline: 'JUN 30, 2025',
+      status: 'ACTIVE',
+      accessType: 'PRIVATE',
+      categories: [{ id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' }],
+      tasks: [],
     },
   ]);
 
@@ -306,9 +317,23 @@ export class GoalsComponent {
   ];
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(5);
-  readonly totalElements = signal(18);
-  readonly pageSize = signal(4);
+  readonly pageSize = signal(10);
+
+  readonly totalElements = computed(() => this.goals().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedGoals = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.goals().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   showCreateModal = signal(false);
   showEditModal = signal(false);
@@ -541,9 +566,6 @@ export class GoalsComponent {
     return this.selectedGoal()?.imagePath ?? null;
   }
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
   onAiClick() {
     console.log('AI clicked');
   }

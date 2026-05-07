@@ -179,12 +179,197 @@ export class DocumentsComponent {
       categories: [{ id: 3, name: 'Personal', icon: 'person', color: '#9c27b0' }],
       previewUrl: null,
     },
+    {
+      id: 8,
+      title: 'Technical Architecture Overview',
+      description: 'System design and infrastructure documentation for Easy Life.',
+      filePath: '/docs/architecture.pdf',
+      fileType: 'pdf',
+      fileSizeBytes: 1800000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Apr 10, 2024',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      previewUrl: null,
+    },
+    {
+      id: 9,
+      title: 'Marketing Campaign Q1 2024',
+      description: 'Full campaign brief and creative assets for Q1.',
+      filePath: '/docs/marketing-q1.pptx',
+      fileType: 'pptx',
+      fileSizeBytes: 34000000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Mar 01, 2024',
+      categories: [
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+        { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
+      ],
+      previewUrl: null,
+    },
+    {
+      id: 10,
+      title: 'Personal Budget 2024',
+      description: 'Monthly budget tracking and savings overview.',
+      filePath: '/docs/budget-2024.xlsx',
+      fileType: 'xlsx',
+      fileSizeBytes: 450000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Jan 01, 2024',
+      categories: [
+        { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
+        { id: 3, name: 'Personal', icon: 'person', color: '#9c27b0' },
+      ],
+      previewUrl: null,
+    },
+    {
+      id: 11,
+      title: 'Easy Life Brand Guidelines',
+      description: 'Color palette, typography and usage rules for the Easy Life brand.',
+      filePath: '/docs/brand-guidelines.pdf',
+      fileType: 'pdf',
+      fileSizeBytes: 6700000,
+      accessType: 'PUBLIC',
+      uploadedAt: 'Feb 14, 2024',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      previewUrl: null,
+    },
+    {
+      id: 12,
+      title: 'Weekly Workout Tracker',
+      description: 'Spreadsheet to track weekly gym sessions and progress.',
+      filePath: '/docs/workout-tracker.xlsx',
+      fileType: 'xlsx',
+      fileSizeBytes: 230000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Jan 15, 2024',
+      categories: [{ id: 4, name: 'Health', icon: 'self_improvement', color: '#43a047' }],
+      previewUrl: null,
+    },
+    {
+      id: 13,
+      title: 'API Documentation v2',
+      description: 'Full REST API reference for Easy Life backend endpoints.',
+      filePath: '/docs/api-docs.html',
+      fileType: 'html',
+      fileSizeBytes: 890000,
+      accessType: 'PUBLIC',
+      uploadedAt: 'Mar 22, 2024',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      previewUrl: null,
+    },
+    {
+      id: 14,
+      title: 'Interview Recording – UX Research',
+      description: 'Raw audio recording of 5 user interviews for product research.',
+      filePath: '/docs/ux-interviews.m4a',
+      fileType: 'm4a',
+      fileSizeBytes: 145000000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Apr 05, 2024',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      previewUrl: null,
+    },
+    {
+      id: 15,
+      title: 'Team Offsite Photos',
+      description: 'Photo collection from the Berlin offsite in March.',
+      filePath: '/docs/offsite-march.jpg',
+      fileType: 'jpg',
+      fileSizeBytes: 78000000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Mar 18, 2024',
+      categories: [
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+        { id: 3, name: 'Personal', icon: 'person', color: '#9c27b0' },
+      ],
+      previewUrl: null,
+    },
+    {
+      id: 16,
+      title: 'Investor Pitch Deck',
+      description: 'Seed round pitch deck for Easy Life Series A.',
+      filePath: '/docs/pitch-deck.pptx',
+      fileType: 'pptx',
+      fileSizeBytes: 22000000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'May 01, 2024',
+      categories: [
+        { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+      ],
+      previewUrl: null,
+    },
+    {
+      id: 17,
+      title: 'App Store Screenshots',
+      description: 'Final screenshots and preview images for iOS App Store submission.',
+      filePath: '/docs/app-store.png',
+      fileType: 'png',
+      fileSizeBytes: 9400000,
+      accessType: 'PUBLIC',
+      uploadedAt: 'May 10, 2024',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      previewUrl: null,
+    },
+    {
+      id: 18,
+      title: 'Legal Entity Documents',
+      description: 'GmbH founding documents and shareholder agreements.',
+      filePath: '/docs/legal.zip',
+      fileType: 'zip',
+      fileSizeBytes: 3200000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Dec 01, 2023',
+      categories: [{ id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' }],
+      previewUrl: null,
+    },
+    {
+      id: 19,
+      title: 'Product Walkthrough Video',
+      description: 'Full feature walkthrough for the Easy Life onboarding flow.',
+      filePath: '/docs/walkthrough.mp4',
+      fileType: 'mp4',
+      fileSizeBytes: 310000000,
+      accessType: 'PUBLIC',
+      uploadedAt: 'May 15, 2024',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      previewUrl: null,
+    },
+    {
+      id: 20,
+      title: 'Health Check Report 2023',
+      description: 'Annual health checkup results and doctor notes.',
+      filePath: '/docs/health-report.pdf',
+      fileType: 'pdf',
+      fileSizeBytes: 1100000,
+      accessType: 'PRIVATE',
+      uploadedAt: 'Nov 30, 2023',
+      categories: [
+        { id: 4, name: 'Health', icon: 'self_improvement', color: '#43a047' },
+        { id: 3, name: 'Personal', icon: 'person', color: '#9c27b0' },
+      ],
+      previewUrl: null,
+    },
   ]);
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(161);
-  readonly totalElements = signal(1284);
-  readonly pageSize = signal(8);
+  readonly pageSize = signal(10);
+
+  readonly totalElements = computed(() => this.documents().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedDocuments = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.documents().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   readonly totalStorageBytes = computed(() =>
     this.documents().reduce((acc, d) => acc + d.fileSizeBytes, 0),
@@ -575,13 +760,6 @@ export class DocumentsComponent {
     return (bytes / 1e3).toFixed(0) + ' KB';
   }
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
-  onPageSizeChange(size: number) {
-    this.pageSize.set(size);
-    this.currentPage.set(0);
-  }
   onAiClick() {
     console.log('AI clicked');
   }

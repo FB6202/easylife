@@ -116,7 +116,6 @@ export class TasksComponent {
       categories: [
         { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
         { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
-        { id: 5, name: 'Learning', icon: 'school', color: '#e91e63' },
       ],
       status: 'IN_PROGRESS',
       priority: 'HIGH',
@@ -126,6 +125,96 @@ export class TasksComponent {
       dueYear: '2025',
       dueDate: '2025-10-28',
       done: false,
+    },
+    {
+      id: 5,
+      title: 'Finalize Q4 Marketing Budget',
+      description: 'Allocate budgets across channels for Q4 campaign',
+      categories: [{ id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' }],
+      status: 'OPEN',
+      priority: 'CRITICAL',
+      accessType: 'PRIVATE',
+      dueDay: '15',
+      dueMonth: 'NOV',
+      dueYear: '2025',
+      dueDate: '2025-11-15',
+      done: false,
+    },
+    {
+      id: 6,
+      title: 'Onboard New Developer',
+      description: 'Set up environment and review onboarding docs',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      status: 'OPEN',
+      priority: 'MEDIUM',
+      accessType: 'PRIVATE',
+      dueDay: '05',
+      dueMonth: 'NOV',
+      dueYear: '2025',
+      dueDate: '2025-11-05',
+      done: false,
+    },
+    {
+      id: 7,
+      title: 'Redesign Email Newsletter Template',
+      description: 'Update to match new brand guidelines',
+      categories: [
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+        { id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' },
+      ],
+      status: 'OPEN',
+      priority: 'LOW',
+      accessType: 'PUBLIC',
+      dueDay: '20',
+      dueMonth: 'NOV',
+      dueYear: '2025',
+      dueDate: '2025-11-20',
+      done: false,
+    },
+    {
+      id: 8,
+      title: 'Run End-to-End Test Suite',
+      description: 'Full regression test before the release',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      status: 'OPEN',
+      priority: 'HIGH',
+      accessType: 'PRIVATE',
+      dueDay: '10',
+      dueMonth: 'NOV',
+      dueYear: '2025',
+      dueDate: '2025-11-10',
+      done: false,
+    },
+    {
+      id: 9,
+      title: 'Investor Update Presentation',
+      description: 'Prepare Q3 highlights for investor meeting',
+      categories: [
+        { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+      ],
+      status: 'OPEN',
+      priority: 'CRITICAL',
+      accessType: 'PRIVATE',
+      dueDay: '08',
+      dueMonth: 'NOV',
+      dueYear: '2025',
+      dueDate: '2025-11-08',
+      done: false,
+    },
+    {
+      id: 10,
+      title: 'Update Privacy Policy',
+      description: 'Align with new GDPR requirements',
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+      status: 'DONE',
+      priority: 'MEDIUM',
+      accessType: 'PUBLIC',
+      dueDay: '01',
+      dueMonth: 'OCT',
+      dueYear: '2025',
+      dueDate: '2025-10-01',
+      done: true,
     },
   ]);
 
@@ -183,9 +272,23 @@ export class TasksComponent {
   ];
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(3);
-  readonly totalElements = signal(24);
-  readonly pageSize = signal(4);
+  readonly pageSize = signal(10);
+
+  readonly totalElements = computed(() => this.tasks().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedTasks = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.tasks().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   // Stats
   readonly pendingCount = computed(() => this.tasks().filter((t) => t.status !== 'DONE').length);
@@ -388,9 +491,6 @@ export class TasksComponent {
     return map[status];
   }
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
   onAiClick() {
     console.log('AI clicked');
   }

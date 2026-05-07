@@ -154,12 +154,100 @@ export class NotificationsComponent {
       scheduledAt: '',
       sentAt: 'Oct 21, 2023',
     },
+    {
+      id: 7,
+      title: 'Goal Deadline Tomorrow',
+      message:
+        "Your goal 'Portfolio Diversification' is due tomorrow. You're at 42% — push for a final sprint!",
+      type: 'REMINDER',
+      channel: 'IN_APP',
+      referenceType: 'GOAL',
+      referenceId: 2,
+      alreadyRead: false,
+      scheduledAt: '',
+      sentAt: 'Oct 20, 2023',
+    },
+    {
+      id: 8,
+      title: 'Document Shared With You',
+      message: "Moritz shared 'Q4 Strategy Deck' with you. Review and leave comments.",
+      type: 'INFO',
+      channel: 'IN_APP',
+      referenceType: 'DOCUMENT',
+      referenceId: 1,
+      alreadyRead: true,
+      scheduledAt: '',
+      sentAt: 'Oct 19, 2023',
+    },
+    {
+      id: 9,
+      title: 'Week Plan Starts Tomorrow',
+      message: "Your week plan 'Q4 Strategy & Planning' starts tomorrow. Are you ready?",
+      type: 'REMINDER',
+      channel: 'IN_APP',
+      referenceType: 'WEEK_PLAN',
+      referenceId: 3,
+      alreadyRead: false,
+      scheduledAt: '',
+      sentAt: 'Oct 18, 2023',
+    },
+    {
+      id: 10,
+      title: 'System Maintenance Tonight',
+      message:
+        'Easy Life will undergo scheduled maintenance from 2am to 4am CET. No data will be lost.',
+      type: 'WARNING',
+      channel: 'IN_APP',
+      referenceType: null,
+      referenceId: null,
+      alreadyRead: true,
+      scheduledAt: '',
+      sentAt: 'Oct 17, 2023',
+    },
+    {
+      id: 11,
+      title: 'New Journal Streak: 7 Days',
+      message: "You've journaled 7 days in a row. Keep the momentum going!",
+      type: 'SUCCESS',
+      channel: 'IN_APP',
+      referenceType: 'JOURNAL_ENTRY',
+      referenceId: null,
+      alreadyRead: true,
+      scheduledAt: '',
+      sentAt: 'Oct 16, 2023',
+    },
+    {
+      id: 12,
+      title: 'Storage Upgraded Successfully',
+      message: 'Your plan upgrade was successful. You now have 10 GB of storage available.',
+      type: 'SUCCESS',
+      channel: 'IN_APP',
+      referenceType: null,
+      referenceId: null,
+      alreadyRead: true,
+      scheduledAt: '',
+      sentAt: 'Oct 15, 2023',
+    },
   ]);
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(4);
-  readonly totalElements = signal(24);
-  readonly pageSize = signal(6);
+  readonly pageSize = signal(10);
+
+  readonly totalElements = computed(() => this.filteredNotifications().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedNotifications = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.filteredNotifications().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   showFilter = signal(false);
   activeFilters = signal<FilterValues>({});
@@ -423,9 +511,6 @@ export class NotificationsComponent {
     }
   }
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
   onAiClick() {
     console.log('AI clicked');
   }

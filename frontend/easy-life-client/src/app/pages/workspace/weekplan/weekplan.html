@@ -25,7 +25,7 @@
 
 <!-- Week Plans List -->
 <div class="weekplan-container">
-  @for (plan of weekplans(); track plan.id) {
+  @for (plan of paginatedWeekplans(); track plan.id) {
     <div
       class="week-card"
       [class]="'week-card--' + plan.status.toLowerCase()"
@@ -123,6 +123,7 @@
       [totalElements]="totalElements()"
       [pageSize]="pageSize()"
       (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
       (aiClick)="onAiClick()"
     />
   </div>
