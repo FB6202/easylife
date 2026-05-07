@@ -2,16 +2,16 @@
 - keycloak
 - security
 - payments
-- ai-general
+- ai-agent
 - ai-screenshots backend changes
 - max storage capacity for docs (including profile image + goals images)
-- pricing models corresponding to storage (size and amount)
-- website + social media?
+- pricing models (storage + amount)
+- website + social media
 - delete mechanism for efficient db storage using ;)
-- tests for edge cases
+- tests for all edge cases (document)
 - clean backend code (especially entities)
 - notifications when event is created
-- categories in modals - especially filter (dropdown?)
+- categories in filter modal as dropdown?
 
 ## Frontend (Pages):
 - pagination working
