@@ -116,7 +116,6 @@ export class WeekplanComponent {
       categories: [
         { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
         { id: 3, name: 'Health', icon: 'self_improvement', color: '#43a047' },
-        { id: 5, name: 'Learning', icon: 'school', color: '#e91e63' },
       ],
     },
     {
@@ -153,12 +152,66 @@ export class WeekplanComponent {
       itemsTotal: 0,
       categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
     },
+    {
+      id: 5,
+      title: 'Health & Recovery Week',
+      intention: 'Prioritize physical and mental recovery after a heavy sprint.',
+      startDate: 'Nov 06',
+      endDate: 'Nov 12, 2023',
+      status: 'DRAFT',
+      reflection: null,
+      createdAt: 'Nov 03, 2023',
+      items: [
+        { id: 1, title: 'Daily 30min walk', description: '', done: false, dueDate: '' },
+        { id: 2, title: 'Sleep by 10pm', description: '', done: false, dueDate: '' },
+        { id: 3, title: 'No meetings before 10am', description: '', done: false, dueDate: '' },
+      ],
+      itemsDone: 0,
+      itemsTotal: 3,
+      categories: [
+        { id: 3, name: 'Health', icon: 'self_improvement', color: '#43a047' },
+        { id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' },
+      ],
+    },
+    {
+      id: 6,
+      title: 'Launch Prep Sprint',
+      intention: 'Final polish and launch preparation for Easy Life MVP.',
+      startDate: 'Nov 13',
+      endDate: 'Nov 19, 2023',
+      status: 'DRAFT',
+      reflection: null,
+      createdAt: 'Nov 10, 2023',
+      items: [
+        { id: 1, title: 'Fix critical bugs', description: '', done: false, dueDate: '' },
+        { id: 2, title: 'Prepare launch post', description: '', done: false, dueDate: '' },
+        { id: 3, title: 'Set up analytics', description: '', done: false, dueDate: '' },
+        { id: 4, title: 'Email first 50 users', description: '', done: false, dueDate: '' },
+      ],
+      itemsDone: 0,
+      itemsTotal: 4,
+      categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
+    },
   ]);
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(13);
-  readonly totalElements = signal(52);
-  readonly pageSize = signal(4);
+  readonly pageSize = signal(5);
+
+  readonly totalElements = computed(() => this.weekplans().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedWeekplans = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.weekplans().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   showFilter = signal(false);
   activeFilters = signal<FilterValues>({});
@@ -491,9 +544,6 @@ export class WeekplanComponent {
     return status === 'DRAFT' ? 'Planned Items' : 'Items Progress';
   }
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
   onAiClick() {
     console.log('AI clicked');
   }

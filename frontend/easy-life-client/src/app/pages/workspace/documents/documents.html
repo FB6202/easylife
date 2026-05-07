@@ -62,7 +62,7 @@
   <!-- Grid View -->
   @if (viewMode() === 'grid') {
     <div class="docs-grid">
-      @for (doc of documents(); track doc.id) {
+      @for (doc of paginatedDocuments(); track doc.id) {
         <div class="doc-card" (click)="openEdit(doc)">
           <div class="doc-card__top">
             <div class="doc-card__file-icon" [style.color]="getFileColor(doc.fileType)">
@@ -111,7 +111,7 @@
         <span class="docs-list__col docs-list__col--actions"></span>
       </div>
 
-      @for (doc of documents(); track doc.id) {
+      @for (doc of paginatedDocuments(); track doc.id) {
         <div class="docs-list__row" (click)="openEdit(doc)">
           <div class="docs-list__col docs-list__col--name">
             <div class="doc-list-name">

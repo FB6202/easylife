@@ -28,7 +28,7 @@
 <!-- Grid -->
 <div class="categories-container">
   <div class="categories-grid">
-    @for (category of categories(); track category.id) {
+    @for (category of paginatedCategories(); track category.id) {
       <div class="category-card" (click)="openEdit(category)">
         <div class="category-card__bar" [style.background]="category.color"></div>
         <div class="category-card__body">
@@ -82,6 +82,7 @@
     [totalElements]="totalElements()"
     [pageSize]="pageSize()"
     (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
     (aiClick)="onAiClick()"
   />
 </div>

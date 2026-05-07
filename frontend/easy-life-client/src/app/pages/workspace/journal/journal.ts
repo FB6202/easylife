@@ -150,12 +150,133 @@ export class JournalComponent {
       wordCount: 850,
       readMinutes: 5,
     },
+    {
+      id: 4,
+      title: 'Energy & Focus Reset Day',
+      mood: 'BAD',
+      wentWell: 'Managed to complete the most urgent deliverable despite low energy.',
+      wentBad: 'Distracted by social media and news for too long in the morning. Lost 2 hours.',
+      learnings: 'Keep the phone out of reach for the first hour after waking.',
+      gratitude: 'Grateful for a quiet evening to recharge.',
+      entryDate: 'Oct 09, 2023',
+      entryDay: '09',
+      entryMonth: 'OCT',
+      entryYear: '2023',
+      categories: [{ id: 3, name: 'Health', icon: 'self_improvement', color: '#43a047' }],
+      weekPlan: null,
+      wordCount: 620,
+      readMinutes: 4,
+    },
+    {
+      id: 5,
+      title: 'Deep Work & Flow State',
+      mood: 'GREAT',
+      wentWell:
+        'Entered a genuine flow state for 3 hours. Built the entire auth module without interruption.',
+      wentBad: 'Missed a scheduled call because I was too focused. Need to set alarms.',
+      learnings: 'Flow state is fragile — protect it like a meeting.',
+      gratitude: 'Grateful for the quiet office on a Friday afternoon.',
+      entryDate: 'Oct 06, 2023',
+      entryDay: '06',
+      entryMonth: 'OCT',
+      entryYear: '2023',
+      categories: [
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+        { id: 5, name: 'Learning', icon: 'school', color: '#e91e63' },
+      ],
+      weekPlan: {
+        id: 1,
+        title: 'Scaling the Creative Horizon',
+        startDate: 'Oct 23',
+        endDate: 'Oct 29, 2023',
+      },
+      wordCount: 1840,
+      readMinutes: 12,
+    },
+    {
+      id: 6,
+      title: 'Weekend Reflection & Planning',
+      mood: 'GOOD',
+      wentWell: 'Did a proper weekly review and set clear intentions for next week.',
+      wentBad: 'Spent too much time on admin tasks instead of actual planning.',
+      learnings: 'Use a template for weekly reviews to make them faster.',
+      gratitude: 'Grateful for a long walk in nature with clear headspace.',
+      entryDate: 'Oct 07, 2023',
+      entryDay: '07',
+      entryMonth: 'OCT',
+      entryYear: '2023',
+      categories: [{ id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' }],
+      weekPlan: {
+        id: 1,
+        title: 'Scaling the Creative Horizon',
+        startDate: 'Oct 23',
+        endDate: 'Oct 29, 2023',
+      },
+      wordCount: 980,
+      readMinutes: 6,
+    },
+    {
+      id: 7,
+      title: 'Client Feedback Session',
+      mood: 'OKAY',
+      wentWell:
+        'Client was happy with the overall direction and gave specific actionable feedback.',
+      wentBad:
+        'Three of the features we built were deemed out of scope. Painful but necessary pivot.',
+      learnings: 'Validate assumptions early — building the wrong thing is the costliest mistake.',
+      gratitude: null,
+      entryDate: 'Oct 05, 2023',
+      entryDay: '05',
+      entryMonth: 'OCT',
+      entryYear: '2023',
+      categories: [
+        { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+        { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
+      ],
+      weekPlan: null,
+      wordCount: 1350,
+      readMinutes: 9,
+    },
+    {
+      id: 8,
+      title: 'New Habit Stack Attempt',
+      mood: 'GOOD',
+      wentWell: 'Completed all three morning habits: journaling, exercise and cold shower.',
+      wentBad: 'The cold shower took 10 minutes of mental prep. Still not natural.',
+      learnings: 'Habit stacking works best when the anchor habit is already solid.',
+      gratitude: 'Grateful for a productive Monday that set the tone for the week.',
+      entryDate: 'Oct 02, 2023',
+      entryDay: '02',
+      entryMonth: 'OCT',
+      entryYear: '2023',
+      categories: [
+        { id: 3, name: 'Health', icon: 'self_improvement', color: '#43a047' },
+        { id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' },
+      ],
+      weekPlan: null,
+      wordCount: 760,
+      readMinutes: 5,
+    },
   ]);
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(12);
-  readonly totalElements = signal(48);
-  readonly pageSize = signal(3);
+  readonly pageSize = signal(5);
+
+  readonly totalElements = computed(() => this.entries().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedEntries = computed(() => {
+    const start = this.currentPage() * this.pageSize();
+    return this.entries().slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   showFilter = signal(false);
   activeFilters = signal<FilterValues>({});
@@ -378,9 +499,6 @@ export class JournalComponent {
     return map[mood];
   }
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
   onAiClick() {
     console.log('AI clicked');
   }

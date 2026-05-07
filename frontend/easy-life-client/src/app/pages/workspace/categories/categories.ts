@@ -90,12 +90,82 @@ export class CategoriesComponent {
       accessType: 'PUBLIC',
       createdAt: 'Jan 05',
     },
+    {
+      id: 7,
+      name: 'Learning & Growth',
+      description: 'Books, courses, podcasts and continuous education.',
+      color: '#e91e63',
+      icon: 'school',
+      accessType: 'PUBLIC',
+      createdAt: 'Feb 10',
+    },
+    {
+      id: 8,
+      name: 'Health & Wellness',
+      description: 'Fitness tracking, nutrition logs and mental health.',
+      color: '#4caf50',
+      icon: 'fitness_center',
+      accessType: 'PRIVATE',
+      createdAt: 'Mar 15',
+    },
+    {
+      id: 9,
+      name: 'Travel & Adventures',
+      description: 'Trip planning, travel journals and destination wishlist.',
+      color: '#ff9800',
+      icon: 'flight',
+      accessType: 'PUBLIC',
+      createdAt: 'Apr 22',
+    },
+    {
+      id: 10,
+      name: 'Side Projects',
+      description: 'Personal experiments, open source and creative builds.',
+      color: '#607d8b',
+      icon: 'code',
+      accessType: 'PRIVATE',
+      createdAt: 'May 01',
+    },
+    {
+      id: 11,
+      name: 'Networking',
+      description: 'Professional connections, events and community involvement.',
+      color: '#3f51b5',
+      icon: 'groups',
+      accessType: 'PUBLIC',
+      createdAt: 'May 18',
+    },
+    {
+      id: 12,
+      name: 'Mindfulness',
+      description: 'Meditation, journaling and daily reflection practice.',
+      color: '#795548',
+      icon: 'self_improvement',
+      accessType: 'PRIVATE',
+      createdAt: 'Jun 03',
+    },
   ]);
 
   readonly currentPage = signal(0);
-  readonly totalPages = signal(3);
-  readonly totalElements = signal(24);
-  readonly pageSize = signal(6);
+  readonly pageSize = signal(10);
+
+  readonly totalElements = computed(() => this.categories().length);
+  readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
+
+  readonly paginatedCategories = computed(() => {
+    const all = this.categories();
+    const start = this.currentPage() * this.pageSize();
+    // Reserve last slot for Add New card
+    return all.slice(start, start + this.pageSize());
+  });
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
 
   showFilter = signal(false);
   activeFilters = signal<FilterValues>({});
@@ -394,9 +464,6 @@ export class CategoriesComponent {
     this.selectedCategory.set(null);
   }
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
   onAiClick() {
     console.log('AI clicked');
   }

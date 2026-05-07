@@ -49,7 +49,7 @@
     <span class="network-col network-col--last">Last Contact</span>
   </div>
 
-  @for (contact of filteredContacts(); track contact.id) {
+  @for (contact of paginatedContacts(); track contact.id) {
     <div class="network-table__row" (click)="openEdit(contact)">
       <!-- Contact -->
       <div class="network-col network-col--contact">
@@ -114,6 +114,7 @@
     [totalElements]="totalElements()"
     [pageSize]="pageSize()"
     (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
     (aiClick)="onAiClick()"
   />
 </div>

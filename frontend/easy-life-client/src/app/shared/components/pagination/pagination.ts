@@ -1,9 +1,10 @@
-import { Component, input, output, computed } from '@angular/core';
+import { Component, input, output, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pagination',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pagination.html',
   styleUrl: './pagination.scss',
 })
@@ -11,40 +12,45 @@ export class PaginationComponent {
   readonly currentPage = input.required<number>();
   readonly totalPages = input.required<number>();
   readonly totalElements = input.required<number>();
-  readonly pageSize = input<number>(6);
+  readonly pageSize = input<number>(10);
   readonly showAiButton = input<boolean>(true);
 
   readonly pageChange = output<number>();
   readonly pageSizeChange = output<number>();
   readonly aiClick = output<void>();
 
-  readonly pageSizeOptions = [6, 12, 24, 48];
+  readonly pageSizeOptions = [5, 10, 15, 20];
+  readonly customSizeInput = signal('');
+  readonly showCustomInput = signal(false);
 
   readonly visiblePages = computed(() => {
     const total = this.totalPages();
     const current = this.currentPage();
 
-    if (total <= 7) {
-      return Array.from({ length: total }, (_, i) => i);
-    }
+    if (total <= 0) return [];
+    if (total <= 5) return Array.from({ length: total }, (_, i) => i);
 
     const pages: (number | 'ellipsis')[] = [];
-
     pages.push(0);
 
-    if (current <= 3) {
-      pages.push(1, 2, 3, 4, 'ellipsis');
-    } else if (current >= total - 4) {
-      pages.push('ellipsis', total - 5, total - 4, total - 3, total - 2);
+    if (total <= 7) {
+      for (let i = 1; i < total - 1; i++) pages.push(i);
+    } else if (current <= 2) {
+      pages.push(1, 2, 3, 'ellipsis');
+    } else if (current >= total - 3) {
+      pages.push('ellipsis', total - 4, total - 3, total - 2, total - 1);
+      return pages.slice(0, pages.length - 0);
     } else {
       pages.push('ellipsis', current - 1, current, current + 1, 'ellipsis');
     }
 
-    pages.push(total - 1);
+    if (total > 1) pages.push(total - 1);
     return pages;
   });
 
-  readonly startItem = computed(() => this.currentPage() * this.pageSize() + 1);
+  readonly startItem = computed(() =>
+    this.totalElements() === 0 ? 0 : this.currentPage() * this.pageSize() + 1,
+  );
 
   readonly endItem = computed(() =>
     Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements()),
@@ -63,8 +69,33 @@ export class PaginationComponent {
   }
 
   onSizeChange(size: number) {
+    this.showCustomInput.set(false);
+    this.customSizeInput.set('');
     this.pageSizeChange.emit(size);
     this.pageChange.emit(0);
+  }
+
+  onCustomSizeClick() {
+    this.showCustomInput.set(true);
+    this.customSizeInput.set('');
+  }
+
+  onCustomSizeConfirm() {
+    const val = parseInt(this.customSizeInput(), 10);
+    if (!isNaN(val) && val > 0 && val <= 500) {
+      this.pageSizeChange.emit(val);
+      this.pageChange.emit(0);
+    }
+    this.showCustomInput.set(false);
+    this.customSizeInput.set('');
+  }
+
+  onCustomSizeKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') this.onCustomSizeConfirm();
+    if (event.key === 'Escape') {
+      this.showCustomInput.set(false);
+      this.customSizeInput.set('');
+    }
   }
 
   onAiClick() {
@@ -77,5 +108,9 @@ export class PaginationComponent {
 
   asNumber(page: number | 'ellipsis'): number {
     return page as number;
+  }
+
+  isCustomSize(): boolean {
+    return !this.pageSizeOptions.includes(this.pageSize());
   }
 }
