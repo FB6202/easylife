@@ -38,6 +38,10 @@
     img {
       height: 32px;
       width: auto;
+      // Dark Mode: Logo für hellen Hintergrund invertieren
+      [data-theme='dark'] & {
+        filter: brightness(0) invert(1);
+      }
     }
   }
 
@@ -137,7 +141,7 @@
 
     &:hover {
       color: var(--color-danger);
-      background: rgba(211, 47, 47, 0.06);
+      background: var(--color-danger-subtle); // ← war rgba(211,47,47,0.06)
     }
   }
 

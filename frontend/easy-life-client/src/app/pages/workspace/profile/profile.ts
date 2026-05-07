@@ -2,8 +2,8 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ThemeService, ColorTheme } from '../../../core/services/theme';
 
-type ColorTheme = 'LIGHT' | 'DARK' | 'SYSTEM';
 type Language = 'DE' | 'EN';
 
 @Component({
@@ -21,7 +21,7 @@ export class ProfileComponent {
   lastname = signal('Müller');
   email = signal('felix@easylife.app');
   bio = signal(
-    'Building Easy Life – a productivity suite for intentional people. Passionate about deep work, systems thinking and great software.',
+    'Building Easy Life - a productivity suite for intentional people. Passionate about deep work, systems thinking and great software.',
   );
   readonly bioMaxLength = 240;
 
@@ -115,7 +115,17 @@ export class ProfileComponent {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-  ) {}
+    private themeService: ThemeService,
+  ) {
+    // Aktuelles Theme laden
+    this.webColorTheme.set(this.themeService.currentTheme());
+  }
+
+  setWebTheme(theme: ColorTheme) {
+    this.webColorTheme.set(theme);
+    this.themeService.setTheme(theme);
+    this.markChanged();
+  }
 
   getInitials(): string {
     return `${this.firstname().charAt(0)}${this.lastname().charAt(0)}`.toUpperCase();

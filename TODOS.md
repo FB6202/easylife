@@ -13,7 +13,19 @@
 - notifications when event is created
 
 ## Frontend:
-- dark mode
+- dark mode (logo + pages: weekplan, journal, profile, people, network pages [following], notifications)
+  - goals
+  - calendar
+  - documents
+  - dashboard
+  - weekplan
+  - journal
+  - profile
+  - people
+  - network pages [following]
+  - notifications
+  - modals
+  - (public pages)
 - categories in filter modal as dropdown?
 - login/logout buttons
 - toaster on a few actions (create / delete)

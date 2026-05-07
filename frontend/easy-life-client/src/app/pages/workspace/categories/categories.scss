@@ -231,22 +231,22 @@
 
 // ── Access Badges ──────────────────────────────────────────
 .access--public {
-  background: rgba(67, 160, 71, 0.1);
+  background: var(--color-primary-subtle);
   color: var(--color-primary);
-  border: 1px solid rgba(67, 160, 71, 0.2);
+  border: 1px solid var(--color-primary-border);
 }
 
 .access--private {
-  background: rgba(117, 117, 117, 0.1);
+  background: var(--color-neutral-subtle);
   color: var(--color-text-muted);
-  border: 1px solid rgba(117, 117, 117, 0.15);
+  border: 1px solid var(--color-neutral-border);
 }
 
 // ══ MODAL OVERLAY ════════════════════════════════════════
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--color-overlay);
   backdrop-filter: blur(4px);
   z-index: 200;
   @include flex-center;
@@ -262,10 +262,11 @@
   max-width: 580px;
   max-height: 90vh;
   overflow-y: auto;
+  @include scrollbar-thin;
   @include flex-col;
   gap: $space-4;
   padding: $space-8;
-  margin: auto; // zentriert im scrollbaren overlay
+  margin: auto;
 
   &__header {
     @include flex-between;
@@ -313,10 +314,11 @@
     }
 
     &--delete {
-      background: rgba(211, 47, 47, 0.1);
+      background: var(--color-danger-subtle);
       color: var(--color-danger);
       &:hover {
-        background: rgba(211, 47, 47, 0.2);
+        background: var(--color-danger-subtle);
+        filter: brightness(0.9);
       }
     }
   }
@@ -408,9 +410,10 @@
   &:hover {
     transform: scale(1.2);
   }
+
   &--active {
     box-shadow:
-      0 0 0 3px white,
+      0 0 0 3px var(--color-bg-card),
       0 0 0 5px currentColor;
   }
 }
@@ -496,46 +499,6 @@
   text-align: center;
 }
 
-// ══ ACCESS TOGGLE ══════════════════════════════════════════
-.modal-access-toggle {
-  @include flex-start;
-  border: 1px solid var(--color-border);
-  border-radius: $radius-md;
-  overflow: hidden;
-}
-
-.modal-access-btn {
-  @include flex-start;
-  gap: $space-2;
-  flex: 1;
-  padding: $space-2 $space-3;
-  border: none;
-  background: none;
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: all $transition-fast;
-  border-right: 1px solid var(--color-border);
-  justify-content: center;
-
-  &:last-child {
-    border-right: none;
-  }
-  .material-symbols-outlined {
-    font-size: 16px;
-  }
-  &:hover {
-    background: var(--color-bg-hover);
-    color: var(--color-text-primary);
-  }
-  &.active {
-    background: var(--color-primary);
-    color: white;
-  }
-}
-
 // ══ CONFIRM DIALOG ════════════════════════════════════════
 .confirm-dialog {
   background: var(--color-bg-card);
@@ -566,7 +529,7 @@
     }
 
     &--danger {
-      background: rgba(211, 47, 47, 0.12);
+      background: var(--color-danger-subtle);
       color: var(--color-danger);
     }
   }
@@ -593,7 +556,7 @@
   background: var(--color-danger);
   color: white;
   &:hover:not(:disabled) {
-    background: #c62828;
+    background: var(--color-danger-hover);
   }
 }
 

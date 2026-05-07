@@ -1,5 +1,6 @@
 @use 'variables' as *;
 
+// ── Breakpoints ────────────────────────────────────────────
 @mixin sm {
   @media (min-width: #{$bp-sm}) {
     @content;
@@ -31,6 +32,7 @@
   }
 }
 
+// ── Flex ───────────────────────────────────────────────────
 @mixin flex-center {
   display: flex;
   align-items: center;
@@ -54,11 +56,12 @@
   flex-direction: column;
 }
 
+// ── Card ───────────────────────────────────────────────────
 @mixin card($padding: $space-6) {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: $radius-lg;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-sm);
   padding: $padding;
 }
 
@@ -72,6 +75,7 @@
   }
 }
 
+// ── Buttons ────────────────────────────────────────────────
 @mixin btn-base {
   display: inline-flex;
   align-items: center;
@@ -88,6 +92,7 @@
   outline: none;
   text-decoration: none;
   white-space: nowrap;
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -118,6 +123,7 @@
   background: transparent;
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
+
   &:hover:not(:disabled) {
     background: var(--color-bg-hover);
     border-color: var(--color-primary);
@@ -130,6 +136,7 @@
   background: transparent;
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
+
   &:hover:not(:disabled) {
     background: var(--color-primary-light);
   }
@@ -140,12 +147,14 @@
   background: transparent;
   color: var(--color-text-secondary);
   padding: $space-2;
+
   &:hover:not(:disabled) {
     background: var(--color-bg-hover);
     color: var(--color-text-primary);
   }
 }
 
+// ── Badge ──────────────────────────────────────────────────
 @mixin badge($bg, $color) {
   display: inline-flex;
   align-items: center;
@@ -158,6 +167,7 @@
   white-space: nowrap;
 }
 
+// ── Input ──────────────────────────────────────────────────
 @mixin input-base {
   width: 100%;
   padding: $space-3 $space-4;
@@ -167,17 +177,22 @@
   font-family: $font-family;
   font-size: $font-size-sm;
   color: var(--color-text-primary);
-  transition: border-color $transition-fast;
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast;
   outline: none;
+
   &::placeholder {
     color: var(--color-text-muted);
   }
+
   &:focus {
-    border-color: var(--color-border-focus);
-    box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.12);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-subtle);
   }
 }
 
+// ── Truncate ───────────────────────────────────────────────
 @mixin truncate($lines: 1) {
   @if $lines == 1 {
     overflow: hidden;
@@ -191,9 +206,11 @@
   }
 }
 
+// ── Scrollbar ──────────────────────────────────────────────
 @mixin scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
+
   &::-webkit-scrollbar {
     width: 4px;
   }
@@ -206,6 +223,7 @@
   }
 }
 
+// ── Section Label ──────────────────────────────────────────
 @mixin section-label {
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
@@ -214,11 +232,13 @@
   letter-spacing: 0.08em;
 }
 
+// ── Progress Bar ───────────────────────────────────────────
 @mixin progress-bar($height: 6px) {
   height: $height;
   background: var(--color-border-light);
   border-radius: $radius-pill;
   overflow: hidden;
+
   .progress-fill {
     height: 100%;
     background: var(--color-primary);
@@ -227,6 +247,7 @@
   }
 }
 
+// ── Sidebar Item ───────────────────────────────────────────
 @mixin sidebar-item {
   @include flex-start;
   gap: $space-3;
@@ -238,14 +259,15 @@
   cursor: pointer;
   transition: all $transition-fast;
   text-decoration: none;
+
   &:hover {
     background: var(--color-bg-hover);
     color: var(--color-text-primary);
   }
+
   &.active {
-    background: var(--color-bg-active);
+    background: var(--color-primary-light);
     color: var(--color-primary);
     font-weight: $font-weight-semibold;
-    border-left: 3px solid var(--color-primary);
   }
 }
