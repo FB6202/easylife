@@ -1,53 +1,68 @@
-import { Component, signal, inject, HostListener } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface NavItem {
-  label: string;
-  route: string;
-  icon: string;
-}
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
+import { SettingsModalComponent } from '../../shared/components/settings-modal/settings-modal';
 
 @Component({
   selector: 'app-workspace-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  imports: [CommonModule, RouterModule, SettingsModalComponent],
   templateUrl: './workspace-layout.html',
   styleUrl: './workspace-layout.scss',
 })
 export class WorkspaceLayoutComponent {
-  private route = inject(ActivatedRoute);
-
   sidebarCollapsed = signal(false);
-  readonly username = this.route.snapshot.paramMap.get('username') ?? 'user';
+  showSettings = signal(false);
 
-  readonly managementItems: NavItem[] = [
-    { label: 'Dashboard', route: 'dashboard', icon: 'grid_view' },
-    { label: 'Tasks', route: 'tasks', icon: 'check_circle' },
-    { label: 'Categories', route: 'categories', icon: 'category' },
-    { label: 'Goals', route: 'goals', icon: 'flag' },
-    { label: 'Calendar', route: 'calendar', icon: 'calendar_month' },
-    { label: 'Documents', route: 'documents', icon: 'description' },
-    { label: 'My Week', route: 'my-week', icon: 'view_week' },
-    { label: 'Journal', route: 'journal', icon: 'menu_book' },
+  readonly username: string;
+
+  readonly managementItems = [
+    { route: 'dashboard', label: 'Dashboard', icon: 'grid_view' },
+    { route: 'tasks', label: 'Tasks', icon: 'check_circle' },
+    { route: 'categories', label: 'Categories', icon: 'category' },
+    { route: 'goals', label: 'Goals', icon: 'flag' },
+    { route: 'calendar', label: 'Calendar', icon: 'calendar_month' },
+    { route: 'documents', label: 'Documents', icon: 'description' },
+    { route: 'my-week', label: 'My Week', icon: 'view_week' },
+    { route: 'journal', label: 'Journal', icon: 'menu_book' },
+  ];
+
+  readonly accountItems = [
+    { route: 'profile', label: 'Profile', icon: 'person', badge: false },
+    { route: 'network', label: 'People', icon: 'people', badge: false },
+    { route: 'following', label: 'Network', icon: 'person_add', badge: false },
+    { route: 'notifications', label: 'Notifications', icon: 'notifications', badge: true },
   ];
 
   readonly unreadNotificationCount = signal(3);
 
-  readonly accountItems = [
-    { route: 'profile', label: 'Profile', icon: 'person' },
-    { route: 'network', label: 'People', icon: 'people' },
-    { route: 'following', label: 'Network', icon: 'person_add' },
-    { route: 'notifications', label: 'Notifications', icon: 'notifications', badge: true },
-  ];
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {
+    this.username = this.route.snapshot.paramMap.get('username') ?? 'user';
+  }
 
   toggleSidebar() {
     this.sidebarCollapsed.update((v) => !v);
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    if (window.innerWidth < 1024) {
-      this.sidebarCollapsed.set(true);
+  navigateToProfile(section?: string) {
+    this.router.navigate([`/workspace/${this.username}/profile`]).then(() => {
+      if (section) {
+        setTimeout(() => {
+          const el = document.getElementById(section);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+      }
+    });
+  }
+
+  onSettingsNavigate(event: { path: string; section?: string }) {
+    this.showSettings.set(false);
+    if (event.section) {
+      this.navigateToProfile(event.section);
+    } else {
+      this.router.navigate([`/workspace/${this.username}/${event.path}`]);
     }
   }
 }

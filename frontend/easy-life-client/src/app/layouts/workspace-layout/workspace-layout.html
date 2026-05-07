@@ -51,10 +51,10 @@
           <span class="material-symbols-outlined">search</span>
           <input type="text" placeholder="Search..." />
         </div>
-        <button class="topbar__icon-btn">
+        <button class="topbar__icon-btn" (click)="showSettings.set(true)">
           <span class="material-symbols-outlined">settings</span>
         </button>
-        <div class="topbar__user">
+        <div class="topbar__user" (click)="navigateToProfile('section-profile')">
           <div class="topbar__user-info">
             <span class="topbar__user-name">{{ username }}</span>
             <span class="topbar__user-plan">Premium Plan</span>
@@ -69,3 +69,11 @@
     </main>
   </div>
 </div>
+
+@if (showSettings()) {
+  <app-settings-modal
+    (close)="showSettings.set(false)"
+    (save)="showSettings.set(false)"
+    (navigateTo)="onSettingsNavigate($event)"
+  />
+}

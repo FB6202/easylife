@@ -1,7 +1,7 @@
 ## To Do's:
 - keycloak
 - security
-- payments
+- payments (financial data)
 - ai-agent
 - ai-screenshots backend changes
 - max storage capacity for docs (including profile image + goals images)
@@ -11,14 +11,12 @@
 - tests for all edge cases (document)
 - clean backend code (especially entities)
 - notifications when event is created
-- categories in filter modal as dropdown?
 
-## Frontend (Pages):
-- settings work (incl. dark mode)
-- profile click work
+## Frontend:
+- dark mode
+- categories in filter modal as dropdown?
 - login/logout buttons
 - toaster on a few actions (create / delete)
-- categories (max. 5) on all dialogs
 - dashboard
   - widgets self-service
 - tasks
@@ -44,8 +42,11 @@
   - contract change
   - delete account
   - size for profile image
+  - security & privacy
+  - subscription & billing
 - people
 - network
+  - click on follower → view page
 - notifications
   - channels (all?)
   - start application - load all (for unread...)

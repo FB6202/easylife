@@ -1,34 +1,10 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 
 type ColorTheme = 'LIGHT' | 'DARK' | 'SYSTEM';
 type Language = 'DE' | 'EN';
-
-interface ProfileForm {
-  firstname: string;
-  lastname: string;
-  username: string;
-  email: string;
-  bio: string;
-}
-
-interface AddressForm {
-  country: string;
-  street: string;
-  number: string;
-  additionalAddressInfo: string;
-  zipCode: string;
-  city: string;
-}
-
-interface SettingsForm {
-  language: Language;
-  webColorTheme: ColorTheme;
-  mobileColorTheme: ColorTheme;
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-}
 
 @Component({
   selector: 'app-profile',
@@ -37,40 +13,49 @@ interface SettingsForm {
   styleUrl: './profile.scss',
 })
 export class ProfileComponent {
-  readonly profile = signal<ProfileForm>({
-    firstname: 'Felix',
-    lastname: 'Müller',
-    username: 'felix',
-    email: 'felix@easylife.app',
-    bio: 'Productivity enthusiast and developer. Building Easy Life one feature at a time.',
-  });
+  hasChanges = signal(false);
+  showDeleteConfirm = signal(false);
 
-  readonly address = signal<AddressForm>({
-    country: 'Germany',
-    street: 'Musterstraße',
-    number: '42',
-    additionalAddressInfo: '',
-    zipCode: '40213',
-    city: 'Düsseldorf',
-  });
-
-  readonly settings = signal<SettingsForm>({
-    language: 'DE',
-    webColorTheme: 'LIGHT',
-    mobileColorTheme: 'LIGHT',
-    emailNotifications: true,
-    pushNotifications: false,
-  });
-
-  hasUnsavedChanges = signal(false);
-  profileImagePath = signal<string | null>(null);
-
+  // Profile
+  firstname = signal('Felix');
+  lastname = signal('Müller');
+  email = signal('felix@easylife.app');
+  bio = signal(
+    'Building Easy Life – a productivity suite for intentional people. Passionate about deep work, systems thinking and great software.',
+  );
   readonly bioMaxLength = 240;
-  readonly bioLength = computed(() => this.profile().bio.length);
 
-  readonly languages: { value: Language; label: string }[] = [
-    { value: 'DE', label: 'Deutsch' },
-    { value: 'EN', label: 'English' },
+  // Address
+  country = signal('Germany');
+  street = signal('Musterstraße');
+  number = signal('42');
+  additionalInfo = signal('');
+  zipCode = signal('40210');
+  city = signal('Düsseldorf');
+
+  // Preferences
+  webColorTheme = signal<ColorTheme>('LIGHT');
+  mobileColorTheme = signal<ColorTheme>('SYSTEM');
+  language = signal<Language>('EN');
+  emailNotifications = signal(true);
+  pushNotifications = signal(false);
+
+  // Security
+  currentPassword = signal('');
+  newPassword = signal('');
+  confirmPassword = signal('');
+  twoFactorEnabled = signal(false);
+  sessionTimeout = signal('30');
+
+  // Billing
+  readonly currentPlan = signal<'FREE' | 'PLUS' | 'PRO'>('FREE');
+
+  readonly sessionTimeoutOptions = [
+    { value: '15', label: '15 minutes' },
+    { value: '30', label: '30 minutes' },
+    { value: '60', label: '1 hour' },
+    { value: '240', label: '4 hours' },
+    { value: 'never', label: 'Never' },
   ];
 
   readonly themes: { value: ColorTheme; label: string; icon: string }[] = [
@@ -79,50 +64,80 @@ export class ProfileComponent {
     { value: 'SYSTEM', label: 'System', icon: 'brightness_auto' },
   ];
 
-  onProfileChange() {
-    this.hasUnsavedChanges.set(true);
+  readonly languages: { value: Language; label: string; flag: string }[] = [
+    { value: 'EN', label: 'English', flag: '🇬🇧' },
+    { value: 'DE', label: 'Deutsch', flag: '🇩🇪' },
+  ];
+
+  readonly plans = [
+    {
+      id: 'FREE',
+      label: 'Free',
+      price: '0€',
+      period: 'forever',
+      features: ['50 Tasks', '10 Categories', '5 Goals', '500 MB Storage', 'No AI Agent'],
+      color: '#757575',
+      popular: false,
+    },
+    {
+      id: 'PLUS',
+      label: 'Plus',
+      price: '7.99€',
+      period: '/month',
+      features: [
+        'Unlimited Tasks',
+        'Unlimited Categories',
+        'Unlimited Goals',
+        '10 GB Storage',
+        'Basic AI Agent',
+        'Network & Following',
+      ],
+      color: '#1976d2',
+      popular: true,
+    },
+    {
+      id: 'PRO',
+      label: 'Pro',
+      price: '14.99€',
+      period: '/month',
+      features: [
+        'Everything in Plus',
+        '50 GB Storage',
+        'Full AI Agent',
+        'Priority Support',
+        'Early Access Features',
+      ],
+      color: '#9c27b0',
+      popular: false,
+    },
+  ];
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
+
+  getInitials(): string {
+    return `${this.firstname().charAt(0)}${this.lastname().charAt(0)}`.toUpperCase();
   }
 
-  onAddressChange() {
-    this.hasUnsavedChanges.set(true);
-  }
-
-  onSettingsChange() {
-    this.hasUnsavedChanges.set(true);
+  markChanged() {
+    this.hasChanges.set(true);
   }
 
   onSave() {
-    // later: call API
-    console.log('Saving:', this.profile(), this.address(), this.settings());
-    this.hasUnsavedChanges.set(false);
+    console.log('Save profile');
+    this.hasChanges.set(false);
   }
 
-  onCancel() {
-    this.hasUnsavedChanges.set(false);
+  onDiscard() {
+    this.hasChanges.set(false);
   }
 
-  onPhotoChange() {
-    // later: S3 presigned upload
-    console.log('Change photo');
-  }
-
-  onPhotoRemove() {
-    this.profileImagePath.set(null);
-    this.hasUnsavedChanges.set(true);
-  }
-
-  setTheme(theme: ColorTheme, type: 'web' | 'mobile') {
-    if (type === 'web') {
-      this.settings.update((s) => ({ ...s, webColorTheme: theme }));
-    } else {
-      this.settings.update((s) => ({ ...s, mobileColorTheme: theme }));
-    }
-    this.hasUnsavedChanges.set(true);
-  }
-
-  getInitials(): string {
-    const f = this.profile().firstname.charAt(0);
-    const l = this.profile().lastname.charAt(0);
-    return (f + l).toUpperCase();
+  scrollToSection(sectionId: string) {
+    setTimeout(() => {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   }
 }
