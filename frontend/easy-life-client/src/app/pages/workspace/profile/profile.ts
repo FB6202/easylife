@@ -21,7 +21,7 @@ export class ProfileComponent {
   lastname = signal('Müller');
   email = signal('felix@easylife.app');
   bio = signal(
-    'Building Easy Life – a productivity suite for intentional people. Passionate about deep work, systems thinking and great software.',
+    'Building Easy Life - a productivity suite for intentional people. Passionate about deep work, systems thinking and great software.',
   );
   readonly bioMaxLength = 240;
 
