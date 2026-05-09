@@ -97,6 +97,7 @@
     &:last-child {
       border-right: none;
     }
+
     &:hover {
       background: var(--color-bg-hover);
       color: var(--color-text-primary);
@@ -133,11 +134,7 @@
 
   .material-symbols-outlined {
     font-size: 16px;
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 20;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
   }
 
   &:hover {
@@ -152,11 +149,7 @@
     color: white;
 
     .material-symbols-outlined {
-      font-variation-settings:
-        'FILL' 1,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 20;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
     }
 
     &:hover {
@@ -217,9 +210,11 @@
   &:nth-child(7n) {
     border-right: none;
   }
+
   &:nth-last-child(-n + 7) {
     border-bottom: none;
   }
+
   &:hover {
     background: var(--color-bg-hover);
   }
@@ -230,7 +225,7 @@
   }
 
   &--weekend {
-    background: rgba(0, 0, 0, 0.01);
+    background: var(--color-bg-input);
   }
 
   &--today {
@@ -268,6 +263,7 @@
   @include truncate;
   cursor: pointer;
   transition: opacity $transition-fast;
+
   &:hover {
     opacity: 0.8;
   }
@@ -365,6 +361,12 @@
   background: var(--color-bg-input);
   border-radius: $radius-md;
   border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: box-shadow $transition-fast;
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+  }
 
   &__top {
     @include flex-between;
@@ -398,6 +400,23 @@
       font-size: 13px;
       color: var(--color-text-muted);
     }
+  }
+
+  &__type-row {
+    @include flex-start;
+    gap: $space-1;
+    margin-top: $space-1;
+  }
+
+  &__type-icon {
+    font-size: 13px;
+  }
+
+  &__type-label {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 }
 
@@ -486,7 +505,7 @@
     }
 
     &--today {
-      background: rgba(67, 160, 71, 0.03);
+      background: var(--color-primary-subtle);
     }
   }
 
@@ -525,7 +544,7 @@
 
   &__grid {
     position: relative;
-    height: 1440px; // 24h × 60px
+    height: 1440px;
     overflow-y: auto;
     @include scrollbar-thin;
   }
@@ -575,7 +594,7 @@
   }
 }
 
-// ── Selected Day ────────────────────────────────────────────
+// ── Selected Day ───────────────────────────────────────────
 .cal-cell--selected:not(.cal-cell--today) {
   background: var(--color-bg-hover);
 
@@ -593,37 +612,11 @@
   cursor: pointer;
 }
 
-.cal-today-event {
-  cursor: pointer;
-  transition: box-shadow $transition-fast;
-
-  &:hover {
-    box-shadow: var(--shadow-sm);
-  }
-
-  &__type-row {
-    @include flex-start;
-    gap: $space-1;
-    margin-top: $space-1;
-  }
-
-  &__type-icon {
-    font-size: 13px;
-  }
-
-  &__type-label {
-    font-size: $font-size-xs;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-}
-
 // ══ MODAL OVERLAY ════════════════════════════════════════
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--color-overlay);
   backdrop-filter: blur(4px);
   z-index: 200;
   @include flex-center;
@@ -672,6 +665,7 @@
     border-radius: $radius-md;
     padding: $space-1;
     flex-shrink: 0;
+
     .material-symbols-outlined {
       font-size: 22px;
     }
@@ -685,15 +679,18 @@
     @include flex-center;
     cursor: pointer;
     transition: all $transition-fast;
+
     .material-symbols-outlined {
       font-size: 18px;
     }
 
     &--delete {
-      background: rgba(211, 47, 47, 0.1);
+      background: var(--color-danger-subtle);
       color: var(--color-danger);
+
       &:hover {
-        background: rgba(211, 47, 47, 0.2);
+        background: var(--color-danger-subtle);
+        filter: brightness(0.9);
       }
     }
   }
@@ -721,6 +718,7 @@
     &::placeholder {
       color: var(--color-text-muted);
     }
+
     &:focus {
       border-color: var(--color-primary);
     }
@@ -741,6 +739,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: $space-4;
+
     @include below-md {
       grid-template-columns: 1fr;
     }
@@ -776,11 +775,7 @@
 
   .material-symbols-outlined {
     font-size: 14px;
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 20;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
   }
 
   &:hover {
@@ -794,11 +789,7 @@
     color: white;
 
     .material-symbols-outlined {
-      font-variation-settings:
-        'FILL' 1,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 20;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
     }
   }
 }
@@ -828,10 +819,9 @@
   &:hover {
     transform: scale(1.2);
   }
+
   &--active {
-    box-shadow:
-      0 0 0 3px white,
-      0 0 0 5px currentColor;
+    box-shadow: 0 0 0 3px var(--color-bg-card), 0 0 0 5px currentColor;
   }
 }
 
@@ -869,8 +859,9 @@
     width: 0;
     height: 0;
 
-    &:checked + .toggle-switch__slider {
+    &:checked+.toggle-switch__slider {
       background: var(--color-primary);
+
       &::before {
         transform: translateX(20px);
       }
@@ -899,46 +890,7 @@
   }
 }
 
-// ── Access Toggle ──────────────────────────────────────────
-.modal-access-toggle {
-  @include flex-start;
-  border: 1px solid var(--color-border);
-  border-radius: $radius-md;
-  overflow: hidden;
-}
-
-.modal-access-btn {
-  @include flex-start;
-  gap: $space-2;
-  flex: 1;
-  padding: $space-2 $space-3;
-  border: none;
-  background: none;
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: all $transition-fast;
-  border-right: 1px solid var(--color-border);
-  justify-content: center;
-
-  &:last-child {
-    border-right: none;
-  }
-  .material-symbols-outlined {
-    font-size: 16px;
-  }
-  &:hover {
-    background: var(--color-bg-hover);
-    color: var(--color-text-primary);
-  }
-  &.active {
-    background: var(--color-primary);
-    color: white;
-  }
-}
-
+// ── Confirm Dialog ─────────────────────────────────────────
 .confirm-dialog {
   background: var(--color-bg-card);
   border-radius: $radius-xl;
@@ -959,15 +911,11 @@
 
     .material-symbols-outlined {
       font-size: 28px;
-      font-variation-settings:
-        'FILL' 1,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
     &--danger {
-      background: rgba(211, 47, 47, 0.12);
+      background: var(--color-danger-subtle);
       color: var(--color-danger);
     }
   }
@@ -977,11 +925,13 @@
     font-weight: $font-weight-bold;
     color: var(--color-text-primary);
   }
+
   &__text {
     font-size: $font-size-sm;
     color: var(--color-text-secondary);
     line-height: 1.6;
   }
+
   &__actions {
     @include flex-center;
     gap: $space-3;
@@ -993,7 +943,8 @@
   @include btn-base;
   background: var(--color-danger);
   color: white;
+
   &:hover:not(:disabled) {
-    background: #c62828;
+    background: var(--color-danger-hover);
   }
 }

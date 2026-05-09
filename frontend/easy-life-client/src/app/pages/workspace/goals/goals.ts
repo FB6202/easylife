@@ -281,7 +281,7 @@ export class GoalsComponent {
     {
       key: 'categories',
       label: 'Categories',
-      type: 'multiselect',
+      type: 'multiselect-dropdown',
       icon: 'category',
       options: [
         { value: '1', label: 'Work', icon: 'work', color: '#1976d2' },

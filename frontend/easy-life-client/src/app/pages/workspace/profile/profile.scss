@@ -93,11 +93,7 @@
     color: var(--color-primary);
     flex-shrink: 0;
     margin-top: 2px;
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 24;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 
   &__title {
@@ -158,6 +154,7 @@
 
     &:hover {
       border-color: var(--color-primary);
+
       .material-symbols-outlined {
         color: var(--color-primary);
       }
@@ -224,11 +221,7 @@
       color: var(--color-text-muted);
       flex-shrink: 0;
       margin-top: 2px;
-      font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 20;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
     }
   }
 
@@ -275,11 +268,7 @@
 
   .material-symbols-outlined {
     font-size: 15px;
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 20;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
   }
 
   &:hover:not(&--active) {
@@ -290,12 +279,9 @@
   &--active {
     background: var(--color-primary);
     color: white;
+
     .material-symbols-outlined {
-      font-variation-settings:
-        'FILL' 1,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 20;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
     }
   }
 }
@@ -324,6 +310,7 @@
     border-color: var(--color-primary);
     color: var(--color-primary);
   }
+
   &--active {
     background: var(--color-primary);
     border-color: var(--color-primary);
@@ -344,8 +331,9 @@
     width: 0;
     height: 0;
 
-    &:checked + .pref-toggle__slider {
+    &:checked+.pref-toggle__slider {
       background: var(--color-primary);
+
       &::before {
         transform: translateX(20px);
       }
@@ -401,10 +389,10 @@
   }
 
   &--danger {
-    background: rgba(211, 47, 47, 0.03);
+    background: var(--color-danger-subtle);
     border-radius: $radius-md;
     padding: $space-4;
-    border: 1px solid rgba(211, 47, 47, 0.15);
+    border: 1px solid var(--color-danger-border);
     margin-top: $space-2;
   }
 }
@@ -428,11 +416,7 @@
     font-size: 28px;
     flex-shrink: 0;
     margin-top: 2px;
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 24;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 
   &__label {
@@ -465,9 +449,9 @@
     font-weight: $font-weight-bold;
     padding: $space-2 $space-4;
     border-radius: $radius-pill;
-    background: rgba(117, 117, 117, 0.12);
-    color: #616161;
-    border: 1px solid rgba(117, 117, 117, 0.2);
+    background: var(--color-neutral-subtle);
+    color: var(--color-neutral-text);
+    border: 1px solid var(--color-neutral-border);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     flex-shrink: 0;
@@ -513,7 +497,7 @@
 
   &--popular {
     border-color: var(--plan-color, var(--color-primary));
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
   }
 
   &__badge {
@@ -575,11 +559,7 @@
         font-size: 15px;
         color: var(--color-primary);
         flex-shrink: 0;
-        font-variation-settings:
-          'FILL' 1,
-          'wght' 400,
-          'GRAD' 0,
-          'opsz' 20;
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
       }
     }
   }
@@ -624,11 +604,7 @@
     font-size: 40px;
     color: var(--color-text-muted);
     opacity: 0.4;
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 300,
-      'GRAD' 0,
-      'opsz' 48;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 48;
   }
 
   p {
@@ -667,6 +643,7 @@
       opacity: 0;
       transform: translateX(-50%) translateY(12px);
     }
+
     to {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
@@ -695,7 +672,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--color-overlay);
   backdrop-filter: blur(4px);
   z-index: 200;
   @include flex-center;
@@ -722,15 +699,11 @@
 
     .material-symbols-outlined {
       font-size: 30px;
-      font-variation-settings:
-        'FILL' 1,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
     &--danger {
-      background: rgba(211, 47, 47, 0.12);
+      background: var(--color-danger-subtle);
       color: var(--color-danger);
     }
   }
@@ -740,11 +713,13 @@
     font-weight: $font-weight-bold;
     color: var(--color-text-primary);
   }
+
   &__text {
     font-size: $font-size-sm;
     color: var(--color-text-secondary);
     line-height: 1.6;
   }
+
   &__actions {
     @include flex-center;
     gap: $space-3;
@@ -756,7 +731,8 @@
   @include btn-base;
   background: var(--color-danger);
   color: white;
+
   &:hover:not(:disabled) {
-    background: #c62828;
+    background: var(--color-danger-hover);
   }
 }

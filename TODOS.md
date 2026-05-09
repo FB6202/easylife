@@ -1,6 +1,7 @@
 ## To Do's:
 - keycloak
 - security
+- login/logout functionality (with refresh)
 - payments (financial data)
 - ai-agent
 - ai-screenshots backend changes
@@ -13,40 +14,29 @@
 - notifications when event is created
 
 ## Frontend:
-- dark mode
-- categories in filter modal as dropdown?
-- login/logout buttons
+- dark mode (logo)
 - toaster on a few actions (create / delete)
 - dashboard
-  - widgets self-service
 - tasks
-  - actions menu → is cut off below pagination (higher z-index?)
 - categories
-  - filter (open filter menu)
   - more icons + colors
 - goals
   - improve goals tasks on modals
-  - filter (open filter menu)
 - calendar
   - event create notification directly
-  - filters (tags above)
   - modal → colors - categories (icons)
 - documents
   - actions (preview + download)
-  - more file types (also in filter)
 - my week
   - drop down for existing tasks (for items)
   - week items - toggle 'create tasks' off
 - journal
 - profile
   - contract change
-  - delete account
   - size for profile image
-  - security & privacy
-  - subscription & billing
 - people
 - network
   - click on follower → view page
 - notifications
   - channels (all?)
-  - start application - load all (for unread...)
+  - start application - load all (for dashboard + unread notifications)
