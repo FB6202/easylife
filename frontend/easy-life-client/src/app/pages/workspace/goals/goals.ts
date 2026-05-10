@@ -324,4 +324,12 @@ export class GoalsComponent {
     if (file) return URL.createObjectURL(file);
     return this.selectedGoal()?.imagePath ?? null;
   }
+
+  getCreateTaskTotal(): number {
+    return this.createForm().tasks.reduce((sum, t) => sum + (t.progressContribution || 0), 0);
+  }
+
+  getEditTaskTotal(): number {
+    return this.editForm().tasks.reduce((sum, t) => sum + (t.progressContribution || 0), 0);
+  }
 }

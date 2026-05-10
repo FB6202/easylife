@@ -263,12 +263,29 @@
         <input type="text" class="goal-task-row__title" placeholder="Task title..." [value]="task.title"
           (input)="updateCreateTask(i, 'title', $any($event.target).value)" />
         <div class="goal-task-row__meta">
-          <input type="number" class="goal-task-row__progress" min="0" max="100" placeholder="%"
-            [value]="task.progressContribution"
-            (input)="updateCreateTask(i, 'progressContribution', +$any($event.target).value)" />
-          <input type="date" class="goal-task-row__date" [value]="task.dueDate"
-            (input)="updateCreateTask(i, 'dueDate', $any($event.target).value)" />
-          <button class="goal-task-row__remove" (click)="removeTaskFromCreate(i)">
+          <div class="goal-task-row__contribution">
+            <span class="goal-task-row__contribution-label">
+              <span class="material-symbols-outlined">percent</span>
+              Contribution to goal
+            </span>
+            <div class="goal-task-row__contribution-input-wrap">
+              <input type="number" class="goal-task-row__progress" min="0" max="100" [value]="task.progressContribution"
+                (input)="updateCreateTask(i, 'progressContribution', +$any($event.target).value)" />
+              <span class="goal-task-row__contribution-unit">%</span>
+            </div>
+            <div class="goal-task-row__contribution-bar">
+              <div class="goal-task-row__contribution-fill" [style.width.%]="task.progressContribution"></div>
+            </div>
+          </div>
+          <div class="goal-task-row__date-wrap">
+            <span class="goal-task-row__contribution-label">
+              <span class="material-symbols-outlined">event</span>
+              Due date
+            </span>
+            <input type="date" class="goal-task-row__date" [value]="task.dueDate"
+              (input)="updateCreateTask(i, 'dueDate', $any($event.target).value)" />
+          </div>
+          <button class="goal-task-row__remove" (click)="removeTaskFromCreate(i)" title="Remove task">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -278,6 +295,23 @@
       <p class="goal-tasks-empty">No tasks yet. Add tasks to break down your goal.</p>
       }
     </div>
+
+    @if (createForm().tasks.length > 0) {
+    <div class="goal-tasks-total" [class.goal-tasks-total--ok]="getCreateTaskTotal() === 100"
+      [class.goal-tasks-total--over]="getCreateTaskTotal() > 100">
+      <span class="material-symbols-outlined">
+        {{ getCreateTaskTotal() === 100 ? 'check_circle' : getCreateTaskTotal() > 100 ? 'error' : 'info' }}
+      </span>
+      <span>Total contribution: <strong>{{ getCreateTaskTotal() }}%</strong></span>
+      @if (getCreateTaskTotal() === 100) {
+      <span class="goal-tasks-total__hint">Tasks cover the full goal.</span>
+      } @else if (getCreateTaskTotal() > 100) {
+      <span class="goal-tasks-total__hint">Over 100% — reduce some contributions.</span>
+      } @else {
+      <span class="goal-tasks-total__hint">{{ 100 - getCreateTaskTotal() }}% unassigned.</span>
+      }
+    </div>
+    }
 
     <div class="goal-modal__footer">
       <button class="btn-secondary" (click)="showCreateModal.set(false)">Cancel</button>
@@ -470,12 +504,29 @@
           placeholder="Task title..." [value]="task.title"
           (input)="updateEditTask(i, 'title', $any($event.target).value)" />
         <div class="goal-task-row__meta">
-          <input type="number" class="goal-task-row__progress" min="0" max="100" placeholder="%"
-            [value]="task.progressContribution"
-            (input)="updateEditTask(i, 'progressContribution', +$any($event.target).value)" />
-          <input type="date" class="goal-task-row__date" [value]="task.dueDate"
-            (input)="updateEditTask(i, 'dueDate', $any($event.target).value)" />
-          <button class="goal-task-row__remove" (click)="removeTaskFromEdit(i)">
+          <div class="goal-task-row__contribution">
+            <span class="goal-task-row__contribution-label">
+              <span class="material-symbols-outlined">percent</span>
+              Contribution to goal
+            </span>
+            <div class="goal-task-row__contribution-input-wrap">
+              <input type="number" class="goal-task-row__progress" min="0" max="100" [value]="task.progressContribution"
+                (input)="updateEditTask(i, 'progressContribution', +$any($event.target).value)" />
+              <span class="goal-task-row__contribution-unit">%</span>
+            </div>
+            <div class="goal-task-row__contribution-bar">
+              <div class="goal-task-row__contribution-fill" [style.width.%]="task.progressContribution"></div>
+            </div>
+          </div>
+          <div class="goal-task-row__date-wrap">
+            <span class="goal-task-row__contribution-label">
+              <span class="material-symbols-outlined">event</span>
+              Due date
+            </span>
+            <input type="date" class="goal-task-row__date" [value]="task.dueDate"
+              (input)="updateEditTask(i, 'dueDate', $any($event.target).value)" />
+          </div>
+          <button class="goal-task-row__remove" (click)="removeTaskFromEdit(i)" title="Remove task">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -485,6 +536,23 @@
       <p class="goal-tasks-empty">No tasks yet. Add tasks to break down your goal.</p>
       }
     </div>
+
+    @if (editForm().tasks.length > 0) {
+    <div class="goal-tasks-total" [class.goal-tasks-total--ok]="getEditTaskTotal() === 100"
+      [class.goal-tasks-total--over]="getEditTaskTotal() > 100">
+      <span class="material-symbols-outlined">
+        {{ getEditTaskTotal() === 100 ? 'check_circle' : getEditTaskTotal() > 100 ? 'error' : 'info' }}
+      </span>
+      <span>Total contribution: <strong>{{ getEditTaskTotal() }}%</strong></span>
+      @if (getEditTaskTotal() === 100) {
+      <span class="goal-tasks-total__hint">Tasks cover the full goal.</span>
+      } @else if (getEditTaskTotal() > 100) {
+      <span class="goal-tasks-total__hint">Over 100% — reduce some contributions.</span>
+      } @else {
+      <span class="goal-tasks-total__hint">{{ 100 - getEditTaskTotal() }}% unassigned.</span>
+      }
+    </div>
+    }
 
     <div class="goal-modal__footer">
       <button class="btn-secondary" (click)="showEditModal.set(false)">Cancel</button>

@@ -7,6 +7,13 @@ type EventType = 'APPOINTMENT' | 'REMINDER' | 'TASK' | 'BIRTHDAY';
 type RecurrenceType = 'NONE' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
 type AccessType = 'PRIVATE' | 'PUBLIC';
 
+interface CategoryPreview {
+  id: number;
+  name: string;
+  icon: string;
+  color: string;
+}
+
 interface CalendarEvent {
   id: number;
   title: string;
@@ -68,6 +75,18 @@ export class CalendarComponent {
   showDeleteConfirm = signal(false);
 
   selectedEvent = signal<CalendarEvent | null>(null);
+
+  // ── Category Dropdown ──────────────────────────────────
+  showCatDropdown = signal(false);
+  showEditCatDropdown = signal(false);
+
+  readonly availableCategories = signal<CategoryPreview[]>([
+    { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
+    { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
+    { id: 3, name: 'Health', icon: 'self_improvement', color: '#43a047' },
+    { id: 4, name: 'Personal', icon: 'person', color: '#9c27b0' },
+    { id: 5, name: 'Learning', icon: 'school', color: '#e91e63' },
+  ]);
 
   readonly eventTypes: { type: EventType; icon: string; label: string }[] = [
     { type: 'APPOINTMENT', icon: 'event', label: 'Appointments' },
@@ -134,21 +153,21 @@ export class CalendarComponent {
     {
       id: 3,
       title: 'Deploy Backend v2',
-      description: 'Production deployment of the new API',
+      description: 'Production deployment window',
       location: '',
       eventColor: '#f57c00',
-      startDateTime: '11:00',
-      endDateTime: '12:00',
+      startDateTime: '22:00',
+      endDateTime: '23:00',
       allDay: false,
       eventType: 'TASK',
       recurrence: 'NONE',
       accessType: 'PRIVATE',
-      date: new Date(2026, 3, 30),
+      date: new Date(2026, 3, 29),
       categoryIds: [1],
     },
     {
       id: 4,
-      title: "Felix's Birthday",
+      title: 'Mom Birthday',
       description: '',
       location: '',
       eventColor: '#e91e63',
@@ -158,17 +177,47 @@ export class CalendarComponent {
       eventType: 'BIRTHDAY',
       recurrence: 'YEARLY',
       accessType: 'PRIVATE',
-      date: new Date(2026, 3, 28),
-      categoryIds: [],
+      date: new Date(2026, 3, 30),
+      categoryIds: [4],
     },
     {
       id: 5,
-      title: 'Sprint Planning',
-      description: 'Planning session for Sprint 12',
-      location: 'Office - Room 3',
+      title: 'Design Review',
+      description: 'Review new UI mockups with the team',
+      location: 'Figma',
       eventColor: '#9c27b0',
       startDateTime: '10:00',
-      endDateTime: '11:30',
+      endDateTime: '11:00',
+      allDay: false,
+      eventType: 'APPOINTMENT',
+      recurrence: 'NONE',
+      accessType: 'PUBLIC',
+      date: new Date(2026, 3, 28),
+      categoryIds: [1],
+    },
+    {
+      id: 6,
+      title: 'Gym Session',
+      description: 'Leg day',
+      location: 'Gym',
+      eventColor: '#43a047',
+      startDateTime: '07:00',
+      endDateTime: '08:30',
+      allDay: false,
+      eventType: 'REMINDER',
+      recurrence: 'WEEKLY',
+      accessType: 'PRIVATE',
+      date: new Date(2026, 3, 28),
+      categoryIds: [3],
+    },
+    {
+      id: 7,
+      title: 'Sprint Planning',
+      description: 'Plan Sprint 12',
+      location: 'Zoom',
+      eventColor: '#1976d2',
+      startDateTime: '09:00',
+      endDateTime: '10:30',
       allDay: false,
       eventType: 'APPOINTMENT',
       recurrence: 'NONE',
@@ -177,13 +226,13 @@ export class CalendarComponent {
       categoryIds: [1],
     },
     {
-      id: 6,
+      id: 8,
       title: 'Dentist Appointment',
-      description: 'Annual checkup',
-      location: 'Dental Praxis Müller',
+      description: 'Routine checkup',
+      location: 'Dr. Müller',
       eventColor: '#00bcd4',
-      startDateTime: '08:30',
-      endDateTime: '09:30',
+      startDateTime: '16:00',
+      endDateTime: '17:00',
       allDay: false,
       eventType: 'APPOINTMENT',
       recurrence: 'NONE',
@@ -192,45 +241,15 @@ export class CalendarComponent {
       categoryIds: [3],
     },
     {
-      id: 7,
-      title: 'Easy Life Frontend Review',
-      description: 'Review all completed pages with Moritz',
-      location: 'Video Call',
-      eventColor: '#43a047',
-      startDateTime: '16:00',
-      endDateTime: '17:00',
-      allDay: false,
-      eventType: 'APPOINTMENT',
-      recurrence: 'NONE',
-      accessType: 'PRIVATE',
-      date: new Date(2026, 3, 28),
-      categoryIds: [1],
-    },
-    {
-      id: 8,
-      title: 'Submit Tax Documents',
-      description: 'Deadline for annual tax submission',
-      location: '',
-      eventColor: '#f44336',
-      startDateTime: '',
-      endDateTime: '',
-      allDay: true,
-      eventType: 'REMINDER',
-      recurrence: 'NONE',
-      accessType: 'PRIVATE',
-      date: new Date(2026, 3, 30),
-      categoryIds: [2],
-    },
-    {
       id: 9,
-      title: 'Morning Run',
-      description: '10km training run',
-      location: 'Stadtpark',
-      eventColor: '#8bc34a',
-      startDateTime: '06:30',
-      endDateTime: '07:30',
+      title: 'Read: Atomic Habits',
+      description: 'Daily reading session',
+      location: '',
+      eventColor: '#ff5722',
+      startDateTime: '21:00',
+      endDateTime: '21:30',
       allDay: false,
-      eventType: 'TASK',
+      eventType: 'REMINDER',
       recurrence: 'DAILY',
       accessType: 'PRIVATE',
       date: new Date(2026, 3, 29),
@@ -445,6 +464,7 @@ export class CalendarComponent {
   setView(mode: ViewMode) {
     this.viewMode.set(mode);
   }
+
   setFilter(type: EventType | 'ALL') {
     this.activeFilter.set(type);
   }
@@ -458,9 +478,88 @@ export class CalendarComponent {
     return this.isSameDay(date, this.selectedDate());
   }
 
+  // ── Category Dropdown Methods ──────────────────────────
+  toggleCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showCatDropdown.update(v => !v);
+    this.showEditCatDropdown.set(false);
+  }
+
+  toggleEditCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showEditCatDropdown.update(v => !v);
+    this.showCatDropdown.set(false);
+  }
+
+  toggleCreateCategory(id: number) {
+    this.createForm.update(f => {
+      const ids = f.categoryIds.includes(id)
+        ? f.categoryIds.filter(i => i !== id)
+        : f.categoryIds.length < 5 ? [...f.categoryIds, id] : f.categoryIds;
+      const newForm = { ...f, categoryIds: ids };
+      // Auto-set color from first selected category
+      if (ids.length > 0) {
+        const firstCat = this.availableCategories().find(c => c.id === ids[0]);
+        if (firstCat) newForm.eventColor = firstCat.color;
+      } else {
+        newForm.eventColor = '#43a047';
+      }
+      return newForm;
+    });
+  }
+
+  toggleEditCategory(id: number) {
+    this.editForm.update(f => {
+      const ids = f.categoryIds.includes(id)
+        ? f.categoryIds.filter(i => i !== id)
+        : f.categoryIds.length < 5 ? [...f.categoryIds, id] : f.categoryIds;
+      const newForm = { ...f, categoryIds: ids };
+      if (ids.length > 0) {
+        const firstCat = this.availableCategories().find(c => c.id === ids[0]);
+        if (firstCat) newForm.eventColor = firstCat.color;
+      } else {
+        newForm.eventColor = '#43a047';
+      }
+      return newForm;
+    });
+  }
+
+  getCatDropdownLabel(categoryIds: number[]): string {
+    if (categoryIds.length === 0) return 'Select categories...';
+    if (categoryIds.length === 1)
+      return this.availableCategories().find(c => c.id === categoryIds[0])?.name ?? '1 selected';
+    return `${categoryIds.length} selected`;
+  }
+
+  getSelectedCatColors(categoryIds: number[]): string[] {
+    return this.availableCategories()
+      .filter(c => categoryIds.includes(c.id))
+      .map(c => c.color)
+      .slice(0, 3);
+  }
+
+  readonly createFormColors = computed(() => {
+    const ids = this.createForm().categoryIds;
+    if (ids.length === 0) return this.eventColors;
+    const catColors = this.availableCategories()
+      .filter(c => ids.includes(c.id))
+      .map(c => c.color);
+    return catColors;
+  });
+
+  readonly editFormColors = computed(() => {
+    const ids = this.editForm().categoryIds;
+    if (ids.length === 0) return this.eventColors;
+    const catColors = this.availableCategories()
+      .filter(c => ids.includes(c.id))
+      .map(c => c.color);
+    return catColors;
+  });
+
   // ── Create ─────────────────────────────────────────────
   openCreate() {
     this.createForm.set(this.emptyForm());
+    this.showCatDropdown.set(false);
     this.showCreateModal.set(true);
   }
 
@@ -487,6 +586,7 @@ export class CalendarComponent {
       accessType: event.accessType,
       categoryIds: event.categoryIds,
     });
+    this.showEditCatDropdown.set(false);
     this.showEditModal.set(true);
   }
 

@@ -4,7 +4,8 @@
 - login/logout functionality (with refresh)
 - payments (financial data)
 - ai-agent
-- ai-screenshots backend changes
+  - ai-screenshots backend changes
+  - whatsapp chat (save user number as attribute in backend)
 - max storage capacity for docs (including profile image + goals images)
 - pricing models (storage + amount)
 - website + social media
@@ -15,19 +16,18 @@
 
 ## Frontend:
 - dark mode (logo)
+- ai-agent
 - toaster on a few actions (create / delete)
 - fix modals (access + categories)
 - dashboard
 - tasks
 - categories
-  - more icons + colors
 - goals
-  - improve goals tasks on modals
 - calendar
   - event create notification directly
-  - modal → colors - categories (icons)
 - documents
   - actions (preview + download)
+  - filter (filetype as dropdown)
 - my week
   - drop down for existing tasks (for items)
   - week items - toggle 'create tasks' off
