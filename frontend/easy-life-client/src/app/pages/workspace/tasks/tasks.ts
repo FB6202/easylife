@@ -75,29 +75,20 @@ export class TasksComponent {
   // ── Pagination ─────────────────────────────────────────
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
-
   readonly totalElements = computed(() => this.tasks().length);
   readonly totalPages = computed(() => Math.ceil(this.totalElements() / this.pageSize()));
-
   readonly paginatedTasks = computed(() => {
     const start = this.currentPage() * this.pageSize();
     return this.tasks().slice(start, start + this.pageSize());
   });
-
   onPageChange(page: number) { this.currentPage.set(page); }
   onPageSizeChange(size: number) { this.pageSize.set(size); this.currentPage.set(0); }
   onAiClick() { console.log('AI clicked'); }
 
   // ── Stats ──────────────────────────────────────────────
-  readonly pendingCount = computed(() =>
-    this.tasks().filter(t => t.status === 'OPEN').length
-  );
-  readonly inProgressCount = computed(() =>
-    this.tasks().filter(t => t.status === 'IN_PROGRESS').length
-  );
-  readonly doneCount = computed(() =>
-    this.tasks().filter(t => t.status === 'DONE').length
-  );
+  readonly pendingCount = computed(() => this.tasks().filter(t => t.status === 'OPEN').length);
+  readonly inProgressCount = computed(() => this.tasks().filter(t => t.status === 'IN_PROGRESS').length);
+  readonly doneCount = computed(() => this.tasks().filter(t => t.status === 'DONE').length);
   readonly totalPending = this.pendingCount;
   readonly totalInProgress = this.inProgressCount;
   readonly totalDone = this.doneCount;
@@ -121,18 +112,9 @@ export class TasksComponent {
   activeFilters = signal<FilterValues>({});
 
   readonly taskFilterFields: FilterField[] = [
+    { key: 'search', label: 'Search', type: 'text', icon: 'search', placeholder: 'Search tasks...' },
     {
-      key: 'search',
-      label: 'Search',
-      type: 'text',
-      icon: 'search',
-      placeholder: 'Search tasks...'
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      type: 'multiselect',
-      icon: 'radio_button_checked',
+      key: 'status', label: 'Status', type: 'multiselect', icon: 'radio_button_checked',
       options: [
         { value: 'OPEN', label: 'Open', icon: 'radio_button_unchecked', color: '#1976d2' },
         { value: 'IN_PROGRESS', label: 'Ongoing', icon: 'pending', color: '#f9a825' },
@@ -140,10 +122,7 @@ export class TasksComponent {
       ]
     },
     {
-      key: 'priority',
-      label: 'Priority',
-      type: 'multiselect',
-      icon: 'flag',
+      key: 'priority', label: 'Priority', type: 'multiselect', icon: 'flag',
       options: [
         { value: 'CRITICAL', label: 'Critical', color: '#d32f2f' },
         { value: 'HIGH', label: 'High', color: '#f57c00' },
@@ -153,10 +132,7 @@ export class TasksComponent {
       ]
     },
     {
-      key: 'categories',
-      label: 'Categories',
-      type: 'multiselect-dropdown',
-      icon: 'category',
+      key: 'categories', label: 'Categories', type: 'multiselect-dropdown', icon: 'category',
       options: [
         { value: '1', label: 'Work', icon: 'work', color: '#1976d2' },
         { value: '2', label: 'Finance', icon: 'payments', color: '#f57c00' },
@@ -166,21 +142,13 @@ export class TasksComponent {
       ]
     },
     {
-      key: 'access',
-      label: 'Access',
-      type: 'multiselect',
-      icon: 'lock',
+      key: 'access', label: 'Access', type: 'multiselect', icon: 'lock',
       options: [
         { value: 'PRIVATE', label: 'Private', icon: 'lock', color: '#757575' },
         { value: 'PUBLIC', label: 'Public', icon: 'travel_explore', color: '#43a047' },
       ]
     },
-    {
-      key: 'dueDate',
-      label: 'Due Date Range',
-      type: 'date-range',
-      icon: 'calendar_today'
-    },
+    { key: 'dueDate', label: 'Due Date Range', type: 'date-range', icon: 'calendar_today' },
   ];
 
   readonly activeFilterCount = computed(() =>
@@ -191,12 +159,38 @@ export class TasksComponent {
     }).length
   );
 
-  onFilterApply(values: FilterValues) {
-    this.activeFilters.set(values);
-    this.showFilter.set(false);
+  onFilterApply(values: FilterValues) { this.activeFilters.set(values); this.showFilter.set(false); }
+  onFilterReset() { this.activeFilters.set({}); }
+
+  // ── Category Dropdown ──────────────────────────────────
+  showCatDropdown = signal(false);
+  showEditCatDropdown = signal(false);
+
+  toggleCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showCatDropdown.update(v => !v);
+    this.showEditCatDropdown.set(false);
   }
 
-  onFilterReset() { this.activeFilters.set({}); }
+  toggleEditCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showEditCatDropdown.update(v => !v);
+    this.showCatDropdown.set(false);
+  }
+
+  getCatDropdownLabel(categoryIds: number[]): string {
+    if (categoryIds.length === 0) return 'Select categories...';
+    if (categoryIds.length === 1)
+      return this.availableCategories().find(c => c.id === categoryIds[0])?.name ?? '1 selected';
+    return `${categoryIds.length} selected`;
+  }
+
+  getSelectedCatColors(categoryIds: number[]): string[] {
+    return this.availableCategories()
+      .filter(c => categoryIds.includes(c.id))
+      .map(c => c.color)
+      .slice(0, 3);
+  }
 
   // ── Modals ─────────────────────────────────────────────
   showCreateModal = signal(false);
@@ -217,10 +211,8 @@ export class TasksComponent {
   });
 
   openCreate() {
-    this.createForm.set({
-      title: '', description: '', status: 'OPEN', priority: 'MEDIUM',
-      accessType: 'PRIVATE', dueDate: '', categoryIds: []
-    });
+    this.createForm.set({ title: '', description: '', status: 'OPEN', priority: 'MEDIUM', accessType: 'PRIVATE', dueDate: '', categoryIds: [] });
+    this.showCatDropdown.set(false);
     this.showCreateModal.set(true);
   }
 
@@ -233,14 +225,12 @@ export class TasksComponent {
   openEdit(task: Task) {
     this.selectedTask.set(task);
     this.editForm.set({
-      title: task.title,
-      description: task.description,
-      status: task.status,
-      priority: task.priority,
-      accessType: task.accessType,
-      dueDate: task.dueDate,
+      title: task.title, description: task.description,
+      status: task.status, priority: task.priority,
+      accessType: task.accessType, dueDate: task.dueDate,
       categoryIds: task.categories.map(c => c.id)
     });
+    this.showEditCatDropdown.set(false);
     this.showEditModal.set(true);
     this.activeMenu.set(null);
   }
@@ -259,11 +249,7 @@ export class TasksComponent {
 
   confirmDone() {
     const id = this.selectedTask()?.id;
-    if (id) {
-      this.tasks.update(ts => ts.map(t =>
-        t.id === id ? { ...t, status: 'DONE', done: true } : t
-      ));
-    }
+    if (id) this.tasks.update(ts => ts.map(t => t.id === id ? { ...t, status: 'DONE', done: true } : t));
     this.showDoneConfirm.set(false);
     this.selectedTask.set(null);
   }
@@ -290,18 +276,14 @@ export class TasksComponent {
   toggleCreateCategory(id: number) {
     this.createForm.update(f => ({
       ...f,
-      categoryIds: f.categoryIds.includes(id)
-        ? f.categoryIds.filter(i => i !== id)
-        : [...f.categoryIds, id]
+      categoryIds: f.categoryIds.includes(id) ? f.categoryIds.filter(i => i !== id) : [...f.categoryIds, id]
     }));
   }
 
   toggleEditCategory(id: number) {
     this.editForm.update(f => ({
       ...f,
-      categoryIds: f.categoryIds.includes(id)
-        ? f.categoryIds.filter(i => i !== id)
-        : [...f.categoryIds, id]
+      categoryIds: f.categoryIds.includes(id) ? f.categoryIds.filter(i => i !== id) : [...f.categoryIds, id]
     }));
   }
 
@@ -310,19 +292,11 @@ export class TasksComponent {
   }
 
   getStatusClass(status: TodoStatus): string {
-    return {
-      OPEN: 'status--open',
-      IN_PROGRESS: 'status--in-progress',
-      DONE: 'status--done'
-    }[status];
+    return { OPEN: 'status--open', IN_PROGRESS: 'status--in-progress', DONE: 'status--done' }[status];
   }
 
   getStatusIcon(status: TodoStatus): string {
-    return {
-      OPEN: 'radio_button_unchecked',
-      IN_PROGRESS: 'pending',
-      DONE: 'check_circle'
-    }[status];
+    return { OPEN: 'radio_button_unchecked', IN_PROGRESS: 'pending', DONE: 'check_circle' }[status];
   }
 
   getPriorityLabel(priority: Priority): string {

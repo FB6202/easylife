@@ -159,11 +159,9 @@
       background: var(--color-bg-hover);
     }
 
-    &--done {
-      .task-info__title {
-        text-decoration: line-through;
-        color: var(--color-text-muted);
-      }
+    &--done .task-info__title {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
     }
   }
 }
@@ -186,7 +184,7 @@
     font-size: $font-size-xs;
     color: var(--color-text-muted);
     @include truncate;
-    text-transform: none; // ← explizit none setzen
+    text-transform: none;
   }
 }
 
@@ -199,11 +197,7 @@
 
 .task-category-icon {
   font-size: 18px;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 20;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
 }
 
 // ── Status ─────────────────────────────────────────────────
@@ -218,26 +212,22 @@
 
   &__icon {
     font-size: 14px;
-    font-variation-settings:
-      'FILL' 1,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 20;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
   }
 
   &.status--open {
-    background: rgba(25, 118, 210, 0.12);
-    color: #1976d2;
+    background: var(--color-info-subtle);
+    color: var(--color-info-text);
   }
 
   &.status--in-progress {
-    background: rgba(249, 168, 37, 0.18);
-    color: #b7860b;
+    background: var(--color-reminder-subtle);
+    color: var(--color-reminder-text);
   }
 
   &.status--done {
-    background: rgba(67, 160, 71, 0.12);
-    color: #2e7d32;
+    background: var(--color-success-subtle);
+    color: var(--color-success-text);
   }
 }
 
@@ -285,55 +275,47 @@
   white-space: nowrap;
 
   &.priority--critical {
-    background: rgba(211, 47, 47, 0.15);
-    color: #c62828;
-    border: 1px solid rgba(211, 47, 47, 0.3);
+    background: var(--color-priority-critical-subtle);
+    color: var(--color-priority-critical-text);
+    border: 1px solid var(--color-priority-critical-border);
   }
 
   &.priority--high {
-    background: rgba(245, 124, 0, 0.15);
-    color: #e65100;
-    border: 1px solid rgba(245, 124, 0, 0.3);
+    background: var(--color-priority-high-subtle);
+    color: var(--color-priority-high-text);
+    border: 1px solid var(--color-priority-high-border);
   }
 
   &.priority--medium {
-    background: rgba(249, 168, 37, 0.18);
-    color: #b7860b;
-    border: 1px solid rgba(249, 168, 37, 0.3);
+    background: var(--color-priority-medium-subtle);
+    color: var(--color-priority-medium-text);
+    border: 1px solid var(--color-priority-medium-border);
   }
 
   &.priority--low {
-    background: rgba(25, 118, 210, 0.12);
-    color: #1565c0;
-    border: 1px solid rgba(25, 118, 210, 0.2);
+    background: var(--color-priority-low-subtle);
+    color: var(--color-priority-low-text);
+    border: 1px solid var(--color-priority-low-border);
   }
 
   &.priority--optional {
-    background: rgba(117, 117, 117, 0.12);
-    color: #616161;
-    border: 1px solid rgba(117, 117, 117, 0.2);
+    background: var(--color-priority-optional-subtle);
+    color: var(--color-priority-optional-text);
+    border: 1px solid var(--color-priority-optional-border);
   }
 }
 
 // ── Access Icon ────────────────────────────────────────────
 .task-access-icon {
   font-size: 20px;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 20;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &--public {
     color: var(--color-primary);
-    font-variation-settings:
-      'FILL' 1,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 20;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
   }
 
   &--private {
@@ -365,7 +347,7 @@
     border-radius: $radius-md;
     box-shadow: var(--shadow-md);
     z-index: 10;
-    min-width: 140px;
+    min-width: 160px;
     overflow: hidden;
   }
 
@@ -382,6 +364,7 @@
     width: 100%;
     cursor: pointer;
     transition: background $transition-fast;
+    white-space: nowrap;
 
     .material-symbols-outlined {
       font-size: 16px;
@@ -395,40 +378,8 @@
       color: var(--color-danger);
 
       &:hover {
-        background: rgba(211, 47, 47, 0.06);
+        background: var(--color-danger-subtle);
       }
-    }
-  }
-}
-
-.task-menu__item {
-  @include flex-start;
-  gap: $space-2;
-  padding: $space-3 $space-4;
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--color-text-primary);
-  background: none;
-  border: none;
-  width: 100%;
-  cursor: pointer;
-  transition: background $transition-fast;
-  white-space: nowrap; // ← das war das Problem
-
-  .material-symbols-outlined {
-    font-size: 16px;
-  }
-
-  &:hover {
-    background: var(--color-bg-hover);
-  }
-
-  &--danger {
-    color: var(--color-danger);
-
-    &:hover {
-      background: rgba(211, 47, 47, 0.06);
     }
   }
 }
@@ -437,7 +388,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--color-overlay);
   backdrop-filter: blur(4px);
   z-index: 200;
   @include flex-center;
@@ -506,11 +457,12 @@
     }
 
     &--done {
-      background: rgba(67, 160, 71, 0.1);
+      background: var(--color-success-subtle);
       color: var(--color-primary);
 
       &:hover {
-        background: rgba(67, 160, 71, 0.2);
+        background: var(--color-success-subtle);
+        filter: brightness(0.9);
       }
 
       &:disabled {
@@ -520,11 +472,12 @@
     }
 
     &--delete {
-      background: rgba(211, 47, 47, 0.1);
+      background: var(--color-danger-subtle);
       color: var(--color-danger);
 
       &:hover {
-        background: rgba(211, 47, 47, 0.2);
+        background: var(--color-danger-subtle);
+        filter: brightness(0.9);
       }
     }
   }
@@ -569,43 +522,6 @@
   }
 }
 
-// ══ CATEGORY PICKER ═══════════════════════════════════════
-.modal-cat-picker {
-  @include flex-start;
-  gap: $space-2;
-  flex-wrap: wrap;
-}
-
-.modal-cat-chip {
-  @include flex-start;
-  gap: $space-2;
-  padding: $space-2 $space-3;
-  border-radius: $radius-pill;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-card);
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  .material-symbols-outlined {
-    font-size: 16px;
-  }
-
-  &:hover {
-    border-color: var(--cat-color, var(--color-primary));
-    color: var(--cat-color, var(--color-primary));
-  }
-
-  &--active {
-    background: var(--cat-color, var(--color-primary));
-    border-color: var(--cat-color, var(--color-primary));
-    color: white;
-  }
-}
-
 // ══ PRIORITY PICKER ═══════════════════════════════════════
 .modal-priority-picker {
   @include flex-start;
@@ -626,81 +542,38 @@
   color: var(--color-text-muted);
 
   &--optional.active {
-    background: rgba(117, 117, 117, 0.15);
-    color: #616161;
-    border-color: #9e9e9e;
+    background: var(--color-priority-optional-subtle);
+    color: var(--color-priority-optional-text);
+    border-color: var(--color-priority-optional-border);
   }
 
   &--low.active {
-    background: rgba(25, 118, 210, 0.15);
-    color: #1565c0;
-    border-color: #1976d2;
+    background: var(--color-priority-low-subtle);
+    color: var(--color-priority-low-text);
+    border-color: var(--color-priority-low-border);
   }
 
   &--medium.active {
-    background: rgba(249, 168, 37, 0.18);
-    color: #b7860b;
-    border-color: #f9a825;
+    background: var(--color-priority-medium-subtle);
+    color: var(--color-priority-medium-text);
+    border-color: var(--color-priority-medium-border);
   }
 
   &--high.active {
-    background: rgba(245, 124, 0, 0.15);
-    color: #e65100;
-    border-color: #f57c00;
+    background: var(--color-priority-high-subtle);
+    color: var(--color-priority-high-text);
+    border-color: var(--color-priority-high-border);
   }
 
   &--critical.active {
-    background: rgba(211, 47, 47, 0.15);
-    color: #c62828;
-    border-color: #d32f2f;
+    background: var(--color-priority-critical-subtle);
+    color: var(--color-priority-critical-text);
+    border-color: var(--color-priority-critical-border);
   }
 
   &:hover {
     border-color: var(--color-primary);
     color: var(--color-primary);
-  }
-}
-
-// ══ ACCESS TOGGLE ══════════════════════════════════════════
-.modal-access-toggle {
-  @include flex-start;
-  border: 1px solid var(--color-border);
-  border-radius: $radius-md;
-  overflow: hidden;
-}
-
-.modal-access-btn {
-  @include flex-start;
-  gap: $space-2;
-  flex: 1;
-  padding: $space-2 $space-3;
-  border: none;
-  background: none;
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: all $transition-fast;
-  border-right: 1px solid var(--color-border);
-  justify-content: center;
-
-  &:last-child {
-    border-right: none;
-  }
-
-  .material-symbols-outlined {
-    font-size: 16px;
-  }
-
-  &:hover {
-    background: var(--color-bg-hover);
-    color: var(--color-text-primary);
-  }
-
-  &.active {
-    background: var(--color-primary);
-    color: white;
   }
 }
 
@@ -725,20 +598,16 @@
 
     .material-symbols-outlined {
       font-size: 28px;
-      font-variation-settings:
-        'FILL' 1,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
     &--danger {
-      background: rgba(211, 47, 47, 0.12);
+      background: var(--color-danger-subtle);
       color: var(--color-danger);
     }
 
     &--success {
-      background: rgba(67, 160, 71, 0.12);
+      background: var(--color-success-subtle);
       color: var(--color-primary);
     }
   }
@@ -762,17 +631,17 @@
   }
 }
 
-// ══ DANGER BUTTON ══════════════════════════════════════════
 .btn-danger {
   @include btn-base;
   background: var(--color-danger);
   color: white;
 
   &:hover:not(:disabled) {
-    background: #c62828;
+    background: var(--color-danger-hover);
   }
 }
 
+// ── Tooltip ────────────────────────────────────────────────
 .tasks-stat__tooltip-wrapper {
   position: relative;
   @include flex-center;
@@ -789,11 +658,7 @@
   font-size: 16px;
   color: var(--color-text-muted);
   cursor: help;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 20;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
 
   &:hover {
     color: var(--color-primary);
@@ -818,7 +683,6 @@
   z-index: 10;
   box-shadow: var(--shadow-md);
 
-  // Arrow
   &::after {
     content: '';
     position: absolute;

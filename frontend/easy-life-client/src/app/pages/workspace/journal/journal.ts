@@ -391,6 +391,36 @@ export class JournalComponent {
     });
   }
 
+  // ── Category Dropdown ──────────────────────────────────
+  showCatDropdown = signal(false);
+  showEditCatDropdown = signal(false);
+
+  toggleCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showCatDropdown.update(v => !v);
+    this.showEditCatDropdown.set(false);
+  }
+
+  toggleEditCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showEditCatDropdown.update(v => !v);
+    this.showCatDropdown.set(false);
+  }
+
+  getCatDropdownLabel(categoryIds: number[]): string {
+    if (categoryIds.length === 0) return 'Select categories...';
+    if (categoryIds.length === 1)
+      return this.availableCategories().find(c => c.id === categoryIds[0])?.name ?? '1 selected';
+    return `${categoryIds.length} selected`;
+  }
+
+  getSelectedCatColors(categoryIds: number[]): string[] {
+    return this.availableCategories()
+      .filter(c => categoryIds.includes(c.id))
+      .map(c => c.color)
+      .slice(0, 3);
+  }
+
   readonly activeFilterCount = computed(
     () =>
       Object.values(this.activeFilters()).filter((v) => {
@@ -413,6 +443,7 @@ export class JournalComponent {
   // ── Create ─────────────────────────────────────────────
   openCreate() {
     this.createForm.set(this.emptyForm());
+    this.showCatDropdown.set(false);
     this.showCreateModal.set(true);
   }
 
@@ -426,16 +457,14 @@ export class JournalComponent {
   openEdit(entry: JournalEntry) {
     this.selectedEntry.set(entry);
     this.editForm.set({
-      title: entry.title,
-      mood: entry.mood,
-      wentWell: entry.wentWell,
-      wentBad: entry.wentBad,
-      learnings: entry.learnings ?? '',
-      gratitude: entry.gratitude ?? '',
+      title: entry.title, mood: entry.mood,
+      wentWell: entry.wentWell, wentBad: entry.wentBad,
+      learnings: entry.learnings ?? '', gratitude: entry.gratitude ?? '',
       entryDate: entry.entryDate,
-      categoryIds: entry.categories.map((c) => c.id),
+      categoryIds: entry.categories.map(c => c.id),
       weekPlanId: entry.weekPlan?.id ?? null,
     });
+    this.showEditCatDropdown.set(false);
     this.showEditModal.set(true);
   }
 

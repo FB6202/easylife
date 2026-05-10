@@ -495,10 +495,41 @@ export class NetworkComponent {
     });
   }
 
+  // ── Category Dropdown ──────────────────────────────────
+  showCatDropdown = signal(false);
+  showEditCatDropdown = signal(false);
+
+  toggleCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showCatDropdown.update(v => !v);
+    this.showEditCatDropdown.set(false);
+  }
+
+  toggleEditCatDropdown(event: Event) {
+    event.stopPropagation();
+    this.showEditCatDropdown.update(v => !v);
+    this.showCatDropdown.set(false);
+  }
+
+  getCatDropdownLabel(categoryIds: number[]): string {
+    if (categoryIds.length === 0) return 'Select categories...';
+    if (categoryIds.length === 1)
+      return this.availableCategories().find(c => c.id === categoryIds[0])?.name ?? '1 selected';
+    return `${categoryIds.length} selected`;
+  }
+
+  getSelectedCatColors(categoryIds: number[]): string[] {
+    return this.availableCategories()
+      .filter(c => categoryIds.includes(c.id))
+      .map(c => c.color)
+      .slice(0, 3);
+  }
+
   // ── CRUD ───────────────────────────────────────────────
   openCreate() {
     this.createForm.set(this.emptyForm());
     this.newSkillInput.set('');
+    this.showCatDropdown.set(false);
     this.showCreateModal.set(true);
   }
 
@@ -512,20 +543,16 @@ export class NetworkComponent {
     this.selectedContact.set(contact);
     this.newSkillInput.set('');
     this.editForm.set({
-      firstname: contact.firstname,
-      lastname: contact.lastname,
-      company: contact.company,
-      position: contact.position,
-      email: contact.email ?? '',
-      phone: contact.phone ?? '',
-      linkedinUrl: contact.linkedinUrl ?? '',
-      websiteUrl: contact.websiteUrl ?? '',
-      notes: contact.notes,
-      skills: [...contact.skills],
+      firstname: contact.firstname, lastname: contact.lastname,
+      company: contact.company, position: contact.position,
+      email: contact.email ?? '', phone: contact.phone ?? '',
+      linkedinUrl: contact.linkedinUrl ?? '', websiteUrl: contact.websiteUrl ?? '',
+      notes: contact.notes, skills: [...contact.skills],
       relationshipType: contact.relationshipType,
-      categoryIds: contact.categories.map((c) => c.id),
-      tagIds: contact.tags.map((t) => t.id),
+      categoryIds: contact.categories.map(c => c.id),
+      tagIds: contact.tags.map(t => t.id),
     });
+    this.showEditCatDropdown.set(false);
     this.showEditModal.set(true);
   }
 

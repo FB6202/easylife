@@ -16,6 +16,7 @@
 ## Frontend:
 - dark mode (logo)
 - toaster on a few actions (create / delete)
+- fix modals (access + categories)
 - dashboard
 - tasks
 - categories

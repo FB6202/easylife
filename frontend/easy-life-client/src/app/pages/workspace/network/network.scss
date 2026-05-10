@@ -496,43 +496,6 @@
   }
 }
 
-// ── Category Picker ────────────────────────────────────────
-.modal-cat-picker {
-  @include flex-start;
-  gap: $space-2;
-  flex-wrap: wrap;
-}
-
-.modal-cat-chip {
-  @include flex-start;
-  gap: $space-2;
-  padding: $space-2 $space-3;
-  border-radius: $radius-pill;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-card);
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all $transition-fast;
-
-  .material-symbols-outlined {
-    font-size: 16px;
-  }
-
-  &:hover {
-    border-color: var(--cat-color, var(--color-primary));
-    color: var(--cat-color, var(--color-primary));
-  }
-
-  &--active {
-    background: var(--cat-color, var(--color-primary));
-    border-color: var(--cat-color, var(--color-primary));
-    color: white;
-  }
-}
-
 // ══ CONFIRM DIALOG ════════════════════════════════════════
 .confirm-dialog {
   background: var(--color-bg-card);
