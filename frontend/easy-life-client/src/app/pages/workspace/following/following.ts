@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type FollowStatus = 'ACCEPTED' | 'PENDING';
 
@@ -230,7 +231,6 @@ export class FollowingComponent {
     },
   ]);
 
-
   readonly username: string;
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
@@ -256,7 +256,7 @@ export class FollowingComponent {
     this.currentPage.set(0);
   }
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(private router: Router, private route: ActivatedRoute, private aiAgent: AiAgentService) {
     this.username = this.route.snapshot.paramMap.get('username') ?? 'user';
   }
 
@@ -348,7 +348,7 @@ export class FollowingComponent {
   }
 
   onAiClick() {
-    console.log('AI clicked');
+    this.aiAgent.open();
   }
 
   goToSearch() {

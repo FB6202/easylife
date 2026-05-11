@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type AccessType = 'PRIVATE' | 'PUBLIC';
 
@@ -145,6 +146,8 @@ export class CategoriesComponent {
       createdAt: 'Jun 03',
     },
   ]);
+
+  constructor(private aiAgent: AiAgentService) { }
 
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
@@ -509,6 +512,6 @@ export class CategoriesComponent {
   }
 
   onAiClick() {
-    console.log('AI clicked');
+    this.aiAgent.open();
   }
 }

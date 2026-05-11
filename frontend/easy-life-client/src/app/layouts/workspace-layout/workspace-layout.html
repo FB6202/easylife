@@ -8,25 +8,25 @@
       <div class="sidebar__section">
         <span class="sidebar__section-label">Management</span>
         @for (item of managementItems; track item.route) {
-          <a [routerLink]="item.route" routerLinkActive="active" class="sidebar__item">
-            <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
-            <span class="sidebar__label">{{ item.label }}</span>
-          </a>
+        <a [routerLink]="item.route" routerLinkActive="active" class="sidebar__item">
+          <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
+          <span class="sidebar__label">{{ item.label }}</span>
+        </a>
         }
       </div>
 
       <div class="sidebar__section">
         <span class="sidebar__section-label">Account</span>
         @for (item of accountItems; track item.route) {
-          <a [routerLink]="item.route" routerLinkActive="active" class="sidebar__item">
-            <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
-            <span class="sidebar__label">{{ item.label }}</span>
-            @if (item.badge && unreadNotificationCount() > 0) {
-              <span class="sidebar__badge">
-                {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
-              </span>
-            }
-          </a>
+        <a [routerLink]="item.route" routerLinkActive="active" class="sidebar__item">
+          <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
+          <span class="sidebar__label">{{ item.label }}</span>
+          @if (item.badge && unreadNotificationCount() > 0) {
+          <span class="sidebar__badge">
+            {{ unreadNotificationCount() > 99 ? '99+' : unreadNotificationCount() }}
+          </span>
+          }
+        </a>
         }
       </div>
     </nav>
@@ -68,12 +68,10 @@
       <router-outlet />
     </main>
   </div>
+  <app-ai-agent-widget />
 </div>
 
 @if (showSettings()) {
-  <app-settings-modal
-    (close)="showSettings.set(false)"
-    (save)="showSettings.set(false)"
-    (navigateTo)="onSettingsNavigate($event)"
-  />
+<app-settings-modal (close)="showSettings.set(false)" (save)="showSettings.set(false)"
+  (navigateTo)="onSettingsNavigate($event)" />
 }

@@ -92,7 +92,7 @@
 
   <!-- List View -->
   @if (viewMode() === 'list') {
-  <div class="docs-list">
+  <div class="docs-list" (click)="closeMenu()">
     <div class="docs-list__header">
       <span class="docs-list__col docs-list__col--name">Name</span>
       <span class="docs-list__col docs-list__col--type">Type</span>
@@ -126,13 +126,34 @@
         </span>
       </div>
       <div class="docs-list__col docs-list__col--date">{{ doc.uploadedAt }}</div>
-      <div class="docs-list__col docs-list__col--actions">
+      <div class="docs-list__col docs-list__col--actions" (click)="$event.stopPropagation()">
         <button class="doc-action-btn" (click)="downloadDoc(doc, $event)">
           <span class="material-symbols-outlined">download</span>
         </button>
-        <button class="doc-action-btn" (click)="$event.stopPropagation(); openEdit(doc)">
-          <span class="material-symbols-outlined">more_vert</span>
-        </button>
+        <div class="doc-row-menu">
+          <button class="doc-action-btn" (click)="toggleMenu(doc.id, $event)">
+            <span class="material-symbols-outlined">more_vert</span>
+          </button>
+          @if (openMenuId() === doc.id) {
+          <div class="doc-row-menu__dropdown">
+            <button class="doc-row-menu__item" (click)="openEdit(doc); closeMenu()">
+              <span class="material-symbols-outlined">edit</span>
+              Edit
+            </button>
+            <button class="doc-row-menu__item" (click)="quickToggleAccess(doc, $event)">
+              <span class="material-symbols-outlined">
+                {{ doc.accessType === 'PRIVATE' ? 'travel_explore' : 'lock' }}
+              </span>
+              Make {{ doc.accessType === 'PRIVATE' ? 'Public' : 'Private' }}
+            </button>
+            <div class="doc-row-menu__divider"></div>
+            <button class="doc-row-menu__item doc-row-menu__item--danger" (click)="quickDelete(doc, $event)">
+              <span class="material-symbols-outlined">delete</span>
+              Delete
+            </button>
+          </div>
+          }
+        </div>
       </div>
     </div>
     }

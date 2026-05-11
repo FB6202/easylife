@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type NotificationType = 'REMINDER' | 'INFO' | 'WARNING' | 'SUCCESS';
 type NotificationChannel = 'IN_APP' | 'EMAIL' | 'PUSH';
@@ -317,6 +318,8 @@ export class NotificationsComponent {
     },
   ];
 
+  constructor(private aiAgent: AiAgentService) { }
+
   readonly unreadCount = computed(() => this.notifications().filter((n) => !n.alreadyRead).length);
 
   readonly countByType = computed(() => {
@@ -548,6 +551,6 @@ export class NotificationsComponent {
   }
 
   onAiClick() {
-    console.log('AI clicked');
+    this.aiAgent.open();
   }
 }

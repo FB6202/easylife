@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type ViewMode = 'grid' | 'list';
 type AccessType = 'PRIVATE' | 'PUBLIC';
@@ -96,6 +97,37 @@ export class DocumentsComponent {
   onPageChange(page: number) { this.currentPage.set(page); }
   onPageSizeChange(size: number) { this.pageSize.set(size); this.currentPage.set(0); }
 
+  // ── Row Menu ───────────────────────────────────────────────
+  openMenuId = signal<number | null>(null);
+
+  toggleMenu(id: number, event: Event) {
+    event.stopPropagation();
+    this.openMenuId.update(v => (v === id ? null : id));
+  }
+
+  closeMenu() {
+    this.openMenuId.set(null);
+  }
+
+  quickToggleAccess(doc: Document, event: Event) {
+    event.stopPropagation();
+    this.documents.update(list =>
+      list.map(d =>
+        d.id === doc.id
+          ? { ...d, accessType: d.accessType === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE' }
+          : d,
+      ),
+    );
+    this.openMenuId.set(null);
+  }
+
+  quickDelete(doc: Document, event: Event) {
+    event.stopPropagation();
+    this.selectedDocument.set(doc);
+    this.openMenuId.set(null);
+    this.showDeleteConfirm.set(true);
+  }
+
   readonly totalStorageBytes = computed(() =>
     this.documents().reduce((acc, d) => acc + d.fileSizeBytes, 0)
   );
@@ -104,6 +136,8 @@ export class DocumentsComponent {
     return gb >= 1 ? gb.toFixed(1) + ' GB' : (this.totalStorageBytes() / 1e6).toFixed(0) + ' MB';
   });
   readonly totalFiles = computed(() => this.totalElements());
+
+  constructor(private aiAgent: AiAgentService) { }
 
   // ── Filter ─────────────────────────────────────────────
   showFilter = signal(false);
@@ -345,5 +379,5 @@ export class DocumentsComponent {
     return (bytes / 1e3).toFixed(0) + ' KB';
   }
 
-  onAiClick() { console.log('AI clicked'); }
+  onAiClick() { this.aiAgent.open(); }
 }

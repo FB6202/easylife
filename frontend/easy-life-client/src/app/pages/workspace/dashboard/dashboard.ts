@@ -1,6 +1,7 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 interface WidgetConfig {
   id: string;
@@ -20,7 +21,7 @@ export class DashboardComponent {
   readonly username: string;
   showWidgetManager = signal(false);
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(private router: Router, private route: ActivatedRoute, private aiAgent: AiAgentService) {
     this.username = this.route.snapshot.paramMap.get('username') ?? 'user';
   }
 
@@ -141,5 +142,5 @@ export class DashboardComponent {
     this.router.navigate([`/workspace/${this.username}/${route}`]);
   }
 
-  onAiClick() { console.log('AI clicked'); }
+  onAiClick() { this.aiAgent.open() }
 }

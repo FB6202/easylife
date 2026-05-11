@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type GoalStatus = 'ACTIVE' | 'COMPLETED' | 'ABANDONED';
 type AccessType = 'PRIVATE' | 'PUBLIC';
@@ -65,7 +66,6 @@ interface GoalForm {
   styleUrl: './goals.scss',
 })
 export class GoalsComponent {
-
   readonly availableCategories = signal<CategoryPreview[]>([
     { id: 1, name: 'Work', icon: 'work', color: '#1976d2' },
     { id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' },
@@ -84,6 +84,8 @@ export class GoalsComponent {
     { id: 7, title: 'Read 24 Books', description: 'Two books per month across different genres.', imagePath: null, measurableTarget: '24 books', targetValue: 24, targetUnit: 'books', currentProgress: 100, deadline: 'DEC 31, 2023', status: 'COMPLETED', accessType: 'PUBLIC', categories: [{ id: 5, name: 'Learning', icon: 'school', color: '#e91e63' }], tasks: [] },
     { id: 8, title: 'Save Emergency Fund', description: 'Build 6 months of expenses as emergency reserve.', imagePath: null, measurableTarget: '15000 €', targetValue: 15000, targetUnit: '€', currentProgress: 53, deadline: 'JUN 30, 2025', status: 'ACTIVE', accessType: 'PRIVATE', categories: [{ id: 2, name: 'Finance', icon: 'payments', color: '#f57c00' }], tasks: [] },
   ]);
+
+  constructor(private aiAgent: AiAgentService) { }
 
   // ── Filter ─────────────────────────────────────────────
   showFilter = signal(false);
@@ -150,7 +152,7 @@ export class GoalsComponent {
   });
   onPageChange(page: number) { this.currentPage.set(page); }
   onPageSizeChange(size: number) { this.pageSize.set(size); this.currentPage.set(0); }
-  onAiClick() { console.log('AI clicked'); }
+  onAiClick() { this.aiAgent.open(); }
 
   // ── Modals ─────────────────────────────────────────────
   showCreateModal = signal(false);

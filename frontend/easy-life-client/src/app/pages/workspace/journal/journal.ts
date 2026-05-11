@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type MoodLevel = 'GREAT' | 'GOOD' | 'OKAY' | 'BAD' | 'TERRIBLE';
 
@@ -346,6 +347,8 @@ export class JournalComponent {
     },
   ];
 
+  constructor(private aiAgent: AiAgentService) { }
+
   showCreateModal = signal(false);
   showEditModal = signal(false);
   showDeleteConfirm = signal(false);
@@ -529,6 +532,6 @@ export class JournalComponent {
   }
 
   onAiClick() {
-    console.log('AI clicked');
+    this.aiAgent.open();
   }
 }

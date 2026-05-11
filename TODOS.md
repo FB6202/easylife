@@ -3,6 +3,7 @@
 - security
 - login/logout functionality (with refresh)
 - payments (financial data)
+  - widgets am user
 - ai-agent
   - ai-screenshots backend changes
   - whatsapp chat (save user number as attribute in backend)
@@ -17,21 +18,9 @@
 
 ## Frontend:
 - dark mode (logo)
-- ai-agent
-- toaster on a few actions (create / delete)
-- dashboard
-- tasks
-- categories
-- goals
+- toaster + loading circles
 - calendar
   - event create notification directly
-- documents
-  - actions (preview + download)
-- my week
-- journal
 - profile
   - contract change
   - size for profile image
-- people
-- network
-- notifications

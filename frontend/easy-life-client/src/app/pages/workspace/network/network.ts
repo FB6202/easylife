@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type RelationshipType = 'FRIEND' | 'COLLEAGUE' | 'BUSINESS' | 'MENTOR' | 'OTHER';
 
@@ -398,6 +399,8 @@ export class NetworkComponent {
     tagIds: [],
   });
 
+  constructor(private aiAgent: AiAgentService) { }
+
   createForm = signal<ContactForm>(this.emptyForm());
   editForm = signal<ContactForm>(this.emptyForm());
 
@@ -579,7 +582,7 @@ export class NetworkComponent {
   }
 
   onAiClick() {
-    console.log('AI clicked');
+    this.aiAgent.open();
   }
 
   getRelationshipClass(type: RelationshipType): string {

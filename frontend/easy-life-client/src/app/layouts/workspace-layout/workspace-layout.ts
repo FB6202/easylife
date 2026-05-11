@@ -2,10 +2,11 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { SettingsModalComponent } from '../../shared/components/settings-modal/settings-modal';
+import { AiAgentWidgetComponent } from '../../shared/components/ai-agent/ai-agent';
 
 @Component({
   selector: 'app-workspace-layout',
-  imports: [CommonModule, RouterModule, SettingsModalComponent],
+  imports: [CommonModule, RouterModule, SettingsModalComponent, AiAgentWidgetComponent],
   templateUrl: './workspace-layout.html',
   styleUrl: './workspace-layout.scss',
 })

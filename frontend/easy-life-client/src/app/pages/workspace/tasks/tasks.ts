@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 import { FilterPanelComponent, FilterField, FilterValues } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type TodoStatus = 'OPEN' | 'IN_PROGRESS' | 'DONE';
 type Priority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'OPTIONAL';
@@ -48,6 +49,8 @@ interface TaskForm {
 })
 export class TasksComponent {
 
+  constructor(private aiAgent: AiAgentService) { }
+
   readonly priorities: Priority[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'OPTIONAL'];
   readonly statuses: TodoStatus[] = ['OPEN', 'IN_PROGRESS', 'DONE'];
 
@@ -83,7 +86,7 @@ export class TasksComponent {
   });
   onPageChange(page: number) { this.currentPage.set(page); }
   onPageSizeChange(size: number) { this.pageSize.set(size); this.currentPage.set(0); }
-  onAiClick() { console.log('AI clicked'); }
+  onAiClick() { this.aiAgent.open() }
 
   // ── Stats ──────────────────────────────────────────────
   readonly pendingCount = computed(() => this.tasks().filter(t => t.status === 'OPEN').length);

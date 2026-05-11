@@ -7,6 +7,7 @@ import {
   FilterField,
   FilterValues,
 } from '../../../shared/components/filter/filter';
+import { AiAgentService } from '../../../core/services/ai-agent';
 
 type WeekPlanStatus = 'ACTIVE' | 'COMPLETED' | 'DRAFT' | 'ABANDONED';
 
@@ -201,6 +202,8 @@ export class WeekplanComponent {
       categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
     },
   ]);
+
+  constructor(private aiAgent: AiAgentService) { }
 
   // ── Task Picker ────────────────────────────────────────
   readonly availableTasks = signal<TaskPreview[]>([
@@ -641,6 +644,6 @@ export class WeekplanComponent {
   }
 
   onAiClick() {
-    console.log('AI clicked');
+    this.aiAgent.open();
   }
 }
