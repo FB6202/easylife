@@ -19,7 +19,6 @@
 - dark mode (logo)
 - ai-agent
 - toaster on a few actions (create / delete)
-- fix modals (access + categories)
 - dashboard
 - tasks
 - categories
