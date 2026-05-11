@@ -78,8 +78,9 @@
     <div class="week-card__footer">
       <div class="week-card__categories">
         @for (cat of plan.categories; track cat.id) {
-        <span class="material-symbols-outlined week-card__cat-icon" [style.color]="cat.color" [title]="cat.name">{{
-          cat.icon }}</span>
+        <span class="material-symbols-outlined week-card__cat-icon" [style.color]="cat.color" [title]="cat.name">
+          {{ cat.icon }}
+        </span>
         }
       </div>
       @if (plan.reflection) {
@@ -112,8 +113,8 @@
 
 <!-- ══ CREATE MODAL ══════════════════════════════════════ -->
 @if (showCreateModal()) {
-<div class="modal-overlay" (click)="showCreateModal.set(false); showCatDropdown.set(false)">
-  <div class="weekplan-modal" (click)="$event.stopPropagation(); showCatDropdown.set(false)">
+<div class="modal-overlay" (click)="showCreateModal.set(false); showCatDropdown.set(false); showTaskPicker.set(null)">
+  <div class="weekplan-modal" (click)="$event.stopPropagation(); showCatDropdown.set(false); showTaskPicker.set(null)">
 
     <div class="weekplan-modal__header">
       <div>
@@ -176,9 +177,7 @@
               }
             </div>
             }
-            <span class="modal-cat-dropdown__label">
-              {{ getCatDropdownLabel(createForm().categoryIds) }}
-            </span>
+            <span class="modal-cat-dropdown__label">{{ getCatDropdownLabel(createForm().categoryIds) }}</span>
           </div>
           <span class="material-symbols-outlined modal-cat-dropdown__arrow">
             {{ showCatDropdown() ? 'expand_less' : 'expand_more' }}
@@ -219,11 +218,55 @@
       Weekly Items
       <div class="weekplan-modal__section-actions">
         @if (createForm().items.length > 0) {
-        <button class="weekplan-modal__convert-all-btn" (click)="convertAllToTasks('create')"
-          title="Mark all items as tasks">
-          <span class="material-symbols-outlined">check_circle</span>All as tasks
+        <button class="weekplan-modal__convert-all-btn" (click)="convertAllToTasks('create')">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ createAllAsTask() ? 'None as tasks' : 'All as tasks' }}
         </button>
         }
+
+        <!-- Task Picker -->
+        <div class="task-picker" (click)="$event.stopPropagation()">
+          <button class="weekplan-modal__from-task-btn"
+            [class.weekplan-modal__from-task-btn--open]="showTaskPicker() === 'create'"
+            (click)="openTaskPicker('create', $event)">
+            <span class="material-symbols-outlined">playlist_add</span>
+            From Task
+            <span class="material-symbols-outlined task-picker__chevron">
+              {{ showTaskPicker() === 'create' ? 'expand_less' : 'expand_more' }}
+            </span>
+          </button>
+
+          @if (showTaskPicker() === 'create') {
+          <div class="task-picker__dropdown">
+            <div class="task-picker__search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" placeholder="Search tasks..." [value]="taskSearchQuery()"
+                (input)="taskSearchQuery.set($any($event.target).value)" (click)="$event.stopPropagation()" />
+            </div>
+            <div class="task-picker__list">
+              @for (task of filteredTasks(); track task.id) {
+              <button class="task-picker__item"
+                [class.task-picker__item--added]="isTaskAlreadyAdded(task.title, 'create')"
+                [disabled]="isTaskAlreadyAdded(task.title, 'create')" (click)="addItemFromTask(task, 'create')">
+                <span class="material-symbols-outlined task-picker__item-icon" [style.color]="task.categoryColor">
+                  {{ task.categoryIcon }}
+                </span>
+                <span class="task-picker__item-title">{{ task.title }}</span>
+                @if (isTaskAlreadyAdded(task.title, 'create')) {
+                <span class="material-symbols-outlined task-picker__item-check">check</span>
+                } @else if (task.dueDate) {
+                <span class="task-picker__item-date">{{ task.dueDate }}</span>
+                }
+              </button>
+              }
+              @if (filteredTasks().length === 0) {
+              <p class="task-picker__empty">No tasks found</p>
+              }
+            </div>
+          </div>
+          }
+        </div>
+
         <button class="weekplan-modal__add-item-btn" (click)="addItemToCreate()">
           <span class="material-symbols-outlined">add</span>Add Item
         </button>
@@ -284,8 +327,9 @@
 
 <!-- ══ EDIT MODAL ════════════════════════════════════════ -->
 @if (showEditModal() && selectedPlan()) {
-<div class="modal-overlay" (click)="showEditModal.set(false); showEditCatDropdown.set(false)">
-  <div class="weekplan-modal" (click)="$event.stopPropagation(); showEditCatDropdown.set(false)">
+<div class="modal-overlay" (click)="showEditModal.set(false); showEditCatDropdown.set(false); showTaskPicker.set(null)">
+  <div class="weekplan-modal"
+    (click)="$event.stopPropagation(); showEditCatDropdown.set(false); showTaskPicker.set(null)">
 
     <div class="weekplan-modal__header">
       <div>
@@ -354,9 +398,7 @@
               }
             </div>
             }
-            <span class="modal-cat-dropdown__label">
-              {{ getCatDropdownLabel(editForm().categoryIds) }}
-            </span>
+            <span class="modal-cat-dropdown__label">{{ getCatDropdownLabel(editForm().categoryIds) }}</span>
           </div>
           <span class="material-symbols-outlined modal-cat-dropdown__arrow">
             {{ showEditCatDropdown() ? 'expand_less' : 'expand_more' }}
@@ -397,11 +439,55 @@
       Weekly Items
       <div class="weekplan-modal__section-actions">
         @if (editForm().items.length > 0) {
-        <button class="weekplan-modal__convert-all-btn" (click)="convertAllToTasks('edit')"
-          title="Mark all items as tasks">
-          <span class="material-symbols-outlined">check_circle</span>All as tasks
+        <button class="weekplan-modal__convert-all-btn" (click)="convertAllToTasks('edit')">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ editAllAsTask() ? 'None as tasks' : 'All as tasks' }}
         </button>
         }
+
+        <!-- Task Picker -->
+        <div class="task-picker" (click)="$event.stopPropagation()">
+          <button class="weekplan-modal__from-task-btn"
+            [class.weekplan-modal__from-task-btn--open]="showTaskPicker() === 'edit'"
+            (click)="openTaskPicker('edit', $event)">
+            <span class="material-symbols-outlined">playlist_add</span>
+            From Task
+            <span class="material-symbols-outlined task-picker__chevron">
+              {{ showTaskPicker() === 'edit' ? 'expand_less' : 'expand_more' }}
+            </span>
+          </button>
+
+          @if (showTaskPicker() === 'edit') {
+          <div class="task-picker__dropdown">
+            <div class="task-picker__search">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" placeholder="Search tasks..." [value]="taskSearchQuery()"
+                (input)="taskSearchQuery.set($any($event.target).value)" (click)="$event.stopPropagation()" />
+            </div>
+            <div class="task-picker__list">
+              @for (task of filteredTasks(); track task.id) {
+              <button class="task-picker__item"
+                [class.task-picker__item--added]="isTaskAlreadyAdded(task.title, 'edit')"
+                [disabled]="isTaskAlreadyAdded(task.title, 'edit')" (click)="addItemFromTask(task, 'edit')">
+                <span class="material-symbols-outlined task-picker__item-icon" [style.color]="task.categoryColor">
+                  {{ task.categoryIcon }}
+                </span>
+                <span class="task-picker__item-title">{{ task.title }}</span>
+                @if (isTaskAlreadyAdded(task.title, 'edit')) {
+                <span class="material-symbols-outlined task-picker__item-check">check</span>
+                } @else if (task.dueDate) {
+                <span class="task-picker__item-date">{{ task.dueDate }}</span>
+                }
+              </button>
+              }
+              @if (filteredTasks().length === 0) {
+              <p class="task-picker__empty">No tasks found</p>
+              }
+            </div>
+          </div>
+          }
+        </div>
+
         <button class="weekplan-modal__add-item-btn" (click)="addItemToEdit()">
           <span class="material-symbols-outlined">add</span>Add Item
         </button>

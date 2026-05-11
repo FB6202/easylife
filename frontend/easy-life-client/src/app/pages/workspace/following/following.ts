@@ -230,8 +230,11 @@ export class FollowingComponent {
     },
   ]);
 
+
+  readonly username: string;
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
+
 
   readonly activeList = computed(() =>
     this.activeTab() === 'following' ? this.following() : this.followers(),
@@ -253,10 +256,9 @@ export class FollowingComponent {
     this.currentPage.set(0);
   }
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
+  constructor(private router: Router, private route: ActivatedRoute) {
+    this.username = this.route.snapshot.paramMap.get('username') ?? 'user';
+  }
 
   showFilter = signal(false);
   activeFilters = signal<FilterValues>({});
@@ -351,6 +353,10 @@ export class FollowingComponent {
 
   goToSearch() {
     const username = this.route.snapshot.paramMap.get('username');
-    this.router.navigate([`/workspace/${username}/network/search`]);
+    this.router.navigate([`/workspace/${username}/following/search`]);
+  }
+
+  goToProfile(userId: number) {
+    this.router.navigate([`/workspace/${this.username}/following/user/${userId}`]);
   }
 }

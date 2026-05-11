@@ -42,11 +42,12 @@ interface NotificationForm {
   title: string;
   message: string;
   type: NotificationType;
-  channel: NotificationChannel;
+  channels: NotificationChannel[];
   referenceType: ReferenceType | null;
   referenceId: number | null;
   scheduledAt: string;
 }
+
 
 @Component({
   selector: 'app-notifications',
@@ -375,7 +376,7 @@ export class NotificationsComponent {
     title: '',
     message: '',
     type: 'REMINDER',
-    channel: 'IN_APP',
+    channels: ['IN_APP'],
     referenceType: null,
     referenceId: null,
     scheduledAt: '',
@@ -390,6 +391,27 @@ export class NotificationsComponent {
     { value: 'EMAIL', label: 'Email', icon: 'email' },
     { value: 'PUSH', label: 'Push', icon: 'phone_iphone' },
   ];
+
+  showCreateChannelDropdown = signal(false);
+  showEditChannelDropdown = signal(false);
+
+  toggleChannelDropdown(form: 'create' | 'edit', event: Event) {
+    event.stopPropagation();
+    if (form === 'create') {
+      this.showCreateChannelDropdown.update(v => !v);
+      this.showEditChannelDropdown.set(false);
+    } else {
+      this.showEditChannelDropdown.update(v => !v);
+      this.showCreateChannelDropdown.set(false);
+    }
+  }
+
+  getChannelLabel(channels: NotificationChannel[]): string {
+    if (channels.length === 0) return 'Select channels...';
+    if (channels.length === 1)
+      return this.channelOptions.find(c => c.value === channels[0])?.label ?? '1 selected';
+    return `${channels.length} channels`;
+  }
 
   // ── Create ─────────────────────────────────────────────
   openCreate() {
@@ -410,13 +432,27 @@ export class NotificationsComponent {
       title: notification.title,
       message: notification.message,
       type: notification.type,
-      channel: notification.channel,
+      channels: [notification.channel],
       referenceType: notification.referenceType,
       referenceId: notification.referenceId,
       scheduledAt: notification.scheduledAt,
     });
+
     this.markRead(notification.id);
     this.showEditModal.set(true);
+  }
+
+  toggleChannel(channel: NotificationChannel, form: 'create' | 'edit') {
+    const target = form === 'create' ? this.createForm : this.editForm;
+    target.update(f => {
+      const already = f.channels.includes(channel);
+      // mindestens ein Channel muss aktiv bleiben
+      if (already && f.channels.length === 1) return f;
+      const channels = already
+        ? f.channels.filter(c => c !== channel)
+        : [...f.channels, channel];
+      return { ...f, channels };
+    });
   }
 
   submitEdit() {

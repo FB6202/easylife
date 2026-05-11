@@ -59,6 +59,14 @@ interface WeekPlanForm {
   items: WeekPlanFormItem[];
 }
 
+interface TaskPreview {
+  id: number;
+  title: string;
+  dueDate: string;
+  categoryColor: string;
+  categoryIcon: string;
+}
+
 @Component({
   selector: 'app-weekplan',
   imports: [CommonModule, FormsModule, PaginationComponent, FilterPanelComponent],
@@ -193,6 +201,59 @@ export class WeekplanComponent {
       categories: [{ id: 1, name: 'Work', icon: 'work', color: '#1976d2' }],
     },
   ]);
+
+  // ── Task Picker ────────────────────────────────────────
+  readonly availableTasks = signal<TaskPreview[]>([
+    { id: 1, title: 'Review Annual Financial Report Q4', dueDate: '2025-10-24', categoryColor: '#f57c00', categoryIcon: 'payments' },
+    { id: 2, title: 'Monthly Team Synergy Workshop', dueDate: '2025-10-28', categoryColor: '#1976d2', categoryIcon: 'work' },
+    { id: 3, title: 'Fix critical bugs before launch', dueDate: '2025-11-01', categoryColor: '#1976d2', categoryIcon: 'work' },
+    { id: 4, title: 'Write weekly newsletter', dueDate: '2025-10-29', categoryColor: '#9c27b0', categoryIcon: 'person' },
+    { id: 5, title: 'Prepare investor update', dueDate: '2025-11-05', categoryColor: '#f57c00', categoryIcon: 'payments' },
+    { id: 6, title: 'Daily 30min walk', dueDate: '', categoryColor: '#43a047', categoryIcon: 'self_improvement' },
+    { id: 7, title: 'Code review all PRs', dueDate: '2025-10-25', categoryColor: '#1976d2', categoryIcon: 'work' },
+    { id: 8, title: 'Update API documentation', dueDate: '2025-10-30', categoryColor: '#1976d2', categoryIcon: 'work' },
+    { id: 9, title: 'Budget forecast Q4', dueDate: '2025-11-03', categoryColor: '#f57c00', categoryIcon: 'payments' },
+    { id: 10, title: 'Team 1:1 meetings', dueDate: '2025-10-27', categoryColor: '#1976d2', categoryIcon: 'work' },
+  ]);
+
+  showTaskPicker = signal<'create' | 'edit' | null>(null);
+  taskSearchQuery = signal('');
+
+  readonly filteredTasks = computed(() => {
+    const q = this.taskSearchQuery().toLowerCase().trim();
+    const alreadyAdded = (form: 'create' | 'edit') => {
+      const items = form === 'create' ? this.createForm().items : this.editForm().items;
+      return items.map(i => i.title.toLowerCase());
+    };
+    return this.availableTasks().filter(t =>
+      (!q || t.title.toLowerCase().includes(q))
+    );
+  });
+
+  openTaskPicker(form: 'create' | 'edit', event: Event) {
+    event.stopPropagation();
+    this.showTaskPicker.set(this.showTaskPicker() === form ? null : form);
+    this.taskSearchQuery.set('');
+  }
+
+  addItemFromTask(task: TaskPreview, form: 'create' | 'edit') {
+    const newItem: WeekPlanFormItem = {
+      title: task.title,
+      description: '',
+      done: false,
+      dueDate: task.dueDate,
+      createAsTask: false,
+    };
+    const target = form === 'create' ? this.createForm : this.editForm;
+    target.update(f => ({ ...f, items: [...f.items, newItem] }));
+    this.showTaskPicker.set(null);
+    this.taskSearchQuery.set('');
+  }
+
+  isTaskAlreadyAdded(taskTitle: string, form: 'create' | 'edit'): boolean {
+    const items = form === 'create' ? this.createForm().items : this.editForm().items;
+    return items.some(i => i.title === taskTitle);
+  }
 
   readonly currentPage = signal(0);
   readonly pageSize = signal(5);
@@ -424,11 +485,20 @@ export class WeekplanComponent {
     }
   }
 
+  readonly createAllAsTask = computed(() =>
+    this.createForm().items.length > 0 && this.createForm().items.every(i => i.createAsTask)
+  );
+
+  readonly editAllAsTask = computed(() =>
+    this.editForm().items.length > 0 && this.editForm().items.every(i => i.createAsTask)
+  );
+
   convertAllToTasks(form: 'create' | 'edit') {
     const target = form === 'create' ? this.createForm : this.editForm;
+    const allSelected = target().items.every(i => i.createAsTask);
     target.update((f) => ({
       ...f,
-      items: f.items.map((item) => ({ ...item, createAsTask: true })),
+      items: f.items.map((item) => ({ ...item, createAsTask: !allSelected })),
     }));
   }
 

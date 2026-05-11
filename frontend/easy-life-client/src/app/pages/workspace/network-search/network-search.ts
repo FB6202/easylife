@@ -81,6 +81,6 @@ export class NetworkSearchComponent {
   }
 
   goBack() {
-    this.router.navigate([`/workspace/${this.username}/network`]);
+    this.router.navigate([`/workspace/${this.username}/following`]);
   }
 }

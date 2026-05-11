@@ -114,7 +114,7 @@ export const routes: Routes = [
         title: 'Notifications - Easy Life',
       },
       {
-        path: 'network/search',
+        path: 'following/search',
         loadComponent: () =>
           import('./pages/workspace/network-search/network-search').then(
             (m) => m.NetworkSearchComponent,
@@ -122,7 +122,7 @@ export const routes: Routes = [
         title: 'Find People - Easy Life',
       },
       {
-        path: 'network/user/:userId',
+        path: 'following/user/:userId',
         loadComponent: () =>
           import('./pages/workspace/network-profile/network-profile').then(
             (m) => m.NetworkProfileComponent,

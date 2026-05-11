@@ -12,6 +12,7 @@
 - delete mechanism for efficient db storage using ;)
 - tests for all edge cases (document)
 - clean backend code (especially entities)
+- clean frontend code (especially ts-files)
 - notifications when event is created
 
 ## Frontend:
@@ -27,17 +28,11 @@
   - event create notification directly
 - documents
   - actions (preview + download)
-  - filter (filetype as dropdown)
 - my week
-  - drop down for existing tasks (for items)
-  - week items - toggle 'create tasks' off
 - journal
 - profile
   - contract change
   - size for profile image
 - people
 - network
-  - click on follower → view page
 - notifications
-  - channels (all?)
-  - start application - load all (for dashboard + unread notifications)

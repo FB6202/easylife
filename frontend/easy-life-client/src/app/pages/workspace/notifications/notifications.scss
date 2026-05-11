@@ -605,6 +605,17 @@
     background: var(--color-primary);
     color: white;
   }
+
+  &__check {
+    font-size: 13px;
+    margin-left: $space-1;
+    flex-shrink: 0;
+  }
+
+  &.active {
+    background: var(--color-primary);
+    color: white;
+  }
 }
 
 // ── Reference Type Picker ──────────────────────────────────
@@ -719,4 +730,16 @@
   margin-left: $space-1;
   min-width: 18px;
   text-align: center;
+}
+
+.notif-channel-hint {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+  margin-top: $space-1;
+}
+
+.notif-channel-dot {
+  font-size: 15px;
+  color: var(--color-primary);
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
 }

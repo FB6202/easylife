@@ -112,7 +112,7 @@ export class DocumentsComponent {
   readonly documentFilterFields: FilterField[] = [
     { key: 'search', label: 'Search', type: 'text', icon: 'search', placeholder: 'Search documents...' },
     {
-      key: 'fileType', label: 'File Type', type: 'multiselect', icon: 'description',
+      key: 'fileType', label: 'File Type', type: 'multiselect-dropdown', icon: 'description',
       options: [
         { value: 'pdf', label: 'PDF', icon: 'picture_as_pdf', color: '#f44336' },
         { value: 'docx', label: 'Word', icon: 'description', color: '#1976d2' },
