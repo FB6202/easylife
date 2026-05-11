@@ -14,11 +14,11 @@
 - tests for all edge cases (document)
 - clean backend code (especially entities)
 - clean frontend code (especially ts-files)
-- notifications when event is created
 
 ## Frontend:
 - dark mode (logo)
 - toaster + loading circles
+- screenshot for main page
 - calendar
   - event create notification directly
 - profile
